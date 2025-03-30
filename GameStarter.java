@@ -1,6 +1,8 @@
+import lib.*;
+
 public class GameStarter {
     public static void main(String[] args) {
-        GameServer gs = new GameServer();
-        Player p = new Player();
+        GameFrame frame = new GameFrame();
+        frame.setUpGUI();
     }
 }

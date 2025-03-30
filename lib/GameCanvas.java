@@ -1,13 +1,22 @@
+package lib;
+
 import java.awt.*;
-import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
+import javax.swing.Timer;
 
 public class GameCanvas extends JComponent {
     ArrayList<GameObject> gameObjects;
+    Timer gameTimer;
 
     public GameCanvas() {
-
+        // Initialize object to hold all gameObjects
+        gameObjects = new ArrayList<>();
+        
+        // Set the game timer to be 100 FPS
+        gameTimer = new Timer(10, e -> {
+            repaint();
+        });
     }
 
     /**

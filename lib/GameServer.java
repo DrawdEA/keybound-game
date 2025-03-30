@@ -1,5 +1,7 @@
-import java.net.*;
+package lib;
+
 import java.io.*;
+import java.net.*;
 
 public class GameServer {
     ServerSocket ss;

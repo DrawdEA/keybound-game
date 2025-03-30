@@ -1,0 +1,1 @@
+https://stackoverflow.com/questions/15551515/java-swing-removing-jpanel-while-clicking-on-jbutton-which-is-present-in-that-jp
