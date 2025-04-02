@@ -16,7 +16,7 @@ public abstract class GameObject {
     }
 
     // Abstract method for updating game logic (to be implemented by subclasses)
-    public abstract void update();
+    //public abstract void update();
 
     // Concrete method for drawing the object (can be overridden by subclasses)
     public void drawSprite(Graphics2D g2d) {

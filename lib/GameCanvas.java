@@ -14,7 +14,7 @@ public class GameCanvas extends JComponent {
         gameObjects = new ArrayList<>();
 
         // Initialize the environment.
-        gameObjects.add(new GameObject());
+        gameObjects.add(new Environment(this));
         
         // Set the game timer to be 100 FPS
         gameTimer = new Timer(10, e -> {
