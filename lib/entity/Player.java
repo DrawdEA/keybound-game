@@ -1,9 +1,9 @@
-package lib;
+package lib.entity;
 
 import java.io.*;
 import java.net.*;
 
-public class Player {
+public class Player extends Entity {
     public Player() {
         try {
             Socket s = new Socket("localhost", 1000);

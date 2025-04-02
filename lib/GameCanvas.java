@@ -12,6 +12,9 @@ public class GameCanvas extends JComponent {
     public GameCanvas() {
         // Initialize object to hold all gameObjects
         gameObjects = new ArrayList<>();
+
+        // Initialize the environment.
+        gameObjects.add(new GameObject());
         
         // Set the game timer to be 100 FPS
         gameTimer = new Timer(10, e -> {
@@ -36,7 +39,7 @@ public class GameCanvas extends JComponent {
 
         // Draw every object.
         for (GameObject object : gameObjects) {
-            object.draw(g2d);
+            object.drawSprite(g2d);
         }
     }
 }
