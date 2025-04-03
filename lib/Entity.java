@@ -1,6 +1,4 @@
-package lib.entity;
-
-import lib.GameObject;
+package lib;
 
 public class Entity extends GameObject {
     

@@ -6,6 +6,11 @@ import javax.swing.*;
 import javax.swing.Timer;
 
 public class GameCanvas extends JComponent {
+    public static final int SCALE = 2;
+    public static final int TILE_SIZE = 16 * SCALE;
+    public static final int MAX_SCREEN_TILE_COLUMNS = 25;
+    public static final int MAX_SCREEN_TILE_ROWS = 18;
+
     ArrayList<GameObject> gameObjects;
     Timer gameTimer;
 
@@ -14,7 +19,7 @@ public class GameCanvas extends JComponent {
         gameObjects = new ArrayList<>();
 
         // Initialize the environment.
-        gameObjects.add(new Environment(this));
+        gameObjects.add(new Environment(0, 0, 16, 16, this));
         
         // Set the game timer to be 100 FPS
         gameTimer = new Timer(10, e -> {
