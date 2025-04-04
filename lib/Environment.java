@@ -173,7 +173,7 @@ public class Environment extends GameObject {
 
             BufferedImage waterTiles = ImageIO.read(getClass().getResourceAsStream("/resources/tiles/Water_Tile.png"));
 
-            // Inner Cliff tiles
+            // Outer water tiles
             tiles[33] = new Tile();
             tiles[33].image = waterTiles.getSubimage(0, 0, 16, 16);
 
@@ -198,7 +198,7 @@ public class Environment extends GameObject {
             tiles[40] = new Tile();
             tiles[40].image = waterTiles.getSubimage(32, 32, 16, 16);
 
-            // Outer Cliff tiles
+            // Inner water tiles
             tiles[41] = new Tile();
             tiles[41].image = waterTiles.getSubimage(0, 48, 16, 16);
 
@@ -211,7 +211,7 @@ public class Environment extends GameObject {
             tiles[44] = new Tile();
             tiles[44].image = waterTiles.getSubimage(16, 64, 16, 16);
 
-            // Grass footprints
+            // Water details
             tiles[45] = new Tile();
             tiles[45].image = waterTiles.getSubimage(0, 80, 16, 16);
 
@@ -222,6 +222,45 @@ public class Environment extends GameObject {
             tiles[47].image = waterTiles.getSubimage(16, 80, 16, 16);
 
             BufferedImage beachTiles = ImageIO.read(getClass().getResourceAsStream("/resources/tiles/Beach_Tile.png"));
+
+            // Inner beach tiles
+            tiles[48] = new Tile();
+            tiles[48].image = beachTiles.getSubimage(0, 0, 16, 16);
+
+            tiles[49] = new Tile();
+            tiles[49].image = beachTiles.getSubimage(16, 0, 16, 16);
+
+            tiles[50] = new Tile();
+            tiles[50].image = beachTiles.getSubimage(32, 0, 16, 16);
+
+            tiles[51] = new Tile();
+            tiles[51].image = beachTiles.getSubimage(0, 16, 16, 16);
+
+            tiles[52] = new Tile();
+            tiles[52].image = beachTiles.getSubimage(32, 16, 16, 16);
+
+            tiles[53] = new Tile();
+            tiles[53].image = beachTiles.getSubimage(0, 32, 16, 16);
+
+            tiles[54] = new Tile();
+            tiles[54].image = beachTiles.getSubimage(16, 32, 16, 16);
+
+            tiles[55] = new Tile();
+            tiles[55].image = beachTiles.getSubimage(32, 32, 16, 16);
+
+            // Outer beach tiles
+            tiles[56] = new Tile();
+            tiles[56].image = beachTiles.getSubimage(48, 0, 16, 16);
+
+            tiles[57] = new Tile();
+            tiles[57].image = beachTiles.getSubimage(64, 0, 16, 16);
+
+            tiles[58] = new Tile();
+            tiles[58].image = beachTiles.getSubimage(48, 16, 16, 16);
+
+            tiles[59] = new Tile();
+            tiles[59].image = beachTiles.getSubimage(64, 16, 16, 16);
+
         } catch(IOException e) {
             e.printStackTrace();
         }
