@@ -9,7 +9,7 @@ public class GameCanvas extends JComponent {
     public static final int SCALE = 2;
     public static final int TILE_SIZE = 16 * SCALE;
     public static final int MAX_SCREEN_TILE_COLUMNS = 25;
-    public static final int MAX_SCREEN_TILE_ROWS = 18;
+    public static final int MAX_SCREEN_TILE_ROWS = 19;
 
     ArrayList<GameObject> gameObjects;
     Timer gameTimer;
