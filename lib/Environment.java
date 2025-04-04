@@ -187,36 +187,41 @@ public class Environment extends GameObject {
             tiles[36].image = waterTiles.getSubimage(0, 16, 16, 16);
 
             tiles[37] = new Tile();
-            tiles[37].image = waterTiles.getSubimage(0, 32, 16, 16);
+            tiles[37].image = waterTiles.getSubimage(32, 16, 16, 16);
 
             tiles[38] = new Tile();
-            tiles[38].image = waterTiles.getSubimage(16, 32, 16, 16);
+            tiles[38].image = waterTiles.getSubimage(0, 32, 16, 16);
 
             tiles[39] = new Tile();
-            tiles[39].image = waterTiles.getSubimage(32, 32, 16, 16);
+            tiles[39].image = waterTiles.getSubimage(16, 32, 16, 16);
+
+            tiles[40] = new Tile();
+            tiles[40].image = waterTiles.getSubimage(32, 32, 16, 16);
 
             // Outer Cliff tiles
-            tiles[40] = new Tile();
-            tiles[40].image = waterTiles.getSubimage(0, 48, 16, 16);
-
             tiles[41] = new Tile();
-            tiles[41].image = waterTiles.getSubimage(16, 48, 16, 16);
+            tiles[41].image = waterTiles.getSubimage(0, 48, 16, 16);
 
             tiles[42] = new Tile();
-            tiles[42].image = waterTiles.getSubimage(0, 64, 16, 16);
+            tiles[42].image = waterTiles.getSubimage(16, 48, 16, 16);
 
             tiles[43] = new Tile();
-            tiles[43].image = waterTiles.getSubimage(16, 64, 16, 16);
+            tiles[43].image = waterTiles.getSubimage(0, 64, 16, 16);
+
+            tiles[44] = new Tile();
+            tiles[44].image = waterTiles.getSubimage(16, 64, 16, 16);
 
             // Grass footprints
-            tiles[44] = new Tile();
-            tiles[44].image = waterTiles.getSubimage(0, 80, 16, 16);
-
             tiles[45] = new Tile();
-            tiles[45].image = waterTiles.getSubimage(16, 80, 16, 16);
+            tiles[45].image = waterTiles.getSubimage(0, 80, 16, 16);
 
             tiles[46] = new Tile();
             tiles[46].image = waterTiles.getSubimage(16, 80, 16, 16);
+
+            tiles[47] = new Tile();
+            tiles[47].image = waterTiles.getSubimage(16, 80, 16, 16);
+
+            BufferedImage beachTiles = ImageIO.read(getClass().getResourceAsStream("/resources/tiles/Beach_Tile.png"));
         } catch(IOException e) {
             e.printStackTrace();
         }
