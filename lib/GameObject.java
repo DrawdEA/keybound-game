@@ -3,12 +3,12 @@ package lib;
 import java.awt.*;
 
 public abstract class GameObject {
-    // Shared properties for all game objects
-    protected int x, y; // Position
-    protected int width, height; // Size
+    // Shared properties for all game objects. The protected accessor is used so that the subclasses can access it.
+    protected double x, y;
+    protected double width, height;
 
-    // Constructor to initialize position and size
-    public GameObject(int x, int y, int width, int height) {
+    // Constructor to initialize position and size.
+    public GameObject(double x, double y, double width, double height) {
         this.x = x;
         this.y = y;
         this.width = width;
@@ -19,37 +19,34 @@ public abstract class GameObject {
     //public abstract void update();
 
     // Concrete method for drawing the object (can be overridden by subclasses)
-    public void drawSprite(Graphics2D g2d) {
-        g2d.setColor(Color.YELLOW); // Default color
-        g2d.fillRect(x, y, width, height); // Default rendering logic
-    }
+    public abstract void drawSprite(Graphics2D g2d); 
 
     // Getters and setters for position and size
-    public int getX() {
+    public double getX() {
         return x;
     }
 
-    public void setX(int x) {
+    public void setX(double x) {
         this.x = x;
     }
 
-    public int getY() {
+    public double getY() {
         return y;
     }
 
-    public void setY(int y) {
+    public void setY(double y) {
         this.y = y;
     }
 
-    public int getWidth() {
+    public double getWidth() {
         return width;
     }
 
-    public void setWidth(int width) {
+    public void setWidth(double width) {
         this.width = width;
     }
 
-    public int getHeight() {
+    public double getHeight() {
         return height;
     }
 

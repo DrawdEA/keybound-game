@@ -1,5 +1,8 @@
 /**
+ * The Environment class is responsible for generating the environment that the player is walking in.
+ * This includes generating the map through a .txt file, and loading in the tiles and setting their collisions.
  * 
+ * The values of the tiles are as follows:
  * 0 - Grass Tile
  * 1 - Water Tile
  * 2 - Upper Left Corner Grass-Path Tile
@@ -18,8 +21,7 @@
  * 15 - Path Footprints 1
  * 16 - Path Footprints 2
  * 17 - Path Footprints 3
- * 
- * 
+ * TODO: update list
  */
 package lib;
 
@@ -34,24 +36,33 @@ public class Environment extends GameObject {
     Tile[] tiles;
     int[][] mapNumbers;
 
-    public Environment(int x, int y, int height, int width, GameCanvas gc) {
+    /**
+     * Generate a map of the game.
+     * 
+     * @param x x position of the map
+     * @param y y position of the map
+     * @param height height of the map
+     * @param width width of the map
+     */
+    public Environment(int x, int y, int height, int width) {
         super(x, y, height, width);
-        gameCanvas = gc;
         tiles = new Tile[100];
-        mapNumbers = new int[gameCanvas.MAX_SCREEN_TILE_COLUMNS][gameCanvas.MAX_SCREEN_TILE_ROWS];
+        mapNumbers = new int[GameConfig.MAX_SCREEN_TILE_COLUMNS][GameConfig.MAX_SCREEN_TILE_ROWS];
 
         // Load the map.
         try {
             InputStream is = getClass().getResourceAsStream("/resources/maps/test.txt");
             BufferedReader br = new BufferedReader(new InputStreamReader(is));
 
-            for (int j = 0; j < gameCanvas.MAX_SCREEN_TILE_ROWS; j++) {
+            System.out.println("SETTING UP MAP:");
+
+            for (int j = 0; j < GameConfig.MAX_SCREEN_TILE_ROWS; j++) {
                 String line = br.readLine();
                 
                 String numbers[] = line.split(" ");
-                System.out.println(numbers.length);
+                System.out.printf("GENERATING MAP, AMOUNT OF TILES: %d\n",numbers.length);
 
-                for (int i = 0; i < gameCanvas.MAX_SCREEN_TILE_COLUMNS; i++) {
+                for (int i = 0; i < GameConfig.MAX_SCREEN_TILE_COLUMNS; i++) {
                     mapNumbers[i][j] = Integer.parseInt(numbers[i]);
                 }
             }
@@ -268,9 +279,9 @@ public class Environment extends GameObject {
 
     @Override
     public void drawSprite(Graphics2D g2d) {
-        for (int i = 0; i < gameCanvas.MAX_SCREEN_TILE_COLUMNS; i++) {
-            for (int j = 0; j < gameCanvas.MAX_SCREEN_TILE_ROWS; j++) {
-                g2d.drawImage(tiles[mapNumbers[i][j]].image, i * gameCanvas.TILE_SIZE, j * gameCanvas.TILE_SIZE, gameCanvas.TILE_SIZE, gameCanvas.TILE_SIZE, null);
+        for (int i = 0; i < GameConfig.MAX_SCREEN_TILE_COLUMNS; i++) {
+            for (int j = 0; j < GameConfig.MAX_SCREEN_TILE_ROWS; j++) {
+                g2d.drawImage(tiles[mapNumbers[i][j]].image, i * GameConfig.TILE_SIZE, j * GameConfig.TILE_SIZE, GameConfig.TILE_SIZE, GameConfig.TILE_SIZE, null);
             }
         }
     }

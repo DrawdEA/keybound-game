@@ -10,7 +10,7 @@ public class GameFrame {
     /**
      * Instantiates a new frame.
     */
-    public GameFrame(){
+    public GameFrame() {
         mainFrame = new JFrame();
         gameMainMenu = new MainMenu();
     }
