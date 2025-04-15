@@ -41,11 +41,22 @@ public class MainMenu extends JPanel implements ActionListener {
             mainFrame.remove(this);
             mainFrame.repaint();
             mainFrame.add(new ServerMenu(), BorderLayout.CENTER);
+
+            // Game Server Stuff
+            GameServer gs = new GameServer();
+            gs.acceptConnections();
+            
             mainFrame.revalidate();
             mainFrame.repaint();
         } else if (e.getSource() == join) {
             mainFrame.remove(this);
-            mainFrame.add(new GameCanvas());
+
+            // Player stuff
+            GameCanvas gc = new GameCanvas();
+            mainFrame.add(gc);
+            gc.connectToServer();
+            gc.addPlayers();
+
             mainFrame.revalidate();
             mainFrame.repaint();
         }

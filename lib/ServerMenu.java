@@ -44,7 +44,13 @@ public class ServerMenu extends JPanel implements ActionListener {
             mainFrame.repaint();
         } else if (e.getSource() == start) {
             mainFrame.remove(this);
-            mainFrame.add(new GameCanvas());
+
+            // Player stuff
+            GameCanvas gc = new GameCanvas();
+            mainFrame.add(gc);
+            gc.connectToServer();
+            gc.addPlayers();
+            
             mainFrame.revalidate();
             mainFrame.repaint();
         }
