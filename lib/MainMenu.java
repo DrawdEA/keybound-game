@@ -42,7 +42,7 @@ public class MainMenu extends JPanel implements ActionListener {
             mainFrame.repaint();
             mainFrame.add(new ServerMenu(), BorderLayout.CENTER);
 
-            // Game Server Stuff
+            // Game Server Stuff for sir choob
             GameServer gs = new GameServer();
             gs.acceptConnections();
             
@@ -51,7 +51,7 @@ public class MainMenu extends JPanel implements ActionListener {
         } else if (e.getSource() == join) {
             mainFrame.remove(this);
 
-            // Player stuff
+            // Player stuff for sir choob
             GameCanvas gc = new GameCanvas();
             mainFrame.add(gc);
             gc.connectToServer();

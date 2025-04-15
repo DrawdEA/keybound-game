@@ -41,11 +41,9 @@ public class Environment extends GameObject {
      * 
      * @param x x position of the map
      * @param y y position of the map
-     * @param height height of the map
-     * @param width width of the map
      */
-    public Environment(int x, int y, int height, int width) {
-        super(x, y, height, width);
+    public Environment(int x, int y) {
+        super(x, y, 0, 0);
         tiles = new Tile[100];
         mapNumbers = new int[GameConfig.MAX_SCREEN_TILE_COLUMNS][GameConfig.MAX_SCREEN_TILE_ROWS];
 

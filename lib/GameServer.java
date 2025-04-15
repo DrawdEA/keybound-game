@@ -7,7 +7,6 @@ public class GameServer {
     private ServerSocket ss;
     private int players;
 
-    private Socket p1Socket, p2Socket;
     private ReadFromClient p1ReadRunnable, p2ReadRunnable;
     private WriteToClient p1WriteRunnable, p2WriteRunnable;
 
@@ -46,11 +45,9 @@ public class GameServer {
                 WriteToClient wtc = new WriteToClient(players, out);
 
                 if (players == 1) {
-                    p1Socket = s;
                     p1ReadRunnable = rfc;
                     p1WriteRunnable = wtc;
                 } else {
-                    p2Socket = s;
                     p2ReadRunnable = rfc;
                     p2WriteRunnable = wtc;
 

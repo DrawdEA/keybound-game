@@ -28,7 +28,7 @@ public class GameCanvas extends JComponent {
         gameObjects = new ArrayList<>();
 
         // Initialize the environment.
-        gameObjects.add(new Environment(0, 0, 16, 16)); 
+        gameObjects.add(new Environment(0, 0)); 
         
         // Set the game timer and key bindings.
         keyBindings = new KeyBindings(this);
