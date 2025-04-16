@@ -10,7 +10,7 @@ public class MainMenu extends JPanel implements ActionListener {
     JButton host, join;
 
     public MainMenu() {
-        title = new JLabel("Keyboard Casters");
+        title = new JLabel("KEYBOUND");
         host = new JButton("Host Lobby");
         join = new JButton("Join Lobby");
         
@@ -43,10 +43,21 @@ public class MainMenu extends JPanel implements ActionListener {
             mainFrame.repaint();
             mainFrame.add(new ServerMenu(), BorderLayout.CENTER);
 
-            // Game Server Stuff for sir choob
-            GameServer gs = new GameServer();
-            gs.acceptConnections();
-            
+            // Start a Game Server using an anonymous Thread
+            new Thread() {
+                public void run() {
+                    // Game Server Stuff for sir choob
+                    // Create a server
+                    GameServer gs = new GameServer();
+                    gs.acceptConnections();
+                }
+            }.start();
+
+            // Join the created server as a new player
+            Player p = new Player();
+            mainFrame.add(p.getCanvas());
+            p.connectToServer();
+
             mainFrame.revalidate();
             mainFrame.repaint();
         } else if (e.getSource() == join) {
