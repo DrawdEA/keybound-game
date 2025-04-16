@@ -9,9 +9,9 @@ import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.Timer;
-import lib.objects.*;
-import lib.input.*;
 import lib.*;
+import lib.input.*;
+import lib.objects.*;
 
 public class GameCanvas extends JComponent {
     ArrayList<GameObject> gameObjects;
@@ -31,6 +31,7 @@ public class GameCanvas extends JComponent {
         ActionListener al = new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 keyBindings.updatePlayerPosition((PlayerVisuals) self, GameConfig.PLAYER_SPEED);
+                keyBindings.castPlayerSpells((PlayerVisuals) self); // Add a cooldown thread?
                 repaint();
             }
         };

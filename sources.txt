@@ -4,3 +4,4 @@ https://www.youtube.com/playlist?list=PL_QPQmz5C6WUF-pOQDsbsKbaBZqXj4qSq // Goat
 
 https://stackoverflow.com/questions/2364856/initializing-a-boolean-array-in-java
 https://www.geeksforgeeks.org/java-program-to-get-a-character-from-a-string/
+https://stackoverflow.com/questions/8777257/equals-vs-arrays-equals-in-java
