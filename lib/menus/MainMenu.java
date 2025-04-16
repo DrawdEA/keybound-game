@@ -1,8 +1,9 @@
-package lib;
+package lib.menus;
 
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import lib.network.*;
 
 public class MainMenu extends JPanel implements ActionListener {
     JLabel title;

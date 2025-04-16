@@ -23,13 +23,14 @@
  * 17 - Path Footprints 3
  * TODO: update list
  */
-package lib;
+package lib.objects;
 
-import java.io.*;
-
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.*;
+import java.io.*;
+import javax.imageio.ImageIO;
+import lib.*;
+import lib.render.*;
 
 public class Environment extends GameObject {
     GameCanvas gameCanvas;

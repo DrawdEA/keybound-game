@@ -1,7 +1,8 @@
-package lib;
+package lib.network;
 
 import java.io.*;
 import java.net.*;
+import lib.*;
 
 public class GameServer {
     private ServerSocket ss;

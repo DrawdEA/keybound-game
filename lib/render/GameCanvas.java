@@ -2,13 +2,16 @@
  * The GameCanvas class is responsible for rendering the entities, environment and other objects within the game.
  * It is also responsible for setting up the game's timer and the player's keybindings.
  */
-package lib;
+package lib.render;
 
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.Timer;
+import lib.objects.*;
+import lib.input.*;
+import lib.*;
 
 public class GameCanvas extends JComponent {
     ArrayList<GameObject> gameObjects;

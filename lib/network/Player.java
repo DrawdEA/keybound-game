@@ -2,10 +2,11 @@
  * The Player class is responsible for generating the player's canvas and appearance.
  * It also handles the client-side of the game.
  */
-package lib;
+package lib.network;
 
 import java.io.*;
 import java.net.*;
+import lib.render.*;
 
 public class Player {
     private Socket socket;

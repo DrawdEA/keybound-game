@@ -2,10 +2,11 @@
  * The KeyBindings class deals with the player key bindings, as well as the consequences of doing such bindings. 
  * This class and its functionality is separated from the GameCanvas class to remove code bloat.
  */
-package lib;
+package lib.input;
 
 import java.awt.event.*;
 import javax.swing.*;
+import lib.render.*;
 
 public class KeyBindings {
     public boolean up, down, left, right;

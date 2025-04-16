@@ -2,10 +2,12 @@
  * The PlayerVisuals class is responsible for controlling the sprite of the player.
  * This includes the player's idle, charging, running, and dying animation.
  */
-package lib;
+package lib.render;
 
 import java.awt.*;
 import java.awt.geom.*;
+import lib.*;
+import lib.objects.*;
 
 public class PlayerVisuals extends GameObject {
     public final int screenX, screenY;

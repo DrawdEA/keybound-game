@@ -1,4 +1,4 @@
-package lib;
+package lib.menus;
 
 import java.awt.*;
 import java.awt.event.*;

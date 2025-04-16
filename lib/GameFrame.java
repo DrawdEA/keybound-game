@@ -2,6 +2,7 @@ package lib;
 
 import java.awt.*;
 import javax.swing.*;
+import lib.menus.*;
 
 public class GameFrame {
     JFrame mainFrame;
