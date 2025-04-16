@@ -288,14 +288,23 @@ public class Environment extends GameObject {
 
         for (int i = 0; i < GameConfig.MAX_WORLD_COLUMNS; i++) {
             for (int j = 0; j < GameConfig.MAX_WORLD_ROWS; j++) {
+
+                // Generate the new camera-centric position.
                 double worldX = i * GameConfig.TILE_SIZE;
                 double worldY = j * GameConfig.TILE_SIZE;
-
                 PlayerVisuals player = gameCanvas.getOwnPlayer();
                 double screenX = worldX - player.getX() + player.getScreenX();
                 double screenY = worldY - player.getY() + player.getScreenY();
+
+                // Limit the render of the player for performance.
+                if (worldX + GameConfig.TILE_SIZE > player.getX() - player.getScreenX() &&
+                    worldX - GameConfig.TILE_SIZE < player.getX() + player.getScreenX() &&
+                    worldY + GameConfig.TILE_SIZE > player.getY() - player.getScreenY() &&
+                    worldY - GameConfig.TILE_SIZE < player.getY() + player.getScreenY()) {
+                        g2d.drawImage(tiles[mapNumbers[i][j]].image, (int) screenX, (int) screenY, GameConfig.TILE_SIZE, GameConfig.TILE_SIZE, null);
+                    }
                 
-                g2d.drawImage(tiles[mapNumbers[i][j]].image, (int) screenX, (int) screenY, GameConfig.TILE_SIZE, GameConfig.TILE_SIZE, null);
+                
             }
         }
     }

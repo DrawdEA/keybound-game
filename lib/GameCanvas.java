@@ -17,7 +17,7 @@ public class GameCanvas extends JComponent {
     PlayerVisuals self, enemy;
 
     public GameCanvas() {
-        // Initialize object to hold all gameObjects
+        // Initialize object to hold all gameObjects.
         gameObjects = new ArrayList<>();
 
         // Initialize the environment.
