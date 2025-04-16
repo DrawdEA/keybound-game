@@ -56,9 +56,17 @@ public class Player {
         public void run() {
             try {
                 while (true) { 
-                    if (gameCanvas.gameObjects.size() >= 3) { // TODO: get a better condition.
-                        gameCanvas.gameObjects.get(2).setX(dataIn.readDouble());
-                        gameCanvas.gameObjects.get(2).setY(dataIn.readDouble());
+                    PlayerVisuals enemy = gameCanvas.getEnemy();
+                    if (enemy != null) {
+                        PlayerVisuals player = gameCanvas.getOwnPlayer();
+                        double screenX = dataIn.readDouble() - player.getX() + player.getScreenX();
+                        double screenY = dataIn.readDouble() - player.getY() + player.getScreenY();
+                        System.out.println("SX: " + screenX);
+                        //System.out.println("SY: " + screenY);
+                        //System.out.println("PX: " + player.getX());
+                        //System.out.println("PY: " + player.getY());
+                        enemy.setX(screenX);
+                        enemy.setY(screenY);
                     }
                 }
             } catch(IOException ex) {
@@ -93,9 +101,10 @@ public class Player {
         public void run() {
             try {
                 while (true) {
-                    if (gameCanvas.gameObjects.size() >= 2) {
-                        dataOut.writeDouble(gameCanvas.gameObjects.get(1).getX());
-                        dataOut.writeDouble(gameCanvas.gameObjects.get(1).getY());
+                    if (gameCanvas.getOwnPlayer() != null) {
+                        dataOut.writeDouble(gameCanvas.getOwnPlayer().getX());
+                        dataOut.writeDouble(gameCanvas.getOwnPlayer().getY());
+                        System.out.println("Send: ");
                         dataOut.flush();
                     }
                     try {

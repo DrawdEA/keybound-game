@@ -14,19 +14,20 @@ public class GameCanvas extends JComponent {
     ArrayList<GameObject> gameObjects;
     Timer animationTimer;
     KeyBindings keyBindings;
+    PlayerVisuals self, enemy;
 
     public GameCanvas() {
         // Initialize object to hold all gameObjects
         gameObjects = new ArrayList<>();
 
         // Initialize the environment.
-        gameObjects.add(new Environment(0, 0)); 
+        gameObjects.add(new Environment(0, 0, this)); 
         
         // Set the game timer and key bindings.
         keyBindings = new KeyBindings(this);
         ActionListener al = new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                keyBindings.updatePlayerPosition((PlayerVisuals) gameObjects.get(1), GameConfig.PLAYER_SPEED);
+                keyBindings.updatePlayerPosition((PlayerVisuals) self, GameConfig.PLAYER_SPEED);
                 repaint();
             }
         };
@@ -38,14 +39,23 @@ public class GameCanvas extends JComponent {
 
     public void addPlayers(int id) {
         if (id == 1) {
-            gameObjects.add(new PlayerVisuals(50, 50, GameConfig.TILE_SIZE, Color.RED));
-            gameObjects.add(new PlayerVisuals(50, 500, GameConfig.TILE_SIZE, Color.BLUE));
+            self = new PlayerVisuals(GameConfig.TILE_SIZE * 10, GameConfig.TILE_SIZE * 10, GameConfig.TILE_SIZE, Color.RED, true);
+            enemy = new PlayerVisuals(GameConfig.TILE_SIZE * 10, GameConfig.TILE_SIZE * 15, GameConfig.TILE_SIZE + 2, Color.BLUE, false);
         } else {
-            gameObjects.add(new PlayerVisuals(50, 500, GameConfig.TILE_SIZE, Color.BLUE));
-            gameObjects.add(new PlayerVisuals(50, 50, GameConfig.TILE_SIZE, Color.RED));
+            self = new PlayerVisuals(GameConfig.TILE_SIZE * 10, GameConfig.TILE_SIZE * 15, GameConfig.TILE_SIZE + 2, Color.BLUE, true);
+            enemy = new PlayerVisuals(GameConfig.TILE_SIZE * 10, GameConfig.TILE_SIZE * 10, GameConfig.TILE_SIZE, Color.RED, false);
+            
         }
 
         repaint();
+    }
+
+    public PlayerVisuals getOwnPlayer() {
+        return self;
+    }
+
+    public PlayerVisuals getEnemy() {
+        return enemy;
     }
 
     @Override
@@ -62,5 +72,9 @@ public class GameCanvas extends JComponent {
         for (GameObject object : gameObjects) {
             object.drawSprite(g2d);
         }
+        
+        // Draw the players.
+        enemy.drawSprite(g2d);
+        self.drawSprite(g2d);
     }
 }

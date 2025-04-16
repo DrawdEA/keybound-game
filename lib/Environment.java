@@ -42,10 +42,11 @@ public class Environment extends GameObject {
      * @param x x position of the map
      * @param y y position of the map
      */
-    public Environment(int x, int y) {
+    public Environment(int x, int y, GameCanvas gc) {
         super(x, y, 0, 0);
+        gameCanvas = gc;
         tiles = new Tile[100];
-        mapNumbers = new int[GameConfig.MAX_SCREEN_TILE_COLUMNS][GameConfig.MAX_SCREEN_TILE_ROWS];
+        mapNumbers = new int[GameConfig.MAX_WORLD_COLUMNS][GameConfig.MAX_WORLD_ROWS];
 
         // Load the map.
         try {
@@ -54,13 +55,13 @@ public class Environment extends GameObject {
 
             System.out.println("SETTING UP MAP");
 
-            for (int j = 0; j < GameConfig.MAX_SCREEN_TILE_ROWS; j++) {
+            for (int j = 0; j < GameConfig.MAX_WORLD_ROWS; j++) {
                 String line = br.readLine();
                 
                 String numbers[] = line.split(" ");
                 //System.out.printf("GENERATING MAP, AMOUNT OF TILES: %d\n",numbers.length);
 
-                for (int i = 0; i < GameConfig.MAX_SCREEN_TILE_COLUMNS; i++) {
+                for (int i = 0; i < GameConfig.MAX_WORLD_COLUMNS; i++) {
                     mapNumbers[i][j] = Integer.parseInt(numbers[i]);
                 }
             }
@@ -283,9 +284,18 @@ public class Environment extends GameObject {
 
     @Override
     public void drawSprite(Graphics2D g2d) {
-        for (int i = 0; i < GameConfig.MAX_SCREEN_TILE_COLUMNS; i++) {
-            for (int j = 0; j < GameConfig.MAX_SCREEN_TILE_ROWS; j++) {
-                g2d.drawImage(tiles[mapNumbers[i][j]].image, i * GameConfig.TILE_SIZE, j * GameConfig.TILE_SIZE, GameConfig.TILE_SIZE, GameConfig.TILE_SIZE, null);
+        
+
+        for (int i = 0; i < GameConfig.MAX_WORLD_COLUMNS; i++) {
+            for (int j = 0; j < GameConfig.MAX_WORLD_ROWS; j++) {
+                double worldX = i * GameConfig.TILE_SIZE;
+                double worldY = j * GameConfig.TILE_SIZE;
+
+                PlayerVisuals player = gameCanvas.getOwnPlayer();
+                double screenX = worldX - player.getX() + player.getScreenX();
+                double screenY = worldY - player.getY() + player.getScreenY();
+                
+                g2d.drawImage(tiles[mapNumbers[i][j]].image, (int) screenX, (int) screenY, GameConfig.TILE_SIZE, GameConfig.TILE_SIZE, null);
             }
         }
     }
