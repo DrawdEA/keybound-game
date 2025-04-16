@@ -50,7 +50,7 @@ public class Environment extends GameObject {
 
         // Load the map.
         try {
-            InputStream is = getClass().getResourceAsStream("/resources/maps/test.txt");
+            InputStream is = getClass().getResourceAsStream("/resources/maps/bigmap.txt");
             BufferedReader br = new BufferedReader(new InputStreamReader(is));
 
             System.out.println("SETTING UP MAP");

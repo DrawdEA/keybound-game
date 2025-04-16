@@ -61,10 +61,6 @@ public class Player {
                         PlayerVisuals player = gameCanvas.getOwnPlayer();
                         double screenX = dataIn.readDouble() - player.getX() + player.getScreenX();
                         double screenY = dataIn.readDouble() - player.getY() + player.getScreenY();
-                        System.out.println("SX: " + screenX);
-                        //System.out.println("SY: " + screenY);
-                        //System.out.println("PX: " + player.getX());
-                        //System.out.println("PY: " + player.getY());
                         enemy.setX(screenX);
                         enemy.setY(screenY);
                     }
@@ -104,7 +100,6 @@ public class Player {
                     if (gameCanvas.getOwnPlayer() != null) {
                         dataOut.writeDouble(gameCanvas.getOwnPlayer().getX());
                         dataOut.writeDouble(gameCanvas.getOwnPlayer().getY());
-                        System.out.println("Send: ");
                         dataOut.flush();
                     }
                     try {
