@@ -1,2 +1,6 @@
 https://stackoverflow.com/questions/15551515/java-swing-removing-jpanel-while-clicking-on-jbutton-which-is-present-in-that-jp
 https://www.youtube.com/playlist?list=PL_QPQmz5C6WUF-pOQDsbsKbaBZqXj4qSq // Goated playlist on making a java game
+
+
+https://stackoverflow.com/questions/2364856/initializing-a-boolean-array-in-java
+https://www.geeksforgeeks.org/java-program-to-get-a-character-from-a-string/
