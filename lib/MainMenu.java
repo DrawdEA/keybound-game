@@ -52,10 +52,16 @@ public class MainMenu extends JPanel implements ActionListener {
             mainFrame.remove(this);
 
             // Player stuff for sir choob
-            GameCanvas gc = new GameCanvas();
-            mainFrame.add(gc);
-            gc.connectToServer();
-            gc.addPlayers();
+            Player p = new Player();
+            mainFrame.add(p.getCanvas());
+            p.connectToServer();
+            
+
+            // legacy canvas
+            //GameCanvas gc = new GameCanvas();
+            //mainFrame.add(gc);
+            //gc.connectToServer();
+            //gc.addPlayers();
 
             mainFrame.revalidate();
             mainFrame.repaint();

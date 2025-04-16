@@ -52,18 +52,19 @@ public class Environment extends GameObject {
             InputStream is = getClass().getResourceAsStream("/resources/maps/test.txt");
             BufferedReader br = new BufferedReader(new InputStreamReader(is));
 
-            System.out.println("SETTING UP MAP:");
+            System.out.println("SETTING UP MAP");
 
             for (int j = 0; j < GameConfig.MAX_SCREEN_TILE_ROWS; j++) {
                 String line = br.readLine();
                 
                 String numbers[] = line.split(" ");
-                System.out.printf("GENERATING MAP, AMOUNT OF TILES: %d\n",numbers.length);
+                //System.out.printf("GENERATING MAP, AMOUNT OF TILES: %d\n",numbers.length);
 
                 for (int i = 0; i < GameConfig.MAX_SCREEN_TILE_COLUMNS; i++) {
                     mapNumbers[i][j] = Integer.parseInt(numbers[i]);
                 }
             }
+            System.out.println("SETUP DONE");
             br.close();
         } catch(IOException e) {
             e.printStackTrace();
@@ -273,6 +274,11 @@ public class Environment extends GameObject {
         } catch(IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public class Tile {
+        public BufferedImage image;
+        public boolean canCollide = false;
     }
 
     @Override
