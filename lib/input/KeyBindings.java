@@ -5,7 +5,6 @@
 package lib.input;
 
 import java.awt.event.*;
-import java.util.ArrayList;
 import javax.swing.*;
 import lib.render.*;
 
@@ -41,15 +40,21 @@ public class KeyBindings {
         inputMap.put(KeyStroke.getKeyStroke("released RIGHT"), "stopRight");
 
         // Bind letter keys
-        // ASCII value of a=97 and z=122
-        for (int i = 97; i < 122 + 1; i++) {
-            inputMap.put(KeyStroke.getKeyStroke((char) i), (char) i);
+        for (int keyCode = KeyEvent.VK_A; keyCode <= KeyEvent.VK_Z; keyCode++){
+            inputMap.put(KeyStroke.getKeyStroke(keyCode, 0, false), "press" + (char) keyCode);
+            inputMap.put(KeyStroke.getKeyStroke(keyCode, 0, true), "release" + (char) keyCode);
 
-            final int temp = i - 97;
-            actionMap.put((char) i, new AbstractAction() {
+            final int temp = keyCode - 65; // ASCII value of VK_A = 65
+            actionMap.put("press" + (char) keyCode, new AbstractAction() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     letters[temp] = true;
+                }
+            });
+            actionMap.put("release" + (char) keyCode, new AbstractAction() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    letters[temp] = false;
                 }
             });
         }
@@ -131,15 +136,20 @@ public class KeyBindings {
     public void castPlayerSpells(PlayerVisuals player) {
         // Else if is important since if someone pressed "waterh" we don't want to activate both earth and water
         // BASIC SPELLS
-        if (isStringPressedDown("fire")){
+        if (isStringPressedDown("fire")) {
             System.out.println("FIRE");
-        } else if (isStringPressedDown("water")){
+            resetLetters("fire");
+        } else if (isStringPressedDown("water")) {
             System.out.println("WATER");
-        } else if (isStringPressedDown("earth")){
+            resetLetters("water");
+        } else if (isStringPressedDown("earth")) {
             System.out.println("EARTH");
-        } else if (isStringPressedDown("wind")){
+            resetLetters("earth");
+        } else if (isStringPressedDown("wind")) {
             System.out.println("WIND");
+            resetLetters("wind");
         }
+
     }
 
     /**
@@ -148,21 +158,25 @@ public class KeyBindings {
      * @param checkString 
      */
     public boolean isStringPressedDown(String checkString) {
-        ArrayList<Integer> asciiCodes = new ArrayList<>();
-        
-        for (int i = 0; i < checkString.length(); i++){
-            // ASCII value a=97 and z=122
-            asciiCodes.add((int) checkString.charAt(i) - 97);
+        // Build a boolean array for the spell
+        boolean[] spellLetters = new boolean[26];
+        for (int i = 0; i < checkString.length(); i++) {
+            int code = checkString.charAt(i) - 97;
+            spellLetters[code] = true;
         }
 
-        for (int code : asciiCodes){
-            if (letters[code] == false) // If even one of the keys in the string isn't pressed then the combination isn't active
+        // Now check that letters[] matches spellLetters exactly
+        for (int i = 0; i < 26; i++) {
+            if (letters[i] != spellLetters[i]) {
                 return false;
+            }
         }
-
-        // Reset Letters to false
-        letters = new boolean[26];
-
         return true;
+    }
+
+    private void resetLetters(String spell) {
+        for (int i = 0; i < spell.length(); i++) {
+            letters[spell.charAt(i) - 97] = false;
+        }
     }
 }
