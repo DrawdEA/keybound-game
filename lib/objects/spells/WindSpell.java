@@ -3,7 +3,7 @@ package lib.objects.spells;
 import java.awt.Graphics2D;
 import lib.objects.*;
 
-class WindSpell extends GameObject {
+public class WindSpell extends GameObject {
 
     public WindSpell(double x, double y, double width, double height) {
         super(x, y, width, height);

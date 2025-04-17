@@ -3,7 +3,7 @@ package lib.objects.spells;
 import java.awt.Graphics2D;
 import lib.objects.*;
 
-class EarthSpell extends GameObject {
+public class EarthSpell extends GameObject {
 
     public EarthSpell(double x, double y, double width, double height) {
         super(x, y, width, height);

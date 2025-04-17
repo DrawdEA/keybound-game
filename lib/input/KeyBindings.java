@@ -138,6 +138,7 @@ public class KeyBindings {
         // BASIC SPELLS
         if (isStringPressedDown("fire")) {
             System.out.println("FIRE");
+            player.castSpell("fire");
             resetLetters("fire");
         } else if (isStringPressedDown("water")) {
             System.out.println("WATER");
