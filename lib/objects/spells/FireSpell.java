@@ -36,8 +36,6 @@ public class FireSpell extends GameObject {
             x += SPEED;
         }
 
-        System.out.println("fire: " + x + " " + y);
-
         g2d.setColor(COLOR);
         g2d.fill(new Rectangle2D.Double(x, y, width, height));
     }
