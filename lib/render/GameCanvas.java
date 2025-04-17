@@ -43,11 +43,11 @@ public class GameCanvas extends JComponent {
 
     public void addPlayers(int id) {
         if (id == 1) {
-            self = new PlayerVisuals(GameConfig.TILE_SIZE * 20, GameConfig.TILE_SIZE * 10, GameConfig.TILE_SIZE, Color.RED, true);
-            enemy = new PlayerVisuals(GameConfig.TILE_SIZE * 20, GameConfig.TILE_SIZE * 15, GameConfig.TILE_SIZE + 2, Color.BLUE, false);
+            self = new PlayerVisuals(GameConfig.TILE_SIZE * 20, GameConfig.TILE_SIZE * 10, GameConfig.TILE_SIZE, true);
+            enemy = new PlayerVisuals(GameConfig.TILE_SIZE * 20, GameConfig.TILE_SIZE * 15, GameConfig.TILE_SIZE + 2, false);
         } else {
-            self = new PlayerVisuals(GameConfig.TILE_SIZE * 20, GameConfig.TILE_SIZE * 15, GameConfig.TILE_SIZE + 2, Color.BLUE, true);
-            enemy = new PlayerVisuals(GameConfig.TILE_SIZE * 20, GameConfig.TILE_SIZE * 10, GameConfig.TILE_SIZE, Color.RED, false);
+            self = new PlayerVisuals(GameConfig.TILE_SIZE * 20, GameConfig.TILE_SIZE * 15, GameConfig.TILE_SIZE + 2, true);
+            enemy = new PlayerVisuals(GameConfig.TILE_SIZE * 20, GameConfig.TILE_SIZE * 10, GameConfig.TILE_SIZE, false);
             
         }
 
