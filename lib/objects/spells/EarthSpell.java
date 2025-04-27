@@ -6,7 +6,7 @@ import lib.objects.*;
 public class EarthSpell extends GameObject {
 
     public EarthSpell(double x, double y, double width, double height) {
-        super(x, y, width, height);
+        super("EARTH_SPELL",x, y, width, height);
     }
 
     @Override

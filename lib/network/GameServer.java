@@ -11,15 +11,14 @@ public class GameServer {
     private ReadFromClient p1ReadRunnable, p2ReadRunnable;
     private WriteToClient p1WriteRunnable, p2WriteRunnable;
 
-    private double p1x, p1y, p2x, p2y;
+    private String p1DataRaw, p2DataRaw;
 
     public GameServer() {
         System.out.println("==== GAME SERVER ====");
         players = 0;
-        p1x = 50;
-        p1y = 50;
-        p2x = 50;
-        p2y = 500;
+
+        p1DataRaw = "1 POSITION-50-50 ";
+        p2DataRaw = "2 POSITION-50-500 ";
 
         try {
             ss = new ServerSocket(10000);
@@ -90,15 +89,11 @@ public class GameServer {
             try {
                 while (true) {
                     String dataRaw = dataIn.readUTF();
-                    String[] data = dataRaw.split(" ");
 
-                    String[] positionData = data[1].split("-");
                     if (playerID == 1) {
-                        p1x = Double.parseDouble(positionData[1]);
-                        p1y = Double.parseDouble(positionData[2]);
+                        p1DataRaw = dataRaw;
                     } else {
-                        p2x = Double.parseDouble(positionData[1]);
-                        p2y = Double.parseDouble(positionData[2]);
+                        p2DataRaw = dataRaw;
                     }
                 }
             } catch(IOException ex) {
@@ -121,13 +116,9 @@ public class GameServer {
             try {
                 while (true) {
                     if (playerID == 1) {
-                        dataOut.writeUTF(String.format("2 POSITION-%f-%f", p2x, p2y));
-                        // dataOut.writeDouble(p2x);
-                        // dataOut.writeDouble(p2y);
+                        dataOut.writeUTF(p2DataRaw);
                     } else {
-                        dataOut.writeUTF(String.format("1 POSITION-%f-%f", p1x, p1y));
-                        // dataOut.writeDouble(p1x);
-                        // dataOut.writeDouble(p1y);
+                        dataOut.writeUTF(p1DataRaw);
                     }
                     dataOut.flush();
                     try {

@@ -6,7 +6,7 @@ import lib.objects.*;
 public class WaterSpell extends GameObject {
 
     public WaterSpell(double x, double y, double width, double height) {
-        super(x, y, width, height);
+        super("WATER_SPELL",x, y, width, height);
     }
 
     @Override

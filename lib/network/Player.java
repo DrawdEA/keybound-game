@@ -73,8 +73,22 @@ public class Player {
                         String[] enemyPosition = enemyData[1].split("-");
                         enemy.setX(Double.parseDouble(enemyPosition[1]) - player.getX() + player.getScreenX());
                         enemy.setY(Double.parseDouble(enemyPosition[2]) - player.getY() + player.getScreenY());
-
+                        
                         // All other objects owned by the enemy player
+                        enemy.clearSpells();
+                        for (int i = 2; i < enemyData.length; i++){
+                            String[] spellData = enemyData[i].split("-");
+                            if (spellData[0].equals("FIRE_SPELL")) {
+                                double spellX = Double.parseDouble(spellData[1]);
+                                double spellY = Double.parseDouble(spellData[2]);
+                                
+                                // Transform coordinates to player's viewport
+                                double adjustedX = spellX - player.getX() + player.getScreenX();
+                                double adjustedY = spellY - player.getY() + player.getScreenY();
+                                
+                                enemy.addRemoteSpell(spellData[0], adjustedX, adjustedY, spellData[3]);
+                            }
+                        }
                     }
                 }
             } catch(IOException ex) {
@@ -111,12 +125,15 @@ public class Player {
                 while (true) {
                     if (gameCanvas.getOwnPlayer() != null) {
                         // Written data will be in the form of "Player_ID OBJECT/PROPERTY_OF_PLAYER-X-Y OBJECT/PROPERTY_OF_PLAYER-X-Y ..."
+                        
                         // Add Player ID
                         String dataString = String.format("%d ", playerID);
+                        
                         // Add Player Position
-                        dataString += String.format("POSITION-%f-%f", gameCanvas.getOwnPlayer().getX(), gameCanvas.getOwnPlayer().getY());
+                        dataString += String.format("POSITION-%f-%f ", gameCanvas.getOwnPlayer().getX(), gameCanvas.getOwnPlayer().getY());
 
-                        // Add other objects owned by the Player
+                        // Add spells owned by the Player
+                        dataString += gameCanvas.getOwnPlayerSpellsDataString();
 
                         dataOut.writeUTF(dataString);
                         dataOut.flush();

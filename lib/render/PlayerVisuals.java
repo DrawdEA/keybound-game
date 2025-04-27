@@ -6,19 +6,20 @@ package lib.render;
 
 import java.awt.*;
 import java.awt.geom.*;
+import java.util.ArrayList;
 import lib.*;
 import lib.objects.*;
 import lib.objects.spells.*;
 
 public class PlayerVisuals extends GameObject {
-    public final int screenX, screenY;
+    public final double screenX, screenY;
     private boolean isPlayer;
     private Color color;
     private Direction facing;
-    private GameObject activeSpell;
+    private ArrayList<GameObject> spells;
 
     public PlayerVisuals(double xPosition, double yPosition, double s, Color c, boolean iP) {
-        super(xPosition, yPosition, s, s);
+        super("PLAYER", xPosition, yPosition, s, s);
         isPlayer = iP;
         
         screenX = GameConfig.SCREEN_LENGTH / 2 - (GameConfig.TILE_SIZE / 2);
@@ -26,19 +27,39 @@ public class PlayerVisuals extends GameObject {
 
         color = c;
         facing = Direction.RIGHT;
+
+        spells = new ArrayList<>();
     }
 
-    public int getScreenX() {
+    public double getScreenX() {
         return screenX;
     }
 
-    public int getScreenY() {
+    public double getScreenY() {
         return screenY;
     }
 
     public void castSpell(String spellName){
         if (spellName.equals("fire")){
-            activeSpell = new FireSpell((int) screenX, (int) screenY, facing);
+            spells.add(new FireSpell(screenX, screenY, facing));
+        }
+    }
+
+    public String getSpellsAsDataString() {
+        String spellDataString = "";
+        for (GameObject spell : spells){
+            spellDataString += String.format("%s-%f-%f-%s ", spell.getName(), spell.getX(), spell.getY(), facing.toString());
+        }
+        return spellDataString;
+    }
+
+    public void clearSpells(){
+        spells.clear();
+    }
+
+    public void addRemoteSpell(String name, double x, double y, String direction){
+        if (name.equals("FIRE_SPELL")){
+            spells.add(new FireSpell(x,y, Direction.valueOf(direction)));
         }
     }
 
@@ -54,8 +75,18 @@ public class PlayerVisuals extends GameObject {
         g2d.setColor(color);
         g2d.fill(square);
 
-        if (activeSpell != null){
-            activeSpell.drawSprite(g2d);
-        }
+        if (!spells.isEmpty()){
+            for (GameObject spell : spells){
+                    // if (isPlayer) {
+                    //     ((FireSpell) spell).update();
+                    // }
+
+                    if (spell instanceof FireSpell fireSpell){
+                        fireSpell.update();
+                    }
+                    
+                    spell.drawSprite(g2d);
+                }
+            }
     }
 }

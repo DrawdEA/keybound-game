@@ -44,7 +44,7 @@ public class Environment extends GameObject {
      * @param y y position of the map
      */
     public Environment(int x, int y, GameCanvas gc) {
-        super(x, y, 0, 0);
+        super("ENVIRONMENT", x, y, 0, 0);
         gameCanvas = gc;
         tiles = new Tile[100];
         mapNumbers = new int[GameConfig.MAX_WORLD_COLUMNS][GameConfig.MAX_WORLD_ROWS];

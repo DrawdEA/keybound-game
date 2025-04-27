@@ -6,7 +6,7 @@ import lib.objects.*;
 public class WindSpell extends GameObject {
 
     public WindSpell(double x, double y, double width, double height) {
-        super(x, y, width, height);
+        super("WIND_SPELL",x, y, width, height);
     }
 
     @Override

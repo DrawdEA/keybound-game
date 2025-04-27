@@ -62,6 +62,14 @@ public class GameCanvas extends JComponent {
         return enemy;
     }
 
+    public String getOwnPlayerSpellsDataString() {
+        return self.getSpellsAsDataString();
+    }
+
+    public String getEnemySpellsDataString() {
+        return enemy.getSpellsAsDataString();
+    }
+
     @Override
     protected void paintComponent(Graphics g) {
         // Cast Graphics to Graphics2D and apply anti-aliasing key.
