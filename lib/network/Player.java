@@ -60,10 +60,21 @@ public class Player {
                     PlayerVisuals enemy = gameCanvas.getEnemy();
                     if (enemy != null) {
                         PlayerVisuals player = gameCanvas.getOwnPlayer();
-                        double screenX = dataIn.readDouble() - player.getX() + player.getScreenX();
-                        double screenY = dataIn.readDouble() - player.getY() + player.getScreenY();
-                        enemy.setX(screenX);
-                        enemy.setY(screenY);
+                        
+                        // Enemy position
+                        String enemyDataRaw = dataIn.readUTF();
+                        String[] enemyData = enemyDataRaw.split(" ");
+                        
+                        // enemyData[0] = enemy's ID
+                        // enemyData[1] = enemy's position token
+                        // enemyData[2::] = enemy's objects
+                        
+                        // Set position
+                        String[] enemyPosition = enemyData[1].split("-");
+                        enemy.setX(Double.parseDouble(enemyPosition[1]) - player.getX() + player.getScreenX());
+                        enemy.setY(Double.parseDouble(enemyPosition[2]) - player.getY() + player.getScreenY());
+
+                        // All other objects owned by the enemy player
                     }
                 }
             } catch(IOException ex) {
@@ -99,8 +110,15 @@ public class Player {
             try {
                 while (true) {
                     if (gameCanvas.getOwnPlayer() != null) {
-                        dataOut.writeDouble(gameCanvas.getOwnPlayer().getX());
-                        dataOut.writeDouble(gameCanvas.getOwnPlayer().getY());
+                        // Written data will be in the form of "Player_ID OBJECT/PROPERTY_OF_PLAYER-X-Y OBJECT/PROPERTY_OF_PLAYER-X-Y ..."
+                        // Add Player ID
+                        String dataString = String.format("%d ", playerID);
+                        // Add Player Position
+                        dataString += String.format("POSITION-%f-%f", gameCanvas.getOwnPlayer().getX(), gameCanvas.getOwnPlayer().getY());
+
+                        // Add other objects owned by the Player
+
+                        dataOut.writeUTF(dataString);
                         dataOut.flush();
                     }
                     try {

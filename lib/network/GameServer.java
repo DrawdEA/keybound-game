@@ -89,12 +89,16 @@ public class GameServer {
         public void run() {
             try {
                 while (true) {
+                    String dataRaw = dataIn.readUTF();
+                    String[] data = dataRaw.split(" ");
+
+                    String[] positionData = data[1].split("-");
                     if (playerID == 1) {
-                        p1x = dataIn.readDouble();
-                        p1y = dataIn.readDouble();
+                        p1x = Double.parseDouble(positionData[1]);
+                        p1y = Double.parseDouble(positionData[2]);
                     } else {
-                        p2x = dataIn.readDouble();
-                        p2y = dataIn.readDouble();
+                        p2x = Double.parseDouble(positionData[1]);
+                        p2y = Double.parseDouble(positionData[2]);
                     }
                 }
             } catch(IOException ex) {
@@ -117,11 +121,13 @@ public class GameServer {
             try {
                 while (true) {
                     if (playerID == 1) {
-                        dataOut.writeDouble(p2x);
-                        dataOut.writeDouble(p2y);
+                        dataOut.writeUTF(String.format("2 POSITION-%f-%f", p2x, p2y));
+                        // dataOut.writeDouble(p2x);
+                        // dataOut.writeDouble(p2y);
                     } else {
-                        dataOut.writeDouble(p1x);
-                        dataOut.writeDouble(p1y);
+                        dataOut.writeUTF(String.format("1 POSITION-%f-%f", p1x, p1y));
+                        // dataOut.writeDouble(p1x);
+                        // dataOut.writeDouble(p1y);
                     }
                     dataOut.flush();
                     try {
