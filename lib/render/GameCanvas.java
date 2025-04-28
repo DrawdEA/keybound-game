@@ -9,10 +9,12 @@ import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.Timer;
+
 import lib.*;
 import lib.input.*;
 import lib.network.Player;
 import lib.objects.*;
+import lib.objects.spells.*;
 
 public class GameCanvas extends JComponent {
     ArrayList<GameObject> gameObjects;
@@ -20,7 +22,7 @@ public class GameCanvas extends JComponent {
     KeyBindings keyBindings;
     PlayerVisuals self, enemy;
     private Player selfPlayerClient;
-    private ArrayList<GameObject> spells = new ArrayList<>();
+    private ArrayList<Spell> spells = new ArrayList<>();
 
     public GameCanvas() {
         // Initialize object to hold all gameObjects.
@@ -74,7 +76,7 @@ public class GameCanvas extends JComponent {
         spells.clear();
     }
 
-    public void addSpell(GameObject spell) {
+    public void addSpell(Spell spell) {
         spells.add(spell);
     }
 
