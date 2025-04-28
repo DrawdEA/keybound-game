@@ -163,6 +163,7 @@ public class GameServer {
         public void sendStartMsg() {
             try {
                 dataOut.writeUTF("We now have 2 players. Go!");
+                startGameLoop();
             } catch (IOException ex) {
                 System.out.println("IOException from sendStartMsg()");
             }
@@ -190,7 +191,7 @@ public class GameServer {
                 }
             }
         });
-        
+
         gameLoop.setDaemon(true);
         gameLoop.start();
     }

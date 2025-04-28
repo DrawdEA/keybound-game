@@ -80,8 +80,8 @@ public class Player {
                         for (int i = 2; i < enemyData.length; i++) {
                             String[] spellData = enemyData[i].split("-");
                             if (spellData[0].equals("FIRE_SPELL")) {
-                                double spellX = Double.parseDouble(spellData[1]);
-                                double spellY = Double.parseDouble(spellData[2]);
+                                double spellX = Double.parseDouble(spellData[1]) - player.getX() + player.getScreenX();
+                                double spellY = Double.parseDouble(spellData[2]) - player.getY() + player.getScreenY();
                                 Direction dir = Direction.valueOf(spellData[3]);
                                 gameCanvas.addSpell(new FireSpell(spellX, spellY, dir));
                             }
