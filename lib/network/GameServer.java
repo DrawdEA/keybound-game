@@ -4,7 +4,6 @@ import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
 import lib.*;
-import lib.objects.*;
 import lib.objects.spells.*;
 import lib.render.Direction;
 
@@ -139,8 +138,8 @@ public class GameServer {
                 while (true) {
 
                     String spellString = "";
-                    for (GameObject spell : activeSpells) {
-                        spellString += ((FireSpell)spell).getDataString();
+                    for (Spell spell : activeSpells) {
+                        spellString += spell.getDataString();
                         spellString += " ";
                     }
 
@@ -176,14 +175,12 @@ public class GameServer {
         Thread gameLoop = new Thread(() -> {
             while (true) {
                 // Update all spells
-                for (GameObject spell : activeSpells) {
-                    if (spell instanceof FireSpell) {
-                        ((FireSpell) spell).update();
-                    }
-                    // Add other spell types here
+                for (Spell spell : activeSpells) {
+                    spell.update();
                 }
-                // Optionally: Remove spells that are out of bounds or expired
-                // (implement logic as needed)
+                
+                // Remove all expired spells
+                activeSpells.removeIf((spell) -> spell.isExpired());
 
                 try {
                     Thread.sleep(25);
