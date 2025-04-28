@@ -2,10 +2,10 @@ package lib.network;
 
 import java.io.*;
 import java.net.*;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.ArrayList;
 import lib.*;
 import lib.objects.*;
-import lib.objects.spells.FireSpell;
+import lib.objects.spells.*;
 import lib.render.Direction;
 
 public class GameServer {
@@ -17,7 +17,7 @@ public class GameServer {
 
     private String p1DataRaw, p2DataRaw;
 
-    private CopyOnWriteArrayList<GameObject> activeSpells = new CopyOnWriteArrayList<>();
+    private ArrayList<Spell> activeSpells = new ArrayList<>();
 
     public GameServer() {
         System.out.println("==== GAME SERVER ====");
@@ -110,6 +110,7 @@ public class GameServer {
                         if (entity.startsWith("FIRE_SPELL")) {
                             String[] params = entity.split("-");
                             activeSpells.add(new FireSpell(
+                                playerID,
                                 Double.parseDouble(params[1]), 
                                 Double.parseDouble(params[2]), 
                                 Direction.valueOf(params[3]))

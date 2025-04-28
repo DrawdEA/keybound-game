@@ -1,17 +1,30 @@
 package lib.objects.spells;
 
 import java.awt.Graphics2D;
-import lib.objects.*;
+public class WindSpell extends Spell {
+    public WindSpell(int casterId, double x, double y, double width, double height) {
+        super("WIND_SPELL", casterId, x, y, width, height);
+    }
 
-public class WindSpell extends GameObject {
+    @Override
+    public void update() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 
-    public WindSpell(double x, double y, double width, double height) {
-        super("WIND_SPELL",x, y, width, height);
+    @Override
+    public String getDataString() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void onHit() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public void drawSprite(Graphics2D g2d) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+
     
 }

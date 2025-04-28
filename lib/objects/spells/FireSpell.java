@@ -3,41 +3,40 @@ package lib.objects.spells;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
-import lib.objects.*;
 import lib.render.Direction;
 
-public class FireSpell extends GameObject {
+public class FireSpell extends Spell {
     // DEFAULT CONSTANTS
     public final int SPEED = 20;
     public final Color COLOR = Color.RED;
 
     double x, y;
     int width = 25, height = 25;
-    Direction directionPointing;
+    Direction dir;
 
-    public FireSpell(double x, double y, Direction directionPointing) {
-        super("FIRE_SPELL", x, y, 25, 25);
+    public FireSpell(int casterId, double x, double y, Direction dir) {
+        super("FIRE_SPELL", casterId, x, y, 25, 25, dir);
         
         this.x = x;
         this.y = y;
 
-        this.directionPointing = directionPointing;
+        this.dir = dir;
     }
 
     public String getDataString() {
         String spellString = "";
-        spellString += String.format("FIRE_SPELL-%f-%f-%s", x, y, directionPointing.toString());
+        spellString += String.format("FIRE_SPELL-%f-%f-%s", x, y, dir.toString());
         return spellString; 
     }
 
     public void update() {
-        if (directionPointing == Direction.UP){
+        if (dir == Direction.UP){
             y -= SPEED;
-        } else if (directionPointing == Direction.DOWN){
+        } else if (dir == Direction.DOWN){
             y += SPEED;
-        } else if (directionPointing == Direction.LEFT){
+        } else if (dir == Direction.LEFT){
             x -= SPEED;
-        } else if (directionPointing == Direction.RIGHT){
+        } else if (dir == Direction.RIGHT){
             x += SPEED;
         }
     }
@@ -47,4 +46,9 @@ public class FireSpell extends GameObject {
         g2d.setColor(COLOR);
         g2d.fill(new Rectangle2D.Double(x, y, width, height));
     } 
+
+    @Override
+    public void onHit() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

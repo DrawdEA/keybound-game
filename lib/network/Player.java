@@ -83,7 +83,7 @@ public class Player {
                                 double spellX = Double.parseDouble(spellData[1]) - player.getX() + player.getScreenX();
                                 double spellY = Double.parseDouble(spellData[2]) - player.getY() + player.getScreenY();
                                 Direction dir = Direction.valueOf(spellData[3]);
-                                gameCanvas.addSpell(new FireSpell(spellX, spellY, dir));
+                                gameCanvas.addSpell(new FireSpell(playerID, spellX, spellY, dir));
                             }
                         }
                     }
