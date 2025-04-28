@@ -24,6 +24,12 @@ public class FireSpell extends GameObject {
         this.directionPointing = directionPointing;
     }
 
+    public String getDataString() {
+        String spellString = "";
+        spellString += String.format("FIRE_SPELL-%f-%f-%s", x, y, directionPointing.toString());
+        return spellString; 
+    }
+
     public void update() {
         if (directionPointing == Direction.UP){
             y -= SPEED;

@@ -6,6 +6,7 @@ package lib.network;
 
 import java.io.*;
 import java.net.*;
+import lib.objects.spells.FireSpell;
 import lib.render.*;
 
 public class Player {
@@ -18,6 +19,7 @@ public class Player {
     
     public Player() {
         gameCanvas = new GameCanvas();
+        gameCanvas.setPlayerClient(this);
     }
 
     public void connectToServer() {
@@ -74,19 +76,14 @@ public class Player {
                         enemy.setX(Double.parseDouble(enemyPosition[1]) - player.getX() + player.getScreenX());
                         enemy.setY(Double.parseDouble(enemyPosition[2]) - player.getY() + player.getScreenY());
                         
-                        // All other objects owned by the enemy player
-                        enemy.clearSpells();
-                        for (int i = 2; i < enemyData.length; i++){
+                        gameCanvas.clearSpells();
+                        for (int i = 2; i < enemyData.length; i++) {
                             String[] spellData = enemyData[i].split("-");
                             if (spellData[0].equals("FIRE_SPELL")) {
                                 double spellX = Double.parseDouble(spellData[1]);
                                 double spellY = Double.parseDouble(spellData[2]);
-                                
-                                // Transform coordinates to player's viewport
-                                double adjustedX = spellX - player.getX() + player.getScreenX();
-                                double adjustedY = spellY - player.getY() + player.getScreenY();
-                                
-                                enemy.addRemoteSpell(spellData[0], adjustedX, adjustedY, spellData[3]);
+                                Direction dir = Direction.valueOf(spellData[3]);
+                                gameCanvas.addSpell(new FireSpell(spellX, spellY, dir));
                             }
                         }
                     }
@@ -132,8 +129,10 @@ public class Player {
                         // Add Player Position
                         dataString += String.format("POSITION-%f-%f ", gameCanvas.getOwnPlayer().getX(), gameCanvas.getOwnPlayer().getY());
 
-                        // Add spells owned by the Player
-                        dataString += gameCanvas.getOwnPlayerSpellsDataString();
+                        // Add spell request by the Player
+                        if (consumeCastFireRequest()) {
+                            dataString += String.format("FIRE_SPELL-" + gameCanvas.getOwnPlayer().getPositionDataString() + " ");
+                        }
 
                         dataOut.writeUTF(dataString);
                         dataOut.flush();
@@ -148,5 +147,17 @@ public class Player {
                 System.out.println("IOException from WTS run()");
             }
         }
+    }
+
+    private boolean wantsToCastFire = false;
+
+    public void requestCastFire() {
+        wantsToCastFire = true;
+    }
+
+    public boolean consumeCastFireRequest() {
+        boolean result = wantsToCastFire;
+        wantsToCastFire = false;
+        return result;
     }
 }

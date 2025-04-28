@@ -11,6 +11,7 @@ import javax.swing.*;
 import javax.swing.Timer;
 import lib.*;
 import lib.input.*;
+import lib.network.Player;
 import lib.objects.*;
 
 public class GameCanvas extends JComponent {
@@ -18,6 +19,8 @@ public class GameCanvas extends JComponent {
     Timer animationTimer;
     KeyBindings keyBindings;
     PlayerVisuals self, enemy;
+    private Player selfPlayerClient;
+    private ArrayList<GameObject> spells = new ArrayList<>();
 
     public GameCanvas() {
         // Initialize object to hold all gameObjects.
@@ -28,10 +31,11 @@ public class GameCanvas extends JComponent {
         
         // Set the game timer and key bindings.
         keyBindings = new KeyBindings(this);
-        ActionListener al = new ActionListener() {
+        ActionListener al;
+        al = new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 keyBindings.updatePlayerPosition((PlayerVisuals) self, GameConfig.PLAYER_SPEED);
-                keyBindings.castPlayerSpells((PlayerVisuals) self); // Add a cooldown thread?
+                keyBindings.castPlayerSpells(selfPlayerClient); // Add a cooldown thread?
                 repaint();
             }
         };
@@ -39,6 +43,10 @@ public class GameCanvas extends JComponent {
         animationTimer.start();
 
         // Set the player ID.
+    }
+
+    public void setPlayerClient(Player player) {
+        selfPlayerClient = player;
     }
 
     public void addPlayers(int id) {
@@ -62,12 +70,12 @@ public class GameCanvas extends JComponent {
         return enemy;
     }
 
-    public String getOwnPlayerSpellsDataString() {
-        return self.getSpellsAsDataString();
+    public void clearSpells() {
+        spells.clear();
     }
 
-    public String getEnemySpellsDataString() {
-        return enemy.getSpellsAsDataString();
+    public void addSpell(GameObject spell) {
+        spells.add(spell);
     }
 
     @Override
@@ -84,7 +92,11 @@ public class GameCanvas extends JComponent {
         for (GameObject object : gameObjects) {
             object.drawSprite(g2d);
         }
-        
+
+        for (GameObject spell : spells) {
+            spell.drawSprite(g2d);
+        }
+
         // Draw the players.
         enemy.drawSprite(g2d);
         self.drawSprite(g2d);

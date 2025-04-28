@@ -2,7 +2,11 @@ package lib.network;
 
 import java.io.*;
 import java.net.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 import lib.*;
+import lib.objects.*;
+import lib.objects.spells.FireSpell;
+import lib.render.Direction;
 
 public class GameServer {
     private ServerSocket ss;
@@ -12,6 +16,8 @@ public class GameServer {
     private WriteToClient p1WriteRunnable, p2WriteRunnable;
 
     private String p1DataRaw, p2DataRaw;
+
+    private CopyOnWriteArrayList<GameObject> activeSpells = new CopyOnWriteArrayList<>();
 
     public GameServer() {
         System.out.println("==== GAME SERVER ====");
@@ -27,6 +33,8 @@ public class GameServer {
             System.out.println("IOException from GameServer constructor");
         }
     }
+
+    // ----- Network and Connection ----- // 
 
     public void acceptConnections() {
         try {
@@ -95,6 +103,19 @@ public class GameServer {
                     } else {
                         p2DataRaw = dataRaw;
                     }
+
+                    // Catch all spells
+                    String[] data = dataRaw.split(" ");
+                    for (String entity : data){
+                        if (entity.startsWith("FIRE_SPELL")) {
+                            String[] params = entity.split("-");
+                            activeSpells.add(new FireSpell(
+                                Double.parseDouble(params[1]), 
+                                Double.parseDouble(params[2]), 
+                                Direction.valueOf(params[3]))
+                            );
+                        }
+                    }
                 }
             } catch(IOException ex) {
                 System.out.println("IOException from RFC run()");
@@ -115,10 +136,17 @@ public class GameServer {
         public void run() {
             try {
                 while (true) {
+
+                    String spellString = "";
+                    for (GameObject spell : activeSpells) {
+                        spellString += ((FireSpell)spell).getDataString();
+                        spellString += " ";
+                    }
+
                     if (playerID == 1) {
-                        dataOut.writeUTF(p2DataRaw);
+                        dataOut.writeUTF(p2DataRaw + " " + spellString);
                     } else {
-                        dataOut.writeUTF(p1DataRaw);
+                        dataOut.writeUTF(p1DataRaw + " " + spellString);
                     }
                     dataOut.flush();
                     try {
@@ -139,5 +167,31 @@ public class GameServer {
                 System.out.println("IOException from sendStartMsg()");
             }
         }
+    }
+
+    // ----- Game Loop Logic ----- //
+    public void startGameLoop() {
+        Thread gameLoop = new Thread(() -> {
+            while (true) {
+                // Update all spells
+                for (GameObject spell : activeSpells) {
+                    if (spell instanceof FireSpell) {
+                        ((FireSpell) spell).update();
+                    }
+                    // Add other spell types here
+                }
+                // Optionally: Remove spells that are out of bounds or expired
+                // (implement logic as needed)
+
+                try {
+                    Thread.sleep(25);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        
+        gameLoop.setDaemon(true);
+        gameLoop.start();
     }
 }
