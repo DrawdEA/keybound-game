@@ -130,8 +130,9 @@ public class Player {
                         dataString += String.format("POSITION-%f-%f ", gameCanvas.getOwnPlayer().getX(), gameCanvas.getOwnPlayer().getY());
 
                         // Add spell request by the Player
-                        if (consumeCastFireRequest()) {
-                            dataString += String.format("FIRE_SPELL-" + gameCanvas.getOwnPlayer().getPositionDataString() + " ");
+                        if (!wantsToCast.equals("")) {
+                            dataString += String.format(wantsToCast + "-" + gameCanvas.getOwnPlayer().getPositionDataString() + " ");
+                            wantsToCast = "";
                         }
 
                         dataOut.writeUTF(dataString);
@@ -149,15 +150,9 @@ public class Player {
         }
     }
 
-    private boolean wantsToCastFire = false;
+    private String wantsToCast = "";
 
-    public void requestCastFire() {
-        wantsToCastFire = true;
-    }
-
-    public boolean consumeCastFireRequest() {
-        boolean result = wantsToCastFire;
-        wantsToCastFire = false;
-        return result;
+    public void requestToCast(String spellName){
+        wantsToCast = spellName;
     }
 }
