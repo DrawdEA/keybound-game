@@ -2,7 +2,10 @@ package lib.network;
 
 import java.io.*;
 import java.net.*;
+import java.util.ArrayList;
 import lib.*;
+import lib.objects.spells.*;
+import lib.render.Direction;
 
 public class GameServer {
     private ServerSocket ss;
@@ -11,15 +14,16 @@ public class GameServer {
     private ReadFromClient p1ReadRunnable, p2ReadRunnable;
     private WriteToClient p1WriteRunnable, p2WriteRunnable;
 
-    private double p1x, p1y, p2x, p2y;
+    private String p1DataRaw, p2DataRaw;
+
+    private ArrayList<Spell> activeSpells = new ArrayList<>();
 
     public GameServer() {
         System.out.println("==== GAME SERVER ====");
         players = 0;
-        p1x = 50;
-        p1y = 50;
-        p2x = 50;
-        p2y = 500;
+
+        p1DataRaw = "1 POSITION-50-50 ";
+        p2DataRaw = "2 POSITION-50-500 ";
 
         try {
             ss = new ServerSocket(10000);
@@ -28,6 +32,8 @@ public class GameServer {
             System.out.println("IOException from GameServer constructor");
         }
     }
+
+    // ----- Network and Connection ----- // 
 
     public void acceptConnections() {
         try {
@@ -89,12 +95,26 @@ public class GameServer {
         public void run() {
             try {
                 while (true) {
+                    String dataRaw = dataIn.readUTF();
+
                     if (playerID == 1) {
-                        p1x = dataIn.readDouble();
-                        p1y = dataIn.readDouble();
+                        p1DataRaw = dataRaw;
                     } else {
-                        p2x = dataIn.readDouble();
-                        p2y = dataIn.readDouble();
+                        p2DataRaw = dataRaw;
+                    }
+
+                    // Catch all spells
+                    String[] data = dataRaw.split(" ");
+                    for (String entity : data){
+                        if (entity.startsWith("FIRE_SPELL")) {
+                            String[] params = entity.split("-");
+                            activeSpells.add(new FireSpell(
+                                playerID,
+                                Double.parseDouble(params[1]), 
+                                Double.parseDouble(params[2]), 
+                                Direction.valueOf(params[3]))
+                            );
+                        }
                     }
                 }
             } catch(IOException ex) {
@@ -116,12 +136,17 @@ public class GameServer {
         public void run() {
             try {
                 while (true) {
+
+                    String spellString = "";
+                    for (Spell spell : activeSpells) {
+                        spellString += spell.getDataString();
+                        spellString += " ";
+                    }
+
                     if (playerID == 1) {
-                        dataOut.writeDouble(p2x);
-                        dataOut.writeDouble(p2y);
+                        dataOut.writeUTF(p2DataRaw + " " + spellString);
                     } else {
-                        dataOut.writeDouble(p1x);
-                        dataOut.writeDouble(p1y);
+                        dataOut.writeUTF(p1DataRaw + " " + spellString);
                     }
                     dataOut.flush();
                     try {
@@ -138,9 +163,34 @@ public class GameServer {
         public void sendStartMsg() {
             try {
                 dataOut.writeUTF("We now have 2 players. Go!");
+                startGameLoop();
             } catch (IOException ex) {
                 System.out.println("IOException from sendStartMsg()");
             }
         }
+    }
+
+    // ----- Game Loop Logic ----- //
+    public void startGameLoop() {
+        Thread gameLoop = new Thread(() -> {
+            while (true) {
+                // Update all spells
+                for (Spell spell : activeSpells) {
+                    spell.update();
+                }
+                
+                // Remove all expired spells
+                activeSpells.removeIf((spell) -> spell.isExpired());
+
+                try {
+                    Thread.sleep(25);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        gameLoop.setDaemon(true);
+        gameLoop.start();
     }
 }

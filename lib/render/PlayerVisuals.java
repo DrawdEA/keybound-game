@@ -10,26 +10,32 @@ import lib.*;
 import lib.objects.*;
 
 public class PlayerVisuals extends GameObject {
-    public final int screenX, screenY;
+    public final double screenX, screenY;
     private boolean isPlayer;
     private Color color;
+    private Direction facing;
 
     public PlayerVisuals(double xPosition, double yPosition, double s, Color c, boolean iP) {
-        super(xPosition, yPosition, s, s);
+        super("PLAYER", xPosition, yPosition, s, s);
         isPlayer = iP;
         
         screenX = GameConfig.SCREEN_LENGTH / 2 - (GameConfig.TILE_SIZE / 2);
         screenY = GameConfig.SCREEN_HEIGHT / 2 - (GameConfig.TILE_SIZE / 2);
 
         color = c;
+        facing = Direction.RIGHT;
     }
 
-    public int getScreenX() {
+    public double getScreenX() {
         return screenX;
     }
 
-    public int getScreenY() {
+    public double getScreenY() {
         return screenY;
+    }
+
+    public String getPositionDataString(){
+        return String.format("%f-%f-%s", x, y, facing.toString());
     }
 
     @Override
