@@ -128,6 +128,24 @@ public class KeyBindings {
         }
     }
 
+    public String getPlayerAction() {
+        if (up || down || left || right) {
+            return "Running";
+        } else {
+            return "Idle";
+        }
+    }
+
+    public String getPlayerDirection() {
+        if (left) {
+            return "Left";
+        } else if (right) {
+            return "Right";
+        } else {
+            return "None";
+        }
+    }
+
     /**
      * Casts the spell of a player if they press down the right combination of keys
      * 

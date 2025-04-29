@@ -11,4 +11,5 @@ public class GameConfig {
     public static final int MAX_PLAYERS = 2;
     public static final int SCREEN_HEIGHT = 600;
     public static final int SCREEN_LENGTH = 800;
+    public static final int ANIMATION_COUNTER = 10; // Adjust for a slower/faster animation.
 }
