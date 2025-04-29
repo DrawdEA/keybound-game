@@ -51,7 +51,7 @@ public class Environment extends GameObject {
 
         // Load the map.
         try {
-            InputStream is = getClass().getResourceAsStream("/resources/maps/newMap.txt");
+            InputStream is = getClass().getResourceAsStream("/resources/maps/forgottenIslands.txt");
             BufferedReader br = new BufferedReader(new InputStreamReader(is));
 
             System.out.println("SETTING UP MAP");
