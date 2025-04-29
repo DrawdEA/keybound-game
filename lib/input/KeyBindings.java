@@ -6,6 +6,7 @@ package lib.input;
 
 import java.awt.event.*;
 import javax.swing.*;
+import lib.network.Player;
 import lib.render.*;
 
 public class KeyBindings {
@@ -151,11 +152,12 @@ public class KeyBindings {
      * 
      * @param player the player that casts the spell
      */
-    public void castPlayerSpells(PlayerVisuals player) {
+    public void castPlayerSpells(Player player) {
         // Else if is important since if someone pressed "waterh" we don't want to activate both earth and water
         // BASIC SPELLS
         if (isStringPressedDown("fire")) {
             System.out.println("FIRE");
+            player.requestToCast("FIRE_SPELL");
             resetLetters("fire");
         } else if (isStringPressedDown("water")) {
             System.out.println("WATER");
@@ -167,7 +169,6 @@ public class KeyBindings {
             System.out.println("WIND");
             resetLetters("wind");
         }
-
     }
 
     /**

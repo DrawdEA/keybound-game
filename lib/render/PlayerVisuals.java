@@ -15,7 +15,7 @@ import lib.*;
 import lib.objects.*;
 
 public class PlayerVisuals extends GameObject {
-    public final int screenX, screenY;
+    public final double screenX, screenY;
     private boolean isPlayer;
     private BufferedImage[] playerSprites;
     private BufferedImage[] playerSpritesLeft;
@@ -26,9 +26,10 @@ public class PlayerVisuals extends GameObject {
     private int animationIndex;
 
     private boolean lookingLeft;
+    private Direction facing;
 
-    public PlayerVisuals(double xPosition, double yPosition, double s, boolean iP) {
-        super(xPosition, yPosition, s, s);
+    public PlayerVisuals(double xPosition, double yPosition, double s, Color c, boolean iP) {
+        super("PLAYER", xPosition, yPosition, s, s);
         isPlayer = iP;
         
         screenX = GameConfig.SCREEN_LENGTH / 2 - (GameConfig.TILE_SIZE / 2);
@@ -185,13 +186,14 @@ public class PlayerVisuals extends GameObject {
             System.out.println("IOException from PlayerVisuals.java");
         }
         
+        facing = Direction.RIGHT;
     }
 
-    public int getScreenX() {
+    public double getScreenX() {
         return screenX;
     }
 
-    public int getScreenY() {
+    public double getScreenY() {
         return screenY;
     }
 
@@ -228,6 +230,10 @@ public class PlayerVisuals extends GameObject {
             animationCounter = 0;
         }
         animationCounter++;
+    }
+
+    public String getPositionDataString(){
+        return String.format("%f-%f-%s", x, y, facing.toString());
     }
 
     @Override

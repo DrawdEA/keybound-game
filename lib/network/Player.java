@@ -6,6 +6,7 @@ package lib.network;
 
 import java.io.*;
 import java.net.*;
+import lib.objects.spells.FireSpell;
 import lib.render.*;
 
 public class Player {
@@ -18,6 +19,7 @@ public class Player {
     
     public Player() {
         gameCanvas = new GameCanvas();
+        gameCanvas.setPlayerClient(this);
     }
 
     public void connectToServer() {
@@ -60,10 +62,32 @@ public class Player {
                     PlayerVisuals enemy = gameCanvas.getEnemy();
                     if (enemy != null) {
                         PlayerVisuals player = gameCanvas.getOwnPlayer();
-                        double screenX = dataIn.readDouble() - player.getX() + player.getScreenX();
-                        double screenY = dataIn.readDouble() - player.getY() + player.getScreenY();
-                        enemy.setX(screenX);
-                        enemy.setY(screenY);
+                        
+                        // Enemy position
+                        String enemyDataRaw = dataIn.readUTF();
+                        String[] enemyData = enemyDataRaw.split(" ");
+                        
+                        // enemyData[0] = enemy's ID
+                        // enemyData[1] = enemy's position token
+                        // enemyData[2::] = enemy's objects
+                        
+                        // Set position
+                        String[] enemyPosition = enemyData[1].split("-");
+                        enemy.setX(Double.parseDouble(enemyPosition[1]) - player.getX() + player.getScreenX());
+                        enemy.setY(Double.parseDouble(enemyPosition[2]) - player.getY() + player.getScreenY());
+                        
+                        gameCanvas.clearSpells();
+                        for (int i = 2; i < enemyData.length; i++) {
+                            String[] spellData = enemyData[i].split("-");
+                            if (spellData[0].equals("FIRE_SPELL")) {
+                                gameCanvas.addSpell(new FireSpell(
+                                    playerID, 
+                                    Double.parseDouble(spellData[1]) - player.getX() + player.getScreenX(), 
+                                    Double.parseDouble(spellData[2]) - player.getY() + player.getScreenY(), 
+                                    Direction.valueOf(spellData[3])
+                                ));
+                            }
+                        }
                     }
                 }
             } catch(IOException ex) {
@@ -99,8 +123,21 @@ public class Player {
             try {
                 while (true) {
                     if (gameCanvas.getOwnPlayer() != null) {
-                        dataOut.writeDouble(gameCanvas.getOwnPlayer().getX());
-                        dataOut.writeDouble(gameCanvas.getOwnPlayer().getY());
+                        // Written data will be in the form of "Player_ID OBJECT/PROPERTY_OF_PLAYER-X-Y OBJECT/PROPERTY_OF_PLAYER-X-Y ..."
+                        
+                        // Add Player ID
+                        String dataString = String.format("%d ", playerID);
+                        
+                        // Add Player Position
+                        dataString += String.format("POSITION-%f-%f ", gameCanvas.getOwnPlayer().getX(), gameCanvas.getOwnPlayer().getY());
+
+                        // Add spell request by the Player
+                        if (!wantsToCast.equals("")) {
+                            dataString += String.format(wantsToCast + "-" + gameCanvas.getOwnPlayer().getPositionDataString() + " ");
+                            wantsToCast = "";
+                        }
+
+                        dataOut.writeUTF(dataString);
                         dataOut.flush();
                     }
                     try {
@@ -113,5 +150,11 @@ public class Player {
                 System.out.println("IOException from WTS run()");
             }
         }
+    }
+
+    private String wantsToCast = "";
+
+    public void requestToCast(String spellName){
+        wantsToCast = spellName;
     }
 }
