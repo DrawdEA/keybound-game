@@ -25,10 +25,9 @@ public class PlayerVisuals extends GameObject {
     private int animationCounter;
     private int animationIndex;
 
-    private boolean lookingLeft;
     private Direction facing;
 
-    public PlayerVisuals(double xPosition, double yPosition, double s, Color c, boolean iP) {
+    public PlayerVisuals(int xPosition, int yPosition, int s, boolean iP) {
         super("PLAYER", xPosition, yPosition, s, s);
         isPlayer = iP;
         
@@ -39,11 +38,12 @@ public class PlayerVisuals extends GameObject {
         currentFrame = 0;
         animationCounter = 0;
         animationIndex = 0;
-        lookingLeft = false;
+        facing = Direction.RIGHT;
 
         // Generate the sprites.
         playerSprites = new BufferedImage[53];
         playerSpritesLeft = new BufferedImage[53];
+
         try {
             BufferedImage playerMovements = ImageIO.read(getClass().getResourceAsStream("/resources/player/Elite Mage Sprite Sheet.png"));
 
@@ -185,8 +185,6 @@ public class PlayerVisuals extends GameObject {
         } catch (IOException e) { 
             System.out.println("IOException from PlayerVisuals.java");
         }
-        
-        facing = Direction.RIGHT;
     }
 
     public double getScreenX() {
@@ -200,9 +198,9 @@ public class PlayerVisuals extends GameObject {
     // Update the current frame and the animation of the player.
     public void updatePlayerAnimation(String animationType, String direction) {
         if (direction == "Right") {
-            lookingLeft = false;
+            facing = Direction.RIGHT;
         } else if (direction == "Left") {
-            lookingLeft = true;
+            facing = Direction.LEFT;
         }
 
         if (animationCounter == GameConfig.ANIMATION_COUNTER) {
@@ -238,15 +236,15 @@ public class PlayerVisuals extends GameObject {
 
     @Override
     public void drawSprite(Graphics2D g2d) {
-        if (lookingLeft) {
+        if (facing == Direction.LEFT) {
             if (isPlayer) {
-                g2d.drawImage(playerSpritesLeft[animationIndex], screenX, screenY, GameConfig.TILE_SIZE * 4, GameConfig.TILE_SIZE * 2, null);
+                g2d.drawImage(playerSpritesLeft[animationIndex], (int) screenX, (int) screenY, GameConfig.TILE_SIZE * 4, GameConfig.TILE_SIZE * 2, null);
             } else {
                 g2d.drawImage(playerSpritesLeft[animationIndex], (int) x, (int) y, GameConfig.TILE_SIZE * 4, GameConfig.TILE_SIZE * 2, null);
             }
         } else {
             if (isPlayer) {
-                g2d.drawImage(playerSprites[animationIndex], screenX, screenY, GameConfig.TILE_SIZE * 4, GameConfig.TILE_SIZE * 2, null);
+                g2d.drawImage(playerSprites[animationIndex], (int) screenX, (int) screenY, GameConfig.TILE_SIZE * 4, GameConfig.TILE_SIZE * 2, null);
             } else {
                 g2d.drawImage(playerSprites[animationIndex], (int) x, (int) y, GameConfig.TILE_SIZE * 4, GameConfig.TILE_SIZE * 2, null);
             }
