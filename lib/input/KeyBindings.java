@@ -117,7 +117,7 @@ public class KeyBindings {
      * @param player the player moving
      * @param speed the speed at which the player is moving
      */
-    public void updatePlayerPosition(PlayerVisuals player, double speed) {
+    public void updatePlayerPosition(PlayerObject player, double speed) {
         if (up) {
             player.setY(player.getY() - speed);
         } else if (down) {
@@ -142,6 +142,10 @@ public class KeyBindings {
             return "Left";
         } else if (right) {
             return "Right";
+        } else if (up) {
+            return "Up";
+        } else if (down) {
+            return "Down";
         } else {
             return "None";
         }

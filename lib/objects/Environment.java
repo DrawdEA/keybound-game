@@ -33,9 +33,9 @@ import lib.*;
 import lib.render.*;
 
 public class Environment extends GameObject {
-    GameCanvas gameCanvas;
-    Tile[] tiles;
-    int[][] mapNumbers;
+    private GameCanvas gameCanvas;
+    private Tile[] tiles;
+    private int[][] mapNumbers;
 
     /**
      * Generate a map of the game.
@@ -76,62 +76,80 @@ public class Environment extends GameObject {
         try {
             tiles[0] = new Tile();
             tiles[0].image = ImageIO.read(getClass().getResourceAsStream("/resources/tiles/Grass_Middle.png"));
+            tiles[0].canCollide = false;
 
             tiles[1] = new Tile();
             tiles[1].image = ImageIO.read(getClass().getResourceAsStream("/resources/tiles/Water_Middle.png"));
-            
+            tiles[1].canCollide = false;
+
             BufferedImage pathTiles = ImageIO.read(getClass().getResourceAsStream("/resources/tiles/Path_Tile.png"));
 
             // Inner Grass-Path tiles
             tiles[2] = new Tile();
             tiles[2].image = pathTiles.getSubimage(0, 0, 16, 16);
+            tiles[2].canCollide = false;
 
             tiles[3] = new Tile();
             tiles[3].image = pathTiles.getSubimage(16, 0, 16, 16);
+            tiles[3].canCollide = false;
 
             tiles[4] = new Tile();
             tiles[4].image = pathTiles.getSubimage(32, 0, 16, 16);
+            tiles[4].canCollide = false;
 
             tiles[5] = new Tile();
             tiles[5].image = pathTiles.getSubimage(0, 16, 16, 16);
+            tiles[5].canCollide = false;
 
             tiles[6] = new Tile();
             tiles[6].image = pathTiles.getSubimage(16, 16, 16, 16);
+            tiles[6].canCollide = false;
 
             tiles[7] = new Tile();
             tiles[7].image = pathTiles.getSubimage(32, 16, 16, 16);
+            tiles[7].canCollide = false;
 
             tiles[8] = new Tile();
             tiles[8].image = pathTiles.getSubimage(0, 32, 16, 16);
+            tiles[8].canCollide = false;
 
             tiles[9] = new Tile();
             tiles[9].image = pathTiles.getSubimage(16, 32, 16, 16);
+            tiles[9].canCollide = false;
 
             tiles[10] = new Tile();
             tiles[10].image = pathTiles.getSubimage(32, 32, 16, 16);
+            tiles[10].canCollide = false;
 
             // Outer Grass-Path tiles
             tiles[11] = new Tile();
             tiles[11].image = pathTiles.getSubimage(0, 48, 16, 16);
+            tiles[11].canCollide = false;
 
             tiles[12] = new Tile();
             tiles[12].image = pathTiles.getSubimage(16, 48, 16, 16);
+            tiles[12].canCollide = false;
 
             tiles[13] = new Tile();
             tiles[13].image = pathTiles.getSubimage(0, 64, 16, 16);
+            tiles[13].canCollide = false;
 
             tiles[14] = new Tile();
             tiles[14].image = pathTiles.getSubimage(16, 64, 16, 16);
+            tiles[14].canCollide = false;
 
             // Path footprints
             tiles[15] = new Tile();
             tiles[15].image = pathTiles.getSubimage(0, 80, 16, 16);
+            tiles[15].canCollide = false;
 
             tiles[16] = new Tile();
             tiles[16].image = pathTiles.getSubimage(16, 80, 16, 16);
+            tiles[16].canCollide = false;
 
             tiles[17] = new Tile();
             tiles[17].image = pathTiles.getSubimage(16, 80, 16, 16);
+            tiles[17].canCollide = false;
 
             BufferedImage cliffTiles = ImageIO.read(getClass().getResourceAsStream("/resources/tiles/Cliff_Tile.png"));
 
@@ -176,12 +194,15 @@ public class Environment extends GameObject {
             // Grass footprints
             tiles[30] = new Tile();
             tiles[30].image = cliffTiles.getSubimage(0, 80, 16, 16);
+            tiles[30].canCollide = false;
 
             tiles[31] = new Tile();
             tiles[31].image = cliffTiles.getSubimage(16, 80, 16, 16);
+            tiles[31].canCollide = false;
 
             tiles[32] = new Tile();
             tiles[32].image = cliffTiles.getSubimage(16, 80, 16, 16);
+            tiles[32].canCollide = false;
 
             BufferedImage waterTiles = ImageIO.read(getClass().getResourceAsStream("/resources/tiles/Water_Tile.png"));
 
@@ -280,7 +301,15 @@ public class Environment extends GameObject {
 
     public class Tile {
         public BufferedImage image;
-        public boolean canCollide = false;
+        public boolean canCollide = true;
+    }
+
+    public int[][] getMapNumbers() {
+        return mapNumbers;
+    }
+
+    public Tile[] getTiles() {
+        return tiles;
     }
 
     @Override
@@ -293,7 +322,7 @@ public class Environment extends GameObject {
                 // Generate the new camera-centric position.
                 double worldX = i * GameConfig.TILE_SIZE;
                 double worldY = j * GameConfig.TILE_SIZE;
-                PlayerVisuals player = gameCanvas.getOwnPlayer();
+                PlayerObject player = gameCanvas.getOwnPlayer();
                 double screenX = worldX - player.getX() + player.getScreenX();
                 double screenY = worldY - player.getY() + player.getScreenY();
 

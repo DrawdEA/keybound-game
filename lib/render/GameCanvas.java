@@ -17,26 +17,37 @@ import lib.objects.*;
 import lib.objects.spells.*;
 
 public class GameCanvas extends JComponent {
-    ArrayList<GameObject> gameObjects;
-    Timer animationTimer;
-    KeyBindings keyBindings;
-    PlayerVisuals self, enemy;
+    // Game objects.
+    private ArrayList<GameObject> gameObjects;
+    private ArrayList<Spell> spells;
+    private PlayerObject self, enemy;
+    private Environment environment;
     private Player selfPlayerClient;
-    private ArrayList<Spell> spells = new ArrayList<>();
+
+    // Miscellaneous.
+    private Timer animationTimer;
+    private KeyBindings keyBindings;
+    private CollisionManager collisionManager;
+    
 
     public GameCanvas() {
         // Initialize object to hold all gameObjects.
         gameObjects = new ArrayList<>();
+        spells = new ArrayList<>();
 
         // Initialize the environment.
-        gameObjects.add(new Environment(0, 0, this)); 
+        environment = new Environment(0, 0, this);
         
-        // Set the game timer and key bindings.
+        // Set the game timer, key bindings, and collisions.
         keyBindings = new KeyBindings(this);
+        collisionManager = new CollisionManager(environment, keyBindings);
         ActionListener al;
         al = new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                keyBindings.updatePlayerPosition((PlayerVisuals) self, GameConfig.PLAYER_SPEED);
+                if (!collisionManager.checkWorldCollision(self)) {
+                    keyBindings.updatePlayerPosition((PlayerObject) self, GameConfig.PLAYER_SPEED);
+                }
+                
                 keyBindings.castPlayerSpells(selfPlayerClient); // Add a cooldown thread?
                 repaint();
             }
@@ -53,22 +64,22 @@ public class GameCanvas extends JComponent {
 
     public void addPlayers(int id) {
         if (id == 1) {
-            self = new PlayerVisuals(GameConfig.TILE_SIZE * 64, GameConfig.TILE_SIZE * 32, GameConfig.TILE_SIZE, true);
-            enemy = new PlayerVisuals(GameConfig.TILE_SIZE * 64, GameConfig.TILE_SIZE * 40, GameConfig.TILE_SIZE + 2, false);
+            self = new PlayerObject(GameConfig.TILE_SIZE * 64, GameConfig.TILE_SIZE * 43, GameConfig.TILE_SIZE, true);
+            enemy = new PlayerObject(GameConfig.TILE_SIZE * 64, GameConfig.TILE_SIZE * 64, GameConfig.TILE_SIZE + 2, false);
         } else {
-            self = new PlayerVisuals(GameConfig.TILE_SIZE * 64, GameConfig.TILE_SIZE * 32, GameConfig.TILE_SIZE + 2, true);
-            enemy = new PlayerVisuals(GameConfig.TILE_SIZE * 64, GameConfig.TILE_SIZE * 40, GameConfig.TILE_SIZE, false);
+            self = new PlayerObject(GameConfig.TILE_SIZE * 64, GameConfig.TILE_SIZE * 64, GameConfig.TILE_SIZE + 2, true);
+            enemy = new PlayerObject(GameConfig.TILE_SIZE * 64, GameConfig.TILE_SIZE * 43, GameConfig.TILE_SIZE, false);
             
         }
 
         repaint();
     }
 
-    public PlayerVisuals getOwnPlayer() {
+    public PlayerObject getOwnPlayer() {
         return self;
     }
 
-    public PlayerVisuals getEnemy() {
+    public PlayerObject getEnemy() {
         return enemy;
     }
 
@@ -89,6 +100,9 @@ public class GameCanvas extends JComponent {
             RenderingHints.VALUE_ANTIALIAS_ON
         );
         g2d.setRenderingHints(rh);
+
+        // Draw the environment.
+        environment.drawSprite(g2d);
 
         // Draw every object.
         for (GameObject object : gameObjects) {

@@ -59,9 +59,9 @@ public class Player {
         public void run() {
             try {
                 while (true) { 
-                    PlayerVisuals enemy = gameCanvas.getEnemy();
+                    PlayerObject enemy = gameCanvas.getEnemy();
                     if (enemy != null) {
-                        PlayerVisuals player = gameCanvas.getOwnPlayer();
+                        PlayerObject player = gameCanvas.getOwnPlayer();
                         
                         // Enemy position
                         String enemyDataRaw = dataIn.readUTF();

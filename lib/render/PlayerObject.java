@@ -5,7 +5,6 @@
 package lib.render;
 
 import java.awt.*;
-import java.awt.geom.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
@@ -14,7 +13,7 @@ import javax.imageio.ImageIO;
 import lib.*;
 import lib.objects.*;
 
-public class PlayerVisuals extends GameObject {
+public class PlayerObject extends GameObject {
     public final double screenX, screenY;
     private boolean isPlayer;
     private BufferedImage[] playerSprites;
@@ -27,7 +26,9 @@ public class PlayerVisuals extends GameObject {
 
     private Direction facing;
 
-    public PlayerVisuals(int xPosition, int yPosition, int s, boolean iP) {
+    private Rectangle hitbox;
+
+    public PlayerObject(int xPosition, int yPosition, int s, boolean iP) {
         super("PLAYER", xPosition, yPosition, s, s);
         isPlayer = iP;
         
@@ -39,6 +40,13 @@ public class PlayerVisuals extends GameObject {
         animationCounter = 0;
         animationIndex = 0;
         facing = Direction.RIGHT;
+
+        // Set up the hitbox.
+        hitbox = new Rectangle();
+        hitbox.x = GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2;
+        hitbox.y = GameConfig.TILE_SIZE;
+        hitbox.width = GameConfig.TILE_SIZE;
+        hitbox.height = GameConfig.TILE_SIZE;
 
         // Generate the sprites.
         playerSprites = new BufferedImage[53];
@@ -58,7 +66,6 @@ public class PlayerVisuals extends GameObject {
             playerSprites[7] = playerMovements.getSubimage(448, 0, 64, 32);
 
             // Running movements.
-            //playerSprites[9] = playerMovements.getSubimage(0, 32, 64, 32);
             playerSprites[8] = playerMovements.getSubimage(64, 32, 64, 32);
             playerSprites[9] = playerMovements.getSubimage(128, 32, 64, 32);
             playerSprites[10] = playerMovements.getSubimage(192, 32, 64, 32);
@@ -195,6 +202,14 @@ public class PlayerVisuals extends GameObject {
         return screenY;
     }
 
+    public Rectangle getHitbox() {
+        return hitbox;
+    }
+
+    public Direction getDirection() {
+        return facing;
+    }
+
     // Update the current frame and the animation of the player.
     public void updatePlayerAnimation(String animationType, String direction) {
         if (direction == "Right") {
@@ -249,6 +264,7 @@ public class PlayerVisuals extends GameObject {
                 g2d.drawImage(playerSprites[animationIndex], (int) x, (int) y, GameConfig.TILE_SIZE * 4, GameConfig.TILE_SIZE * 2, null);
             }
         }
-        
+        g2d.setColor(Color.CYAN);
+        g2d.drawRect((int) screenX + hitbox.x, (int) screenY + hitbox.y, hitbox.width, hitbox.height);
     }
 }
