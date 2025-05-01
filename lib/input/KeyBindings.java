@@ -5,12 +5,19 @@
 package lib.input;
 
 import java.awt.event.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.IntStream;
+
 import javax.swing.*;
+
+import lib.GameConfig;
 import lib.network.Player;
 import lib.render.*;
 
 public class KeyBindings {
     public boolean up, down, left, right;
+    public boolean attacking1, attacking2;
     public boolean letters[];
 
     /**
@@ -115,30 +122,54 @@ public class KeyBindings {
      * Updates the players position depending on the player's current key.
      * 
      * @param player the player moving
-     * @param speed the speed at which the player is moving
+     * @param displacement the speed at which the player is moving
      */
-    public void updatePlayerPosition(PlayerObject player, double speed) {
-        if (up) {
-            player.setY(player.getY() - speed);
-        } else if (down) {
-            player.setY(player.getY() + speed);
-        } else if (left) {
-            player.setX(player.getX() - speed);
-        } else if (right) {
-            player.setX(player.getX() + speed);
+    public void updatePlayerPosition(PlayerObject player, double displacement, String direction) {
+        if (direction == "Up") {
+            player.setY(player.getY() - displacement);
+        } else if (direction == "Down") {
+            player.setY(player.getY() + displacement);
+        } else if (direction == "Left") {
+            player.setX(player.getX() - displacement);
+        } else if (direction == "Right") {
+            player.setX(player.getX() + displacement);
         }
     }
 
     public String getPlayerAction() {
-        if (up || down || left || right) {
+        if (getPlayerDirection() != "None") {
             return "Running";
+        } else if (IntStream.range(0, letters.length).anyMatch(i -> letters[i])) { // Checks if any of the letters are true.
+            return "Casting";
+        } else if (attacking1) {
+            return "Attacking1";
+        } else if (attacking2) {
+            return "Attacking2";
         } else {
             return "Idle";
         }
     }
 
     public String getPlayerDirection() {
-        if (left) {
+        // Calculate the total number of active directions
+        int activeCount = (up ? 1 : 0) + (down ? 1 : 0) + (left ? 1 : 0) + (right ? 1 : 0);
+
+        // Rule 5 & 4: If three or more directions are active, or opposites are active, cancel
+        if (activeCount >= 3 || (up && down) || (left && right)) {
+            return "None";
+        }
+        // Rule 3: Check for adjacent two-direction combinations (Vertical then Horizontal)
+        else if (up && left) {
+            return "Up Left";
+        } else if (up && right) {
+            return "Up Right";
+        } else if (down && left) {
+            return "Down Left";
+        } else if (down && right) {
+            return "Down Right";
+        }
+        // Rule 2: Check for single directions
+        else if (left) {
             return "Left";
         } else if (right) {
             return "Right";
@@ -146,9 +177,68 @@ public class KeyBindings {
             return "Up";
         } else if (down) {
             return "Down";
-        } else {
+        }
+        // Rule 1: If none of the above, no directions are active
+        else {
             return "None";
         }
+    }
+
+    public void movePlayer(CollisionManager cm, PlayerObject player) {
+        String direction = getPlayerDirection();
+
+        if (direction == "Up Right") {
+            if (!cm.checkWorldCollision(player, "Up")) {
+                updatePlayerPosition(player, GameConfig.PLAYER_SPEED * 0.7, "Up");
+            }
+            if (!cm.checkWorldCollision(player, "Right")) {
+                updatePlayerPosition(player, GameConfig.PLAYER_SPEED * 0.7, "Right");
+            }
+        } else if (direction == "Up Left") {
+            // Handle Up Left diagonal movement
+            if (!cm.checkWorldCollision(player, "Up")) {
+                updatePlayerPosition(player, GameConfig.PLAYER_SPEED * 0.7, "Up");
+            }
+            if (!cm.checkWorldCollision(player, "Left")) {
+                updatePlayerPosition(player, GameConfig.PLAYER_SPEED * 0.7, "Left");
+            }
+        } else if (direction == "Down Right") {
+            // Handle Down Right diagonal movement
+             if (!cm.checkWorldCollision(player, "Down")) {
+                updatePlayerPosition(player, GameConfig.PLAYER_SPEED * 0.7, "Down");
+            }
+            if (!cm.checkWorldCollision(player, "Right")) {
+                updatePlayerPosition(player, GameConfig.PLAYER_SPEED * 0.7, "Right");
+            }
+        } else if (direction == "Down Left") {
+            // Handle Down Left diagonal movement
+             if (!cm.checkWorldCollision(player, "Down")) {
+                updatePlayerPosition(player, GameConfig.PLAYER_SPEED * 0.7, "Down");
+            }
+            if (!cm.checkWorldCollision(player, "Left")) {
+                updatePlayerPosition(player, GameConfig.PLAYER_SPEED * 0.7, "Left");
+            }
+        } else if (direction == "Up") {
+            // Handle Up single movement
+            if (!cm.checkWorldCollision(player, "Up")) {
+                updatePlayerPosition(player, GameConfig.PLAYER_SPEED, "Up");
+            }
+        } else if (direction == "Down") {
+            // Handle Down single movement
+             if (!cm.checkWorldCollision(player, "Down")) {
+                updatePlayerPosition(player, GameConfig.PLAYER_SPEED, "Down");
+            }
+        } else if (direction == "Left") {
+            // Handle Left single movement
+             if (!cm.checkWorldCollision(player, "Left")) {
+                updatePlayerPosition(player, GameConfig.PLAYER_SPEED, "Left");
+            }
+        } else if (direction == "Right") {
+            // Handle Right single movement
+             if (!cm.checkWorldCollision(player, "Right")) {
+                updatePlayerPosition(player, GameConfig.PLAYER_SPEED, "Right");
+            }
+        }        
     }
 
     /**
@@ -160,8 +250,11 @@ public class KeyBindings {
         // Else if is important since if someone pressed "waterh" we don't want to activate both earth and water
         // BASIC SPELLS
         if (isStringPressedDown("fire")) {
+
             System.out.println("FIRE");
+            attacking1 = true;
             player.requestToCast("FIRE_SPELL");
+            attacking1 = false;
             resetLetters("fire");
         } else if (isStringPressedDown("water")) {
             System.out.println("WATER");

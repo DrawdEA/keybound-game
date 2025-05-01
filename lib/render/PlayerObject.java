@@ -18,6 +18,7 @@ public class PlayerObject extends GameObject {
     private boolean isPlayer;
     private BufferedImage[] playerSprites;
     private BufferedImage[] playerSpritesLeft;
+    private BufferedImage shadow;
 
     private String currentAnimation;
     private int currentFrame;
@@ -27,6 +28,9 @@ public class PlayerObject extends GameObject {
     private Direction facing;
 
     private Rectangle hitbox;
+
+    private boolean overridingAnimation;
+    private int overridingIndex;
 
     public PlayerObject(int xPosition, int yPosition, int s, boolean iP) {
         super("PLAYER", xPosition, yPosition, s, s);
@@ -134,7 +138,6 @@ public class PlayerObject extends GameObject {
             playerSpritesLeft[7] = playerMovementsLeft.getSubimage(448, 0, 64, 32);
 
             // Running movements.
-            //playerSprites[9] = playerMovements.getSubimage(0, 32, 64, 32);
             playerSpritesLeft[8] = playerMovementsLeft.getSubimage(64, 32, 64, 32);
             playerSpritesLeft[9] = playerMovementsLeft.getSubimage(128, 32, 64, 32);
             playerSpritesLeft[10] = playerMovementsLeft.getSubimage(192, 32, 64, 32);
@@ -153,7 +156,7 @@ public class PlayerObject extends GameObject {
             playerSpritesLeft[22] = playerMovementsLeft.getSubimage(384, 96, 64, 32);
             playerSpritesLeft[23] = playerMovementsLeft.getSubimage(448, 96, 64, 32);
 
-            // Charging movements.
+            // Casting movements.
             playerSpritesLeft[24] = playerMovementsLeft.getSubimage(0, 160, 64, 32);
             playerSpritesLeft[25] = playerMovementsLeft.getSubimage(64, 160, 64, 32);
             playerSpritesLeft[26] = playerMovementsLeft.getSubimage(128, 160, 64, 32);
@@ -189,6 +192,9 @@ public class PlayerObject extends GameObject {
             playerSpritesLeft[50] = playerMovementsLeft.getSubimage(320, 288, 64, 32);
             playerSpritesLeft[51] = playerMovementsLeft.getSubimage(384, 288, 64, 32);
             playerSpritesLeft[52] = playerMovementsLeft.getSubimage(448, 288, 64, 32);
+
+            // The player's shadow.
+            shadow = ImageIO.read(getClass().getResourceAsStream("/resources/player/shadow.png"));
         } catch (IOException e) { 
             System.out.println("IOException from PlayerVisuals.java");
         }
@@ -210,39 +216,64 @@ public class PlayerObject extends GameObject {
         return facing;
     }
 
+    public void overrideAnimation(String animationType) {
+        overridingAnimation = true;
+        currentFrame = 0;
+        animationCounter = 0;
+        if (animationType == "Attacking1") {
+            overridingIndex = 16;
+        } else if (animationType == "Attacking2") {
+            overridingIndex = 32;
+        }         
+    }
+
     // Update the current frame and the animation of the player.
     public void updatePlayerAnimation(String animationType, String direction) {
-        if (direction == "Right") {
-            facing = Direction.RIGHT;
-        } else if (direction == "Left") {
-            facing = Direction.LEFT;
-        }
-
-        if (animationCounter == GameConfig.ANIMATION_COUNTER) {
-            if (animationType != currentAnimation) {
-                currentFrame = 0;
-            } else {
+        if (overridingAnimation) {
+            if (animationCounter == GameConfig.ANIMATION_COUNTER) {
+                animationIndex = overridingIndex;
                 currentFrame++;
-            }
+                animationIndex += currentFrame;
+                animationCounter = 0;
 
-            int limit = 0;
-            if (animationType == "Idle") {
-                animationIndex = 0;
-                limit = 7;
-            } else if (animationType == "Running") {
-                animationIndex = 8;
-                limit = 7;
+                if (currentFrame >= 7) {
+                    overridingAnimation = false;
+                }
             }
-
-            if (currentFrame >= limit) {
-                currentFrame = 0;
+            animationCounter++;
+        } else {
+            if (direction.contains("Right")) {
+                facing = Direction.RIGHT;
+            } else if (direction.contains("Left")) {
+                facing = Direction.LEFT;
             }
+    
+            if (animationCounter == GameConfig.ANIMATION_COUNTER) {
+                if (animationType != currentAnimation) {
+                    currentFrame = 0;
+                } else {
+                    currentFrame++;
+                }
+    
+                if (animationType == "Idle") {
+                    animationIndex = 0;
 
-            animationIndex += currentFrame;
-            currentAnimation = animationType;
-            animationCounter = 0;
+                } else if (animationType == "Running") {
+                    animationIndex = 8;
+                } else if (animationType == "Casting") {
+                    animationIndex = 24;
+                }
+    
+                if (currentFrame >= 7) {
+                    currentFrame = 0;
+                }
+    
+                animationIndex += currentFrame;
+                currentAnimation = animationType;
+                animationCounter = 0;
+            }
+            animationCounter++;
         }
-        animationCounter++;
     }
 
     public String getPositionDataString(){
@@ -251,6 +282,17 @@ public class PlayerObject extends GameObject {
 
     @Override
     public void drawSprite(Graphics2D g2d) {
+        // Draw the player's shadow.
+        Composite originalComposite = g2d.getComposite();
+        AlphaComposite alphaComposite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.2f);
+        g2d.setComposite(alphaComposite);
+        if (isPlayer) {
+            g2d.drawImage(shadow, (int) screenX + 40, (int) screenY + 59, GameConfig.TILE_SIZE * 2, GameConfig.TILE_SIZE * 2, null);
+        } else {
+            g2d.drawImage(shadow, (int) x + 40, (int) y + 59, GameConfig.TILE_SIZE * 2, GameConfig.TILE_SIZE * 2, null);
+        }
+        g2d.setComposite(originalComposite);
+
         if (facing == Direction.LEFT) {
             if (isPlayer) {
                 g2d.drawImage(playerSpritesLeft[animationIndex], (int) screenX, (int) screenY, GameConfig.TILE_SIZE * 4, GameConfig.TILE_SIZE * 2, null);
@@ -264,7 +306,9 @@ public class PlayerObject extends GameObject {
                 g2d.drawImage(playerSprites[animationIndex], (int) x, (int) y, GameConfig.TILE_SIZE * 4, GameConfig.TILE_SIZE * 2, null);
             }
         }
-        g2d.setColor(Color.CYAN);
-        g2d.drawRect((int) screenX + hitbox.x, (int) screenY + hitbox.y, hitbox.width, hitbox.height);
+
+        // Only uncomment if wanna see the hitbox.
+        //g2d.setColor(Color.CYAN);
+        //g2d.drawRect((int) screenX + hitbox.x, (int) screenY + hitbox.y, hitbox.width, hitbox.height);
     }
 }

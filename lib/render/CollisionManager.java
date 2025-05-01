@@ -15,8 +15,7 @@ public class CollisionManager {
         keyBindings = kB;
     }
 
-    public boolean checkWorldCollision(PlayerObject playerObject) {
-        System.out.println("NEW COLLISION");
+    public boolean checkWorldCollision(PlayerObject playerObject, String direction) {
         Rectangle hitbox = playerObject.getHitbox();
 
         int playerLeftWorldX = (int) playerObject.getX() + hitbox.x;
@@ -32,7 +31,6 @@ public class CollisionManager {
         int tileNum1, tileNum2;
         boolean collided = false;
 
-        String direction = keyBindings.getPlayerDirection();
         if (direction == "Left") {
             playerLeftColumn = (int) Math.floor(((double) playerLeftWorldX - GameConfig.PLAYER_SPEED) / GameConfig.TILE_SIZE);;
             tileNum1 = environment.getMapNumbers()[playerLeftColumn][playerTopRow];

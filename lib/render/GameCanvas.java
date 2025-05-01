@@ -44,18 +44,13 @@ public class GameCanvas extends JComponent {
         ActionListener al;
         al = new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                if (!collisionManager.checkWorldCollision(self)) {
-                    keyBindings.updatePlayerPosition((PlayerObject) self, GameConfig.PLAYER_SPEED);
-                }
-                
+                keyBindings.movePlayer(collisionManager, self);
                 keyBindings.castPlayerSpells(selfPlayerClient); // Add a cooldown thread?
                 repaint();
             }
         };
         animationTimer = new Timer(10, al);
         animationTimer.start();
-
-        // Set the player ID.
     }
 
     public void setPlayerClient(Player player) {

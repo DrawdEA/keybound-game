@@ -154,7 +154,8 @@ public class Player {
 
     private String wantsToCast = "";
 
-    public void requestToCast(String spellName){
+    public void requestToCast(String spellName) {
+        gameCanvas.getOwnPlayer().overrideAnimation("Attacking1");
         wantsToCast = spellName;
     }
 }
