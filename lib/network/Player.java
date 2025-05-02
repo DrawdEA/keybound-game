@@ -6,7 +6,7 @@ package lib.network;
 
 import java.io.*;
 import java.net.*;
-import lib.objects.spells.FireSpell;
+import lib.objects.spells.*;
 import lib.render.*;
 
 public class Player {
@@ -79,13 +79,27 @@ public class Player {
                         gameCanvas.clearSpells();
                         for (int i = 2; i < enemyData.length; i++) {
                             String[] spellData = enemyData[i].split("-");
-                            if (spellData[0].equals("FIRE_SPELL")) {
-                                gameCanvas.addSpell(new FireSpell(
-                                    playerID, 
-                                    Double.parseDouble(spellData[1]) - player.getX() + player.getScreenX(), 
-                                    Double.parseDouble(spellData[2]) - player.getY() + player.getScreenY(), 
-                                    Direction.valueOf(spellData[3])
-                                ));
+                            
+                            double x;
+                            double y;
+                            Direction dir;
+
+                            if (spellData[0].contains("_SPELL")){
+                                x = Double.parseDouble(spellData[1]) - player.getX() + player.getScreenX();
+                                y = Double.parseDouble(spellData[2]) - player.getY() + player.getScreenY();
+                                dir = Direction.valueOf(spellData[3]);
+
+                                if (spellData[0].equals("FIRE_SPELL")) {
+                                gameCanvas.addSpell(new FireSpell(playerID, x, y, dir));
+                                } else if (spellData[0].equals("WATER_SPELL")) {
+                                    double endingBar = Double.parseDouble(spellData[4]);
+                                    if (dir == Direction.LEFT || dir == Direction.RIGHT){
+                                        endingBar -= player.getX() + player.getScreenX();
+                                    } else if (dir == Direction.DOWN || dir == Direction.UP){
+                                        endingBar -= player.getY() + player.getScreenY();;
+                                    }
+                                    gameCanvas.addSpell(new WaterSpell(playerID, x, y, dir, endingBar));
+                                }
                             }
                         }
                     }
@@ -143,7 +157,7 @@ public class Player {
                     try {
                         Thread.sleep(25);
                     } catch (InterruptedException ex) {
-                        System.out.println("InterrptedException from WTS run()");
+                        System.out.println("Interrupted Exception from WTS run()");
                     }
                 }
             } catch(IOException ex) {

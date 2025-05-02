@@ -7,7 +7,7 @@ import lib.render.Direction;
 
 public class FireSpell extends Spell {
     // DEFAULT CONSTANTS
-    public final int SPEED = 15;
+    public final double SPEED = 15;
     public final Color COLOR = Color.RED;
 
     private double x, y;
