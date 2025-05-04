@@ -90,15 +90,23 @@ public class Player {
                                 dir = Direction.valueOf(spellData[3]);
 
                                 if (spellData[0].equals("FIRE_SPELL")) {
-                                gameCanvas.addSpell(new FireSpell(playerID, x, y, dir));
+                                    gameCanvas.addSpell(new FireSpell(playerID, x, y, dir));
+                                
                                 } else if (spellData[0].equals("WATER_SPELL")) {
-                                    double endingBar = Double.parseDouble(spellData[4]);
-                                    if (dir == Direction.LEFT || dir == Direction.RIGHT){
-                                        endingBar -= player.getX() + player.getScreenX();
-                                    } else if (dir == Direction.DOWN || dir == Direction.UP){
-                                        endingBar -= player.getY() + player.getScreenY();;
+                                    if (spellData.length > 4) {
+                                        // Get the endingBar value from the server
+                                        double serverEndingBar = Double.parseDouble(spellData[4]);
+                                        
+                                        // Transform the endingBar to screen coordinates
+                                        double transformedEndingBar;
+                                        if (dir == Direction.LEFT || dir == Direction.RIGHT) {
+                                            transformedEndingBar = serverEndingBar - player.getX() + player.getScreenX();
+                                        } else { // UP or DOWN
+                                            transformedEndingBar = serverEndingBar - player.getY() + player.getScreenY();
+                                        }
+                                        
+                                        gameCanvas.addSpell(new WaterSpell(playerID, x, y, dir, transformedEndingBar));
                                     }
-                                    gameCanvas.addSpell(new WaterSpell(playerID, x, y, dir, endingBar));
                                 }
                             }
                         }

@@ -6,7 +6,7 @@ import java.awt.geom.Rectangle2D;
 import lib.render.Direction;
 
 public class FireSpell extends Spell {
-    // DEFAULT CONSTANTS
+    // Notice that SPEED * maxAgeInTicks is the distance the fireball can travel
     public final double SPEED = 15;
     public final Color COLOR = Color.RED;
 
@@ -35,6 +35,7 @@ public class FireSpell extends Spell {
     }
 
     public void update() {
+        // Move the fire ball in the direction the player is facing
         if (dir == Direction.UP){
             y -= SPEED;
         } else if (dir == Direction.DOWN){
@@ -45,6 +46,7 @@ public class FireSpell extends Spell {
             x += SPEED;
         }
 
+        // Set the spell to expire if it's too old
         currAgeInTicks++;
         if(currAgeInTicks >= maxAgeInTicks) {
             expired = true;
