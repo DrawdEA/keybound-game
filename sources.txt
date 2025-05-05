@@ -9,3 +9,5 @@ https://www.tutorialspoint.com/swing/swing_key_event.htm
 https://github.com/nr-johnson/flip-sprite
 https://www.geeksforgeeks.org/enum-in-java/
 https://www.geeksforgeeks.org/arraylist-removeif-method-in-java/
+
+https://hochupitsu.itch.io/heart-and-mana

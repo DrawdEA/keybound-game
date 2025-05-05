@@ -24,6 +24,9 @@ public class GameCanvas extends JComponent {
     private Environment environment;
     private Player selfPlayerClient;
 
+    // The Game GUI.
+    private InGameGUI gui;
+
     // Miscellaneous.
     private Timer animationTimer;
     private KeyBindings keyBindings;
@@ -51,6 +54,9 @@ public class GameCanvas extends JComponent {
         };
         animationTimer = new Timer(10, al);
         animationTimer.start();
+
+        // Render the GUI.
+        gui = new InGameGUI(keyBindings, self);
     }
 
     public void setPlayerClient(Player player) {
@@ -113,5 +119,8 @@ public class GameCanvas extends JComponent {
         self.updatePlayerAnimation(keyBindings.getPlayerAction(), keyBindings.getPlayerDirection());
         enemy.drawSprite(g2d);
         self.drawSprite(g2d);
+
+        // Render the GUI.
+        gui.renderGUI(g2d);
     }
 }

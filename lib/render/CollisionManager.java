@@ -64,7 +64,7 @@ public class CollisionManager {
         return collided;
     }
 
-    public boolean checkProjectileCollision() {
+    public boolean checkProjectileCollision(Rectangle projectileHitbox, Rectangle playerHitbox) {
         return false;
     }
 }
