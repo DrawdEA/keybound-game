@@ -327,10 +327,10 @@ public class Environment extends GameObject {
                 double screenY = worldY - player.getY() + player.getScreenY();
 
                 // Limit the render of the player for performance.
-                if (worldX + GameConfig.TILE_SIZE > player.getX() - player.getScreenX() &&
-                    worldX - GameConfig.TILE_SIZE < player.getX() + player.getScreenX() &&
-                    worldY + GameConfig.TILE_SIZE > player.getY() - player.getScreenY() &&
-                    worldY - GameConfig.TILE_SIZE < player.getY() + player.getScreenY()) {
+                if (worldX + GameConfig.TILE_SIZE * 4 > player.getX() - player.getScreenX() &&
+                    worldX - GameConfig.TILE_SIZE * 4 < player.getX() + player.getScreenX() &&
+                    worldY + GameConfig.TILE_SIZE * 2 > player.getY() - player.getScreenY() &&
+                    worldY - GameConfig.TILE_SIZE * 2 < player.getY() + player.getScreenY()) {
                         g2d.drawImage(tiles[mapNumbers[i][j]].image, (int) screenX, (int) screenY, GameConfig.TILE_SIZE, GameConfig.TILE_SIZE, null);
                     }
                 

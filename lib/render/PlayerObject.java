@@ -36,8 +36,8 @@ public class PlayerObject extends GameObject {
         super("PLAYER", xPosition, yPosition, s, s);
         isPlayer = iP;
         
-        screenX = GameConfig.SCREEN_LENGTH / 2 - (GameConfig.TILE_SIZE / 2);
-        screenY = GameConfig.SCREEN_HEIGHT / 2 - (GameConfig.TILE_SIZE / 2);
+        screenX = (GameConfig.SCREEN_LENGTH / 2) - (GameConfig.TILE_SIZE * 2);
+        screenY = (GameConfig.SCREEN_HEIGHT / 2) - (GameConfig.TILE_SIZE);
 
         // Set up the animation logic.
         currentFrame = 0;
@@ -257,7 +257,6 @@ public class PlayerObject extends GameObject {
     
                 if (animationType == "Idle") {
                     animationIndex = 0;
-
                 } else if (animationType == "Running") {
                     animationIndex = 8;
                 } else if (animationType == "Casting") {
@@ -308,7 +307,8 @@ public class PlayerObject extends GameObject {
         }
 
         // Only uncomment if wanna see the hitbox.
-        //g2d.setColor(Color.CYAN);
-        //g2d.drawRect((int) screenX + hitbox.x, (int) screenY + hitbox.y, hitbox.width, hitbox.height);
+        g2d.setColor(Color.CYAN);
+        g2d.drawRect((int) screenX + hitbox.x, (int) screenY + hitbox.y, hitbox.width, hitbox.height);
+        g2d.drawRect((int) screenX, (int) screenY, GameConfig.TILE_SIZE * 4, GameConfig.TILE_SIZE * 2);
     }
 }

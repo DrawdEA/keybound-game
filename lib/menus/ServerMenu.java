@@ -4,6 +4,8 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
+import lib.GameConfig;
+
 public class ServerMenu extends JPanel implements ActionListener {
     JLabel title;
     JButton back, start;
@@ -26,7 +28,7 @@ public class ServerMenu extends JPanel implements ActionListener {
         
         // ---- Set up frame ----- // 
         this.setFocusable(true);
-        this.setPreferredSize(new Dimension(800, 600));
+        this.setPreferredSize(new Dimension(GameConfig.SCREEN_LENGTH, GameConfig.SCREEN_HEIGHT));
         this.requestFocusInWindow();
         this.setLayout(new BorderLayout());
 
