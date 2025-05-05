@@ -20,10 +20,9 @@ public class InGameGUI {
     private KeyBindings keyBindings;
     private PlayerObject player;
 
-    public InGameGUI(KeyBindings kb, PlayerObject p) {
+    public InGameGUI(KeyBindings kb) {
         try {
             keyBindings = kb;
-            player = p;
 
             // Render the GUI elements.
             BufferedImage hearts = ImageIO.read(getClass().getResourceAsStream("/resources/gui/hearts.png"));
@@ -41,6 +40,9 @@ public class InGameGUI {
         }
     }
 
+    public void setupPlayer(PlayerObject p) {
+        player = p;
+    }
     public void renderGUI(Graphics2D g2d) {
         // Render the main GUI.
         for (int i = 0; i < 3; i++) {
@@ -48,7 +50,11 @@ public class InGameGUI {
         }
 
         // Render the health bar.
-        int playerHealth = 4; // Replace with instant updates
+        int playerHealth = 0;
+        if (player != null) {
+            playerHealth = player.getPlayerHealth();
+        }
+        
         for (int i = 0; i < 5; i++) {
             if (i < playerHealth) {
                 g2d.drawImage(fullHeart, 10 + 48 * i, 10, 48, 48, null);

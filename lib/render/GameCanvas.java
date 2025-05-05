@@ -56,7 +56,7 @@ public class GameCanvas extends JComponent {
         animationTimer.start();
 
         // Render the GUI.
-        gui = new InGameGUI(keyBindings, self);
+        gui = new InGameGUI(keyBindings);
     }
 
     public void setPlayerClient(Player player) {
@@ -65,14 +65,15 @@ public class GameCanvas extends JComponent {
 
     public void addPlayers(int id) {
         if (id == 1) {
-            self = new PlayerObject(GameConfig.TILE_SIZE * 64, GameConfig.TILE_SIZE * 43, GameConfig.TILE_SIZE, true);
-            enemy = new PlayerObject(GameConfig.TILE_SIZE * 64, GameConfig.TILE_SIZE * 64, GameConfig.TILE_SIZE + 2, false);
+            self = new PlayerObject(GameConfig.TILE_SIZE * 64, GameConfig.TILE_SIZE * 43, GameConfig.TILE_SIZE, true, id);
+            enemy = new PlayerObject(GameConfig.TILE_SIZE * 64, GameConfig.TILE_SIZE * 64, GameConfig.TILE_SIZE + 2, false, 2);
         } else {
-            self = new PlayerObject(GameConfig.TILE_SIZE * 64, GameConfig.TILE_SIZE * 64, GameConfig.TILE_SIZE + 2, true);
-            enemy = new PlayerObject(GameConfig.TILE_SIZE * 64, GameConfig.TILE_SIZE * 43, GameConfig.TILE_SIZE, false);
+            self = new PlayerObject(GameConfig.TILE_SIZE * 64, GameConfig.TILE_SIZE * 64, GameConfig.TILE_SIZE + 2, true, id);
+            enemy = new PlayerObject(GameConfig.TILE_SIZE * 64, GameConfig.TILE_SIZE * 43, GameConfig.TILE_SIZE, false, 1);
             
         }
 
+        gui.setupPlayer(self);
         repaint();
     }
 
