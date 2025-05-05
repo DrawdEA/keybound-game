@@ -8,11 +8,9 @@ import lib.objects.Environment;
 
 public class CollisionManager {
     private Environment environment;
-    private KeyBindings keyBindings;
     
-    public CollisionManager(Environment e, KeyBindings kB) {
+    public CollisionManager(Environment e) {
         environment = e;
-        keyBindings = kB;
     }
 
     public boolean checkWorldCollision(PlayerObject playerObject, String direction) {
@@ -65,6 +63,6 @@ public class CollisionManager {
     }
 
     public boolean checkProjectileCollision(Rectangle projectileHitbox, Rectangle playerHitbox) {
-        return false;
+        return projectileHitbox.intersects(playerHitbox);
     }
 }

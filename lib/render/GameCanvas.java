@@ -43,7 +43,7 @@ public class GameCanvas extends JComponent {
         
         // Set the game timer, key bindings, and collisions.
         keyBindings = new KeyBindings(this);
-        collisionManager = new CollisionManager(environment, keyBindings);
+        collisionManager = new CollisionManager(environment);
         ActionListener al;
         al = new ActionListener() {
             public void actionPerformed(ActionEvent ae) {

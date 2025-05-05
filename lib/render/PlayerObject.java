@@ -58,14 +58,14 @@ public class PlayerObject extends GameObject {
         hitbox.height = GameConfig.TILE_SIZE;
 
         // Create the player's health.
-        playerHealth = 5;
+        playerHealth = 4;
 
         // Generate the sprites.
         playerSprites = new BufferedImage[53];
         playerSpritesLeft = new BufferedImage[53];
 
         try {
-            BufferedImage playerMovements = ImageIO.read(getClass().getResourceAsStream(String.format("/resources/player/%s.png", colorPaths[id])));
+            BufferedImage playerMovements = ImageIO.read(getClass().getResourceAsStream(String.format("/resources/player/%s.png", colorPaths[id - 1])));
 
             // Idle movements.
             playerSprites[0] = playerMovements.getSubimage(0, 0, 64, 32);
@@ -133,7 +133,7 @@ public class PlayerObject extends GameObject {
             playerSprites[51] = playerMovements.getSubimage(384, 288, 64, 32);
             playerSprites[52] = playerMovements.getSubimage(448, 288, 64, 32);
 
-            BufferedImage playerMovementsLeft = ImageIO.read(getClass().getResourceAsStream(String.format("/resources/player/%s_flipped.png", colorPaths[id])));
+            BufferedImage playerMovementsLeft = ImageIO.read(getClass().getResourceAsStream(String.format("/resources/player/%s_flipped.png", colorPaths[id - 1])));
 
             // Idle movements.
             playerSpritesLeft[0] = playerMovementsLeft.getSubimage(0, 0, 64, 32);
