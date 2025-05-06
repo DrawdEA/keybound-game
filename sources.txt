@@ -5,6 +5,8 @@ https://www.youtube.com/playlist?list=PL_QPQmz5C6WUF-pOQDsbsKbaBZqXj4qSq // Goat
 https://stackoverflow.com/questions/2364856/initializing-a-boolean-array-in-java
 https://www.geeksforgeeks.org/java-program-to-get-a-character-from-a-string/
 https://www.tutorialspoint.com/swing/swing_key_event.htm
+https://stackoverflow.com/questions/794248/a-method-to-reverse-effect-of-java-string-split
+https://www.geeksforgeeks.org/copyonwritearraylist-in-java/
 
 https://github.com/nr-johnson/flip-sprite
 https://www.geeksforgeeks.org/enum-in-java/

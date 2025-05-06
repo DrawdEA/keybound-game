@@ -7,9 +7,7 @@ package lib.render;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-
 import javax.imageio.ImageIO;
-
 import lib.*;
 import lib.objects.*;
 
@@ -278,6 +276,11 @@ public class PlayerObject extends GameObject {
 
     public String getPositionDataString(){
         return String.format("%f-%f-%s", x, y, facing.toString());
+    }
+
+    public void setNewPosition(double x, double y){
+        this.x = x;
+        this.y = y;
     }
 
     @Override
