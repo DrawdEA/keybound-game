@@ -7,8 +7,8 @@ import lib.render.Direction;
 
 public class FireSpell extends Spell {
     // Notice that SPEED * maxAgeInTicks is the distance the fireball can travel
-    public final double SPEED = 15;
-    public final Color COLOR = Color.RED;
+    private final double SPEED = 15;
+    private final Color COLOR = Color.RED;
 
     private double x, y;
     private int width = 25, height = 25;

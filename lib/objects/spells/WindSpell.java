@@ -6,8 +6,8 @@ import java.awt.geom.Ellipse2D;
 import lib.render.Direction;
 public class WindSpell extends Spell {
     // Notice though that the final size of the spell is SPEED * maxAgeInTicks 
-    public final double SPEED = 20;
-    public final Color COLOR = Color.GRAY;
+    private final double SPEED = 20;
+    private final Color COLOR = Color.GRAY;
 
     private double x, y;
     private double width = 25, height = 25;

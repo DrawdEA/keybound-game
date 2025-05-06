@@ -1,30 +1,87 @@
 package lib.objects.spells;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.geom.Rectangle2D;
+import lib.render.Direction;
 public class EarthSpell extends Spell {
-    public EarthSpell(int casterId, double x, double y, double width, double height) {
-        super("EARTH_SPELL", casterId, x, y, width, height);
+    private final Color COLOR = Color.ORANGE;
+    private final double WALL_OFFSET = 30;
+
+    private double wallXLength;
+    private double wallYLength;
+
+    private double x, y;
+    private double width = 25, height = 25;
+    private Direction dir;
+
+    private int wallHp;
+
+    private boolean expired;
+    private int currAgeInTicks = 0;
+    private final int maxAgeInTicks = 200;
+
+    public EarthSpell(int casterId, double x, double y, Direction dir) {
+        super("EARTH_SPELL", casterId, x, y, 25, 25);
+
+        this.dir = dir;
+        wallHp = 1;
+        expired = false;
+
+        if (dir == Direction.LEFT) {
+            this.x = x - WALL_OFFSET;
+            this.y = y;
+        } else if (dir == Direction.RIGHT) {
+            this.x = x + WALL_OFFSET;
+            this.y = y;
+        } else if (dir == Direction.DOWN) {
+            this.x = x;
+            this.y = y + WALL_OFFSET;
+        } else if (dir == Direction.UP) {
+            this.x = x;
+            this.y = y - WALL_OFFSET;
+        } 
+
+        if (dir == Direction.LEFT || dir == Direction.RIGHT){
+            wallXLength = 10;
+            wallYLength = 100;
+        } else {
+            wallXLength = 100;
+            wallYLength = 10;
+        }
     }
 
     @Override
     public void update() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        if (wallHp <= 0) {
+            expired = true;
+        }
+
+        currAgeInTicks++;
+        if(currAgeInTicks >= maxAgeInTicks) {
+            expired = true;
+        }
     }
 
     @Override
     public String getDataString() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return String.format("EARTH_SPELL-%f-%f-%s-%d", x, y, dir.toString(), casterId);
     }
 
     @Override
     public void onHit() {
+        // If a spell that isn't the caster hits it decreases hp by 1
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public void drawSprite(Graphics2D g2d) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public boolean isExpired() {
+        return expired;
     }
 
-    
+    @Override
+    public void drawSprite(Graphics2D g2d) {
+        g2d.setColor(COLOR);
+        g2d.fill(new Rectangle2D.Double(x, y, wallXLength, wallYLength));
+    }    
 }

@@ -161,6 +161,21 @@ public class GameServer {
                                     Double.parseDouble(params[2]), 
                                     Direction.valueOf(params[3]))
                                 );
+                        
+                        // EARTH SPELL
+                        } else if (entity.startsWith("EARTH_SPELL")) {
+                            String[] params = entity.split("-");
+                            
+                            // Update the player positions
+                            playerPositions.get(playerID-1)[0] = Double.parseDouble(params[1]);
+                            playerPositions.get(playerID-1)[1] = Double.parseDouble(params[2]);
+
+                            activeSpells.add(new EarthSpell(
+                                    playerID,
+                                    Double.parseDouble(params[1]), 
+                                    Double.parseDouble(params[2]), 
+                                    Direction.valueOf(params[3]))
+                                );
                         } 
                     }
                 }

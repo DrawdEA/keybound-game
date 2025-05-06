@@ -7,8 +7,8 @@ import lib.render.Direction;
 
 public class WaterSpell extends Spell {
     // Notice though that the final size of the spell is SPEED * maxAgeInTicks 
-    public final double SPEED = 5;
-    public final Color COLOR = Color.CYAN;
+    private final double SPEED = 5;
+    private final Color COLOR = Color.CYAN;
 
     private double x, y;
     private double width = 25, height = 25;

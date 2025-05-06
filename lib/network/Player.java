@@ -126,8 +126,7 @@ public class Player {
                                     gameCanvas.addSpell(new WindSpell(playerID, x, y, dir));
                                 // EARTH SPELL
                                 } else if (spellData[0].equals("EARTH_SPELL")){
-                                    
-                                
+                                    gameCanvas.addSpell(new EarthSpell(playerID, x, y, dir));
                                 }
                             }
                         }
