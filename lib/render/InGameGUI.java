@@ -2,8 +2,6 @@ package lib.render;
 
 import java.awt.*;
 import java.awt.image.*;
-import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 
 import javax.imageio.ImageIO;
@@ -20,6 +18,7 @@ public class InGameGUI {
     private KeyBindings keyBindings;
     private PlayerObject player;
 
+    // Initializes a game GUI.
     public InGameGUI(KeyBindings kb) {
         try {
             keyBindings = kb;
@@ -40,9 +39,12 @@ public class InGameGUI {
         }
     }
 
+    // Sets up the player.
     public void setupPlayer(PlayerObject p) {
         player = p;
     }
+    
+    // Renders the GUI for the player.
     public void renderGUI(Graphics2D g2d) {
         // Render the main GUI.
         for (int i = 0; i < 3; i++) {

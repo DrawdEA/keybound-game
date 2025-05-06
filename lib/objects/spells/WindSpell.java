@@ -1,6 +1,8 @@
 package lib.objects.spells;
 
 import java.awt.Graphics2D;
+
+import lib.render.CollisionManager;
 public class WindSpell extends Spell {
     public WindSpell(int casterId, double x, double y, double width, double height) {
         super("WIND_SPELL", casterId, x, y, width, height);
@@ -17,7 +19,7 @@ public class WindSpell extends Spell {
     }
 
     @Override
-    public void onHit() {
+    public void handleCollisions(CollisionManager cm) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

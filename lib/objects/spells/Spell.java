@@ -1,6 +1,7 @@
 package lib.objects.spells;
 
 import lib.objects.*;
+import lib.render.CollisionManager;
 import lib.render.Direction;
 
 import java.awt.Graphics2D;
@@ -33,7 +34,7 @@ public abstract class Spell extends GameObject {
     public abstract String getDataString();
 
     // TODO: Collisions
-    public abstract void onHit();
+    public abstract void handleCollisions(CollisionManager cm);
 
     public abstract void drawSprite(Graphics2D g2d);
 }

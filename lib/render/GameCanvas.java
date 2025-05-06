@@ -74,6 +74,7 @@ public class GameCanvas extends JComponent {
         }
 
         gui.setupPlayer(self);
+        collisionManager.setupPlayer(enemy);
         repaint();
     }
 
@@ -111,8 +112,9 @@ public class GameCanvas extends JComponent {
             object.drawSprite(g2d);
         }
 
-        for (GameObject spell : spells) {
+        for (Spell spell : spells) {
             spell.drawSprite(g2d);
+            spell.handleCollisions(collisionManager);
         }
 
         // Draw the players.
