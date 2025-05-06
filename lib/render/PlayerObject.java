@@ -23,6 +23,7 @@ public class PlayerObject extends GameObject {
     private int animationCounter;
     private int animationIndex;
 
+    private Direction lastHorizontalFacing;
     private Direction facing;
 
     private Rectangle hitbox;
@@ -42,6 +43,7 @@ public class PlayerObject extends GameObject {
         animationCounter = 0;
         animationIndex = 0;
         facing = Direction.RIGHT;
+        lastHorizontalFacing = Direction.RIGHT;
 
         // Set up the hitbox.
         hitbox = new Rectangle();
@@ -242,8 +244,14 @@ public class PlayerObject extends GameObject {
         } else {
             if (direction.contains("Right")) {
                 facing = Direction.RIGHT;
+                lastHorizontalFacing = Direction.RIGHT;
             } else if (direction.contains("Left")) {
                 facing = Direction.LEFT;
+                lastHorizontalFacing = Direction.LEFT;
+            } else if (direction.contains("Up")) {
+                facing = Direction.UP;
+            } else if (direction.contains("Down")){
+                facing = Direction.DOWN;
             }
     
             if (animationCounter == GameConfig.ANIMATION_COUNTER) {
@@ -296,7 +304,7 @@ public class PlayerObject extends GameObject {
         }
         g2d.setComposite(originalComposite);
 
-        if (facing == Direction.LEFT) {
+        if (lastHorizontalFacing == Direction.LEFT) {
             if (isPlayer) {
                 g2d.drawImage(playerSpritesLeft[animationIndex], (int) screenX, (int) screenY, GameConfig.TILE_SIZE * 4, GameConfig.TILE_SIZE * 2, null);
             } else {
@@ -311,7 +319,7 @@ public class PlayerObject extends GameObject {
         }
 
         // Only uncomment if wanna see the hitbox.
-        //g2d.setColor(Color.CYAN);
-        //g2d.drawRect((int) screenX + hitbox.x, (int) screenY + hitbox.y, hitbox.width, hitbox.height);
+        // g2d.setColor(Color.CYAN);
+        // g2d.drawRect((int) screenX + hitbox.x, (int) screenY + hitbox.y, hitbox.width, hitbox.height);
     }
 }

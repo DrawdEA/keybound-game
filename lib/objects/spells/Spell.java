@@ -1,11 +1,13 @@
 package lib.objects.spells;
 
+import java.awt.Graphics2D;
 import lib.objects.*;
 import lib.render.Direction;
 
-import java.awt.Graphics2D;
-
 public abstract class Spell extends GameObject {
+    protected final double PLAYER_X_WIDTH = 100;
+    protected final double PLAYER_Y_WIDTH = 100;
+
     protected int casterId;
     protected Direction direction;
 
@@ -22,6 +24,10 @@ public abstract class Spell extends GameObject {
         this.casterId = casterId;
         this.direction = null;
     }
+
+    // public double adjustToPlayerHand(double x){
+        
+    // }
 
     // Abstract update method: must be implemented by subclasses
     public abstract void update();
