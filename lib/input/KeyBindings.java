@@ -5,12 +5,8 @@
 package lib.input;
 
 import java.awt.event.*;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.stream.IntStream;
-
 import javax.swing.*;
-
 import lib.GameConfig;
 import lib.network.Player;
 import lib.render.*;
@@ -250,20 +246,24 @@ public class KeyBindings {
         // Else if is important since if someone pressed "waterh" we don't want to activate both earth and water
         // BASIC SPELLS
         if (isStringPressedDown("fire")) {
-
-            System.out.println("FIRE");
             attacking1 = true;
             player.requestToCast("FIRE_SPELL");
             attacking1 = false;
             resetLetters("fire");
         } else if (isStringPressedDown("water")) {
-            System.out.println("WATER");
+            attacking1 = true;
+            player.requestToCast("WATER_SPELL");
+            attacking1 = false;
             resetLetters("water");
         } else if (isStringPressedDown("earth")) {
-            System.out.println("EARTH");
+            attacking1 = true;
+            player.requestToCast("EARTH_SPELL");
+            attacking1 = false;
             resetLetters("earth");
         } else if (isStringPressedDown("wind")) {
-            System.out.println("WIND");
+            attacking1 = true;
+            player.requestToCast("WIND_SPELL");
+            attacking1 = false;
             resetLetters("wind");
         }
     }

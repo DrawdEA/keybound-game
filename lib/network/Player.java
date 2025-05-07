@@ -6,7 +6,7 @@ package lib.network;
 
 import java.io.*;
 import java.net.*;
-import lib.objects.spells.FireSpell;
+import lib.objects.spells.*;
 import lib.render.*;
 
 public class Player {
@@ -16,6 +16,8 @@ public class Player {
     private WriteToServer wtsRunnable;
 
     private GameCanvas gameCanvas;
+    
+    private String wantsToCast = "";
     
     public Player() {
         gameCanvas = new GameCanvas();
@@ -79,13 +81,53 @@ public class Player {
                         gameCanvas.clearSpells();
                         for (int i = 2; i < enemyData.length; i++) {
                             String[] spellData = enemyData[i].split("-");
-                            if (spellData[0].equals("FIRE_SPELL")) {
-                                gameCanvas.addSpell(new FireSpell(
-                                    playerID, 
-                                    Double.parseDouble(spellData[1]) - player.getX() + player.getScreenX(), 
-                                    Double.parseDouble(spellData[2]) - player.getY() + player.getScreenY(), 
-                                    Direction.valueOf(spellData[3])
-                                ));
+                            
+                            double x;
+                            double y;
+                            Direction dir;
+
+                            if (spellData[0].contains("_SPELL")){
+                                // Transform the x and the y based on the POV of the player 
+                                x = Double.parseDouble(spellData[1]) - player.getX() + player.getScreenX();
+                                y = Double.parseDouble(spellData[2]) - player.getY() + player.getScreenY();
+                                dir = Direction.valueOf(spellData[3]);
+
+                                // FIRE SPELL
+                                if (spellData[0].equals("FIRE_SPELL")) {
+                                    gameCanvas.addSpell(new FireSpell(playerID, x, y, dir));
+                                
+                                // WATER SPELL
+                                } else if (spellData[0].equals("WATER_SPELL")) {
+                                    if (spellData.length > 4) {
+                                        double serverEndingBar = Double.parseDouble(spellData[4]);
+                                        
+                                        // Transform the endingBar to screen coordinates
+                                        double transformedEndingBar = 0;
+                                        if (dir == Direction.LEFT || dir == Direction.RIGHT) {
+                                            transformedEndingBar = serverEndingBar - player.getX() + player.getScreenX();
+                                        } else if (dir == Direction.UP || dir == Direction.DOWN) {
+                                            transformedEndingBar = serverEndingBar - player.getY() + player.getScreenY();
+                                        }
+                                        
+                                        gameCanvas.addSpell(new WaterSpell(playerID, x, y, dir, transformedEndingBar));
+                                    }
+                                
+                                // WIND SPELL
+                                } else if (spellData[0].equals("WIND_SPELL")){
+                                    int spellCasterId = Integer.parseInt(spellData[4]);
+
+                                    if (spellCasterId == playerID) {
+                                        gameCanvas.getOwnPlayer().setNewPosition(
+                                            Double.parseDouble(spellData[1]), 
+                                            Double.parseDouble(spellData[2])
+                                        );
+                                    }
+                                    
+                                    gameCanvas.addSpell(new WindSpell(playerID, x, y, dir));
+                                // EARTH SPELL
+                                } else if (spellData[0].equals("EARTH_SPELL")){
+                                    gameCanvas.addSpell(new EarthSpell(playerID, x, y, dir));
+                                }
                             }
                         }
                     }
@@ -143,7 +185,7 @@ public class Player {
                     try {
                         Thread.sleep(25);
                     } catch (InterruptedException ex) {
-                        System.out.println("InterrptedException from WTS run()");
+                        System.out.println("Interrupted Exception from WTS run()");
                     }
                 }
             } catch(IOException ex) {
@@ -151,8 +193,6 @@ public class Player {
             }
         }
     }
-
-    private String wantsToCast = "";
 
     public void requestToCast(String spellName) {
         gameCanvas.getOwnPlayer().overrideAnimation("Attacking1");

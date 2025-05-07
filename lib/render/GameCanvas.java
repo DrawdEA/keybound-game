@@ -82,6 +82,10 @@ public class GameCanvas extends JComponent {
         spells.clear();
     }
 
+    public void setOwnPlayerPosition(double x, double y){
+        self.setNewPosition(x, y);
+    }
+
     public void addSpell(Spell spell) {
         spells.add(spell);
     }
