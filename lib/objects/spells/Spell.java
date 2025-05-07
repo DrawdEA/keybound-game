@@ -1,12 +1,13 @@
 package lib.objects.spells;
 
 import java.awt.Graphics2D;
+import lib.GameConfig;
 import lib.objects.*;
 import lib.render.Direction;
 
 public abstract class Spell extends GameObject {
-    protected final double PLAYER_X_WIDTH = 100;
-    protected final double PLAYER_Y_WIDTH = 100;
+    protected final double PLAYER_X_WIDTH = GameConfig.TILE_SIZE * 4;
+    protected final double PLAYER_Y_WIDTH = GameConfig.TILE_SIZE * 2;
 
     protected int casterId;
     protected Direction direction;
@@ -14,6 +15,10 @@ public abstract class Spell extends GameObject {
     // Constructor for directed spells (e.g., fireball)
     public Spell(String name, int casterId, double x, double y, double width, double height, Direction direction) {
         super(name, x, y, width, height);
+
+        this.x = x;
+        this.y = y;
+
         this.casterId = casterId;
         this.direction = direction;
     }
@@ -24,10 +29,6 @@ public abstract class Spell extends GameObject {
         this.casterId = casterId;
         this.direction = null;
     }
-
-    // public double adjustToPlayerHand(double x){
-        
-    // }
 
     // Abstract update method: must be implemented by subclasses
     public abstract void update();

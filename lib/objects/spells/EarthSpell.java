@@ -3,10 +3,13 @@ package lib.objects.spells;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
+import lib.GameConfig;
 import lib.render.Direction;
+
 public class EarthSpell extends Spell {
     private final Color COLOR = Color.ORANGE;
     private final double WALL_OFFSET = 30;
+    private final double TILE = GameConfig.TILE_SIZE;
 
     private double wallXLength;
     private double wallYLength;
@@ -28,20 +31,6 @@ public class EarthSpell extends Spell {
         wallHp = 1;
         expired = false;
 
-        if (dir == Direction.LEFT) {
-            this.x = x - WALL_OFFSET;
-            this.y = y;
-        } else if (dir == Direction.RIGHT) {
-            this.x = x + WALL_OFFSET;
-            this.y = y;
-        } else if (dir == Direction.DOWN) {
-            this.x = x;
-            this.y = y + WALL_OFFSET;
-        } else if (dir == Direction.UP) {
-            this.x = x;
-            this.y = y - WALL_OFFSET;
-        } 
-
         if (dir == Direction.LEFT || dir == Direction.RIGHT){
             wallXLength = 10;
             wallYLength = 100;
@@ -49,6 +38,20 @@ public class EarthSpell extends Spell {
             wallXLength = 100;
             wallYLength = 10;
         }
+
+        if (dir == Direction.LEFT) {
+            this.x = x - WALL_OFFSET;
+            this.y = y + TILE * 1.5 - wallYLength/2;
+        } else if (dir == Direction.RIGHT) {
+            this.x = x + TILE * 2 + WALL_OFFSET;
+            this.y = y + TILE * 1.5 - wallYLength/2;
+        } else if (dir == Direction.DOWN) {
+            this.x = x + TILE * 1.75 - wallXLength/2;
+            this.y = y + TILE * 1.55 + WALL_OFFSET;
+        } else if (dir == Direction.UP) {
+            this.x = x + TILE * 1.75 - wallXLength/2;
+            this.y = y - WALL_OFFSET;
+        } 
     }
 
     @Override

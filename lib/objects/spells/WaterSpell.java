@@ -3,12 +3,14 @@ package lib.objects.spells;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Polygon;
+import lib.GameConfig;
 import lib.render.Direction;
 
 public class WaterSpell extends Spell {
     // Notice though that the final size of the spell is SPEED * maxAgeInTicks 
     private final double SPEED = 5;
     private final Color COLOR = Color.CYAN;
+    private final double TILE = GameConfig.TILE_SIZE;
 
     private double x, y;
     private double width = 25, height = 25;
@@ -23,15 +25,15 @@ public class WaterSpell extends Spell {
     public WaterSpell(int casterId, double x, double y, Direction dir) {
         super("WATER_SPELL", casterId, x, y, 25, 25, dir);
 
-        this.x = x;
-        this.y = y;
+        this.x = adjustToPlayerEdgeCenterX(x, dir);
+        this.y = adjustToPlayerEdgeCenterY(y, dir);
         this.dir = dir;
 
         // Initialize endingBar to match axis of initial direction
         if (dir == Direction.LEFT || dir == Direction.RIGHT) {
-            endingBar = x;
+            endingBar = adjustToPlayerEdgeCenterX(x, dir);
         } else if (dir == Direction.UP || dir == Direction.DOWN) {
-            endingBar = y;
+            endingBar = adjustToPlayerEdgeCenterY(y, dir);
         }
 
         expired = false;
@@ -137,5 +139,26 @@ public class WaterSpell extends Spell {
         }
         
         g2d.fill(new Polygon(xPoints, yPoints, 3));
+    }
+
+    
+    public final double adjustToPlayerEdgeCenterX(double x, Direction dir){
+        if (dir == Direction.DOWN || dir == direction.UP) {
+            return x + PLAYER_X_WIDTH/2; 
+        } else if (dir == Direction.RIGHT){
+            return x + PLAYER_X_WIDTH;
+        } else {
+            return x;
+        }
+    }
+
+    public final double adjustToPlayerEdgeCenterY(double y, Direction dir){
+        if (dir == Direction.LEFT || dir == Direction.RIGHT) {
+            return y + PLAYER_Y_WIDTH / 2;
+        } else if (dir == Direction.DOWN) {
+            return y + PLAYER_Y_WIDTH;
+        } else {
+            return y;
+        }
     }
 }
