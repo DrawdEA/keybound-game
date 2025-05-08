@@ -12,6 +12,8 @@ import lib.*;
 import lib.objects.*;
 
 public class PlayerObject extends GameObject {
+    public static String[] colorPaths = {"purple", "red", "green", "gray", "yellow", "blue", "orange"};
+
     public final double screenX, screenY;
     private boolean isPlayer;
     private BufferedImage[] playerSprites;
@@ -31,12 +33,15 @@ public class PlayerObject extends GameObject {
     private boolean overridingAnimation;
     private int overridingIndex;
 
-    public PlayerObject(int xPosition, int yPosition, int s, boolean iP) {
+    private int playerHealth;
+
+
+    public PlayerObject(int xPosition, int yPosition, int s, boolean iP, int id) {
         super("PLAYER", xPosition, yPosition, s, s);
         isPlayer = iP;
         
-        screenX = GameConfig.SCREEN_LENGTH / 2 - (GameConfig.TILE_SIZE / 2);
-        screenY = GameConfig.SCREEN_HEIGHT / 2 - (GameConfig.TILE_SIZE / 2);
+        screenX = (GameConfig.SCREEN_LENGTH / 2) - (GameConfig.TILE_SIZE * 2);
+        screenY = (GameConfig.SCREEN_HEIGHT / 2) - (GameConfig.TILE_SIZE);
 
         // Set up the animation logic.
         currentFrame = 0;
@@ -52,12 +57,15 @@ public class PlayerObject extends GameObject {
         hitbox.width = GameConfig.TILE_SIZE;
         hitbox.height = GameConfig.TILE_SIZE;
 
+        // Create the player's health.
+        playerHealth = 4;
+
         // Generate the sprites.
         playerSprites = new BufferedImage[53];
         playerSpritesLeft = new BufferedImage[53];
 
         try {
-            BufferedImage playerMovements = ImageIO.read(getClass().getResourceAsStream("/resources/player/Elite Mage Sprite Sheet.png"));
+            BufferedImage playerMovements = ImageIO.read(getClass().getResourceAsStream(String.format("/resources/player/%s.png", colorPaths[id - 1])));
 
             // Idle movements.
             playerSprites[0] = playerMovements.getSubimage(0, 0, 64, 32);
@@ -125,7 +133,7 @@ public class PlayerObject extends GameObject {
             playerSprites[51] = playerMovements.getSubimage(384, 288, 64, 32);
             playerSprites[52] = playerMovements.getSubimage(448, 288, 64, 32);
 
-            BufferedImage playerMovementsLeft = ImageIO.read(getClass().getResourceAsStream("/resources/player/Elite Mage Sprite Sheet_flipped.png"));
+            BufferedImage playerMovementsLeft = ImageIO.read(getClass().getResourceAsStream(String.format("/resources/player/%s_flipped.png", colorPaths[id - 1])));
 
             // Idle movements.
             playerSpritesLeft[0] = playerMovementsLeft.getSubimage(0, 0, 64, 32);
@@ -212,6 +220,12 @@ public class PlayerObject extends GameObject {
         return hitbox;
     }
 
+    // One that is relative.
+    public Rectangle getRelativeHitbox() {
+        Rectangle relativeHitbox = new Rectangle((int) x + hitbox.x, (int) y + hitbox.y, hitbox.width, hitbox.height);
+        return relativeHitbox;
+    }
+
     public Direction getDirection() {
         return facing;
     }
@@ -263,7 +277,6 @@ public class PlayerObject extends GameObject {
     
                 if (animationType == "Idle") {
                     animationIndex = 0;
-
                 } else if (animationType == "Running") {
                     animationIndex = 8;
                 } else if (animationType == "Casting") {
@@ -284,6 +297,14 @@ public class PlayerObject extends GameObject {
 
     public String getPositionDataString(){
         return String.format("%f-%f-%s", x, y, facing.toString());
+    }
+
+    public int getPlayerHealth() {
+        return playerHealth;
+    }
+
+    public void damagePlayer(int damage) {
+        playerHealth = playerHealth - damage;
     }
 
     public void setNewPosition(double x, double y){
@@ -319,7 +340,8 @@ public class PlayerObject extends GameObject {
         }
 
         // Only uncomment if wanna see the hitbox.
-        // g2d.setColor(Color.CYAN);
-        // g2d.drawRect((int) screenX + hitbox.x, (int) screenY + hitbox.y, hitbox.width, hitbox.height);
+        //g2d.setColor(Color.CYAN);
+        //g2d.drawRect((int) screenX + hitbox.x, (int) screenY + hitbox.y, hitbox.width, hitbox.height);
+        //g2d.drawRect((int) screenX, (int) screenY, GameConfig.TILE_SIZE * 4, GameConfig.TILE_SIZE * 2);
     }
 }

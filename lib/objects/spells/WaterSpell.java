@@ -2,6 +2,8 @@ package lib.objects.spells;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+
+import lib.render.CollisionManager;
 import java.awt.Polygon;
 import lib.GameConfig;
 import lib.render.Direction;
@@ -78,7 +80,7 @@ public class WaterSpell extends Spell {
     }
 
     @Override
-    public void onHit() {
+    public void handleCollisions(CollisionManager cm) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

@@ -2,6 +2,8 @@ package lib.objects.spells;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+
+import lib.render.CollisionManager;
 import java.awt.geom.Ellipse2D;
 import lib.GameConfig;
 import lib.render.Direction;
@@ -69,8 +71,7 @@ public class WindSpell extends Spell {
     }
 
     @Override
-    public void onHit() {
-        // Maybe make it so if you dash through an enemy you deal damage too ? 
+    public void handleCollisions(CollisionManager cm) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

@@ -24,6 +24,9 @@ public class GameCanvas extends JComponent {
     private Environment environment;
     private Player selfPlayerClient;
 
+    // The Game GUI.
+    private InGameGUI gui;
+
     // Miscellaneous.
     private Timer animationTimer;
     private KeyBindings keyBindings;
@@ -40,7 +43,7 @@ public class GameCanvas extends JComponent {
         
         // Set the game timer, key bindings, and collisions.
         keyBindings = new KeyBindings(this);
-        collisionManager = new CollisionManager(environment, keyBindings);
+        collisionManager = new CollisionManager(environment);
         ActionListener al;
         al = new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
@@ -51,6 +54,9 @@ public class GameCanvas extends JComponent {
         };
         animationTimer = new Timer(10, al);
         animationTimer.start();
+
+        // Render the GUI.
+        gui = new InGameGUI(keyBindings);
     }
 
     public void setPlayerClient(Player player) {
@@ -59,14 +65,16 @@ public class GameCanvas extends JComponent {
 
     public void addPlayers(int id) {
         if (id == 1) {
-            self = new PlayerObject(GameConfig.TILE_SIZE * 64, GameConfig.TILE_SIZE * 43, GameConfig.TILE_SIZE, true);
-            enemy = new PlayerObject(GameConfig.TILE_SIZE * 64, GameConfig.TILE_SIZE * 64, GameConfig.TILE_SIZE + 2, false);
+            self = new PlayerObject(GameConfig.TILE_SIZE * 64, GameConfig.TILE_SIZE * 43, GameConfig.TILE_SIZE, true, id);
+            enemy = new PlayerObject(GameConfig.TILE_SIZE * 64, GameConfig.TILE_SIZE * 64, GameConfig.TILE_SIZE + 2, false, 2);
         } else {
-            self = new PlayerObject(GameConfig.TILE_SIZE * 64, GameConfig.TILE_SIZE * 64, GameConfig.TILE_SIZE + 2, true);
-            enemy = new PlayerObject(GameConfig.TILE_SIZE * 64, GameConfig.TILE_SIZE * 43, GameConfig.TILE_SIZE, false);
+            self = new PlayerObject(GameConfig.TILE_SIZE * 64, GameConfig.TILE_SIZE * 64, GameConfig.TILE_SIZE + 2, true, id);
+            enemy = new PlayerObject(GameConfig.TILE_SIZE * 64, GameConfig.TILE_SIZE * 43, GameConfig.TILE_SIZE, false, 1);
             
         }
 
+        gui.setupPlayer(self);
+        collisionManager.setupPlayer(enemy);
         repaint();
     }
 
@@ -108,8 +116,9 @@ public class GameCanvas extends JComponent {
             object.drawSprite(g2d);
         }
 
-        for (GameObject spell : spells) {
+        for (Spell spell : spells) {
             spell.drawSprite(g2d);
+            spell.handleCollisions(collisionManager);
         }
 
         // Draw the players.
@@ -117,5 +126,8 @@ public class GameCanvas extends JComponent {
         self.updatePlayerAnimation(keyBindings.getPlayerAction(), keyBindings.getPlayerDirection());
         enemy.drawSprite(g2d);
         self.drawSprite(g2d);
+
+        // Render the GUI.
+        gui.renderGUI(g2d);
     }
 }

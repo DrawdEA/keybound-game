@@ -1,10 +1,12 @@
 package lib.objects.spells;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
+import java.awt.*;
 import java.awt.geom.Rectangle2D;
+
+import lib.render.CollisionManager;
 import lib.GameConfig;
 import lib.render.Direction;
+import lib.render.PlayerObject;
 
 public class FireSpell extends Spell {
     // Notice that SPEED * maxAgeInTicks is the distance the fireball can travel
@@ -19,6 +21,8 @@ public class FireSpell extends Spell {
     private boolean expired;
     private int currAgeInTicks = 0;
     private final int maxAgeInTicks = 30;
+
+    private Rectangle hitbox;
 
     public FireSpell(int casterId, double x, double y, Direction dir) {
         super("FIRE_SPELL", casterId, x, y, 25, 25, dir);
@@ -52,11 +56,11 @@ public class FireSpell extends Spell {
         // Move the fire ball in the direction the player is facing
         if (dir == Direction.UP){
             y -= SPEED;
-        } else if (dir == Direction.DOWN){
+        } else if (dir == Direction.DOWN) {
             y += SPEED;
-        } else if (dir == Direction.LEFT){
+        } else if (dir == Direction.LEFT) {
             x -= SPEED;
-        } else if (dir == Direction.RIGHT){
+        } else if (dir == Direction.RIGHT) {
             x += SPEED;
         }
 
@@ -73,15 +77,23 @@ public class FireSpell extends Spell {
     }
 
     @Override
-    public void onHit() {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public void handleCollisions(CollisionManager cm) {
+        
+        PlayerObject playerHit = cm.checkProjectileCollision(hitbox);
+        if (playerHit != null) {
+            System.out.println("FIRE SPELL HIT!");
+            playerHit.damagePlayer(1);
+        }
+
+        // Remove the firespell.
+        expired = true;
     }
 
     
     @Override
     public void drawSprite(Graphics2D g2d) {
         g2d.setColor(COLOR);
-        g2d.fill(new Rectangle2D.Double(x, y, width, height));
-    } 
-
+        hitbox = new Rectangle((int) x, (int) y, width, height);
+        g2d.fill(hitbox);
+    }
 }

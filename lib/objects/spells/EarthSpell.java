@@ -2,6 +2,8 @@ package lib.objects.spells;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+
+import lib.render.CollisionManager;
 import java.awt.geom.Rectangle2D;
 import lib.GameConfig;
 import lib.render.Direction;
@@ -72,8 +74,7 @@ public class EarthSpell extends Spell {
     }
 
     @Override
-    public void onHit() {
-        // If a spell that isn't the caster hits it decreases hp by 1
+    public void handleCollisions(CollisionManager cm) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

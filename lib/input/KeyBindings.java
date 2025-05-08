@@ -295,4 +295,22 @@ public class KeyBindings {
             letters[spell.charAt(i) - 97] = false;
         }
     }
+
+    public String getLetters() {
+        String outputString = "";
+
+        for (int i = 0; i < letters.length; i++) {
+            if (letters[i]) {
+                char correspondingLetter = (char) ('A' + i);
+                if (!outputString.isEmpty()) {
+                    outputString = outputString + " ";
+                }
+                outputString = outputString + correspondingLetter; 
+            }
+        }
+
+        return outputString;
+    }
 }
+
+    

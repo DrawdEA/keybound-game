@@ -3,16 +3,18 @@ package lib.render;
 import java.awt.Rectangle;
 
 import lib.GameConfig;
-import lib.input.KeyBindings;
 import lib.objects.Environment;
 
 public class CollisionManager {
     private Environment environment;
-    private KeyBindings keyBindings;
+    private PlayerObject player;
     
-    public CollisionManager(Environment e, KeyBindings kB) {
+    public CollisionManager(Environment e) {
         environment = e;
-        keyBindings = kB;
+    }
+
+    public void setupPlayer(PlayerObject p) {
+        player = p;
     }
 
     public boolean checkWorldCollision(PlayerObject playerObject, String direction) {
@@ -64,7 +66,10 @@ public class CollisionManager {
         return collided;
     }
 
-    public boolean checkProjectileCollision() {
-        return false;
+    public PlayerObject checkProjectileCollision(Rectangle projectileHitbox) {
+        if (projectileHitbox.intersects(player.getRelativeHitbox())) {
+            return player;
+        }
+        return null;
     }
 }
