@@ -137,13 +137,15 @@ public class GameServer {
                                 );
                             } 
                             // If we have all parameters including endingBar
-                            else if (params.length == 5) {
+                            else if (params.length >= 5) {
                                 activeSpells.add(new WaterSpell(
                                     playerID,
                                     Double.parseDouble(params[1]), 
                                     Double.parseDouble(params[2]), 
                                     Direction.valueOf(params[3]),
-                                    Double.parseDouble(params[4])
+                                    Double.parseDouble(params[4]),
+                                    Integer.parseInt(params[5]),
+                                    Integer.parseInt(params[6])
                                 ));
                             }
                         

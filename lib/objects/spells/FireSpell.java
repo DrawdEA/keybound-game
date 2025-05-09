@@ -1,10 +1,8 @@
 package lib.objects.spells;
 
 import java.awt.*;
-import java.awt.geom.Rectangle2D;
-
-import lib.render.CollisionManager;
 import lib.GameConfig;
+import lib.render.CollisionManager;
 import lib.render.Direction;
 import lib.render.PlayerObject;
 

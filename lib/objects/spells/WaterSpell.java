@@ -2,15 +2,10 @@ package lib.objects.spells;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-
-import lib.render.CollisionManager;
 import java.awt.Polygon;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
-
 import lib.GameConfig;
+import lib.render.CollisionManager;
 import lib.render.Direction;
 
 public class WaterSpell extends Spell {
@@ -78,13 +73,16 @@ public class WaterSpell extends Spell {
     }
 
     // Static Rendering
-    public WaterSpell(int casterId, double x, double y, Direction dir, double endingBar) {
+    public WaterSpell(int casterId, double x, double y, Direction dir, double endingBar, int animationCounter, int currentFrame) {
         super("WATER_SPELL", casterId, x, y, 25, 25, dir);
 
         this.x = x;
         this.y = y;
         this.dir = dir;
         this.endingBar = endingBar;
+
+        this.animationCounter = animationCounter;
+        this.currentFrame = currentFrame;
 
         expired = false;
 
@@ -133,7 +131,7 @@ public class WaterSpell extends Spell {
 
     @Override
     public String getDataString() {
-        return String.format("WATER_SPELL-%f-%f-%s-%f", x, y, dir.toString(), endingBar);
+        return String.format("WATER_SPELL-%f-%f-%s-%f-%d-%d", x, y, dir.toString(), endingBar, animationCounter, currentFrame);
     }
 
     @Override

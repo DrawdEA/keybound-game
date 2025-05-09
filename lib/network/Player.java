@@ -109,7 +109,10 @@ public class Player {
                                             transformedEndingBar = serverEndingBar - player.getY() + player.getScreenY();
                                         }
                                         
-                                        gameCanvas.addSpell(new WaterSpell(playerID, x, y, dir, transformedEndingBar));
+                                        int animationCounter = Integer.parseInt(spellData[5]);
+                                        int currentFrame = Integer.parseInt(spellData[6]);
+
+                                        gameCanvas.addSpell(new WaterSpell(playerID, x, y, dir, transformedEndingBar, animationCounter, currentFrame));
                                     }
                                 
                                 // WIND SPELL
