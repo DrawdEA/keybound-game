@@ -11,3 +11,9 @@ https://www.geeksforgeeks.org/copyonwritearraylist-in-java/
 https://github.com/nr-johnson/flip-sprite
 https://www.geeksforgeeks.org/enum-in-java/
 https://www.geeksforgeeks.org/arraylist-removeif-method-in-java/
+
+
+
+MUSIC:
+https://www.youtube.com/watch?v=UqqHDL7dA9g&list=PLdsGes2mFh92eHpOZVJQgoubb6rF0CcvU&index=8
+https://www.youtube.com/watch?v=bZr89T3jp-Q&list=PLdsGes2mFh92eHpOZVJQgoubb6rF0CcvU&index=45
