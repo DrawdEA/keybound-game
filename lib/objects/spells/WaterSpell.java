@@ -5,6 +5,11 @@ import java.awt.Graphics2D;
 
 import lib.render.CollisionManager;
 import java.awt.Polygon;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+
 import lib.GameConfig;
 import lib.render.Direction;
 
@@ -23,6 +28,10 @@ public class WaterSpell extends Spell {
     private int currAgeInTicks = 0;
     private final int maxAgeInTicks = 60;
 
+    private BufferedImage waterSprites[];
+    private int animationCounter;
+    private int currentFrame;
+
     // Initial Creation
     public WaterSpell(int casterId, double x, double y, Direction dir) {
         super("WATER_SPELL", casterId, x, y, 25, 25, dir);
@@ -39,6 +48,33 @@ public class WaterSpell extends Spell {
         }
 
         expired = false;
+
+        waterSprites = new BufferedImage[16];
+        animationCounter = 0;
+        currentFrame = 0;
+
+        /* try {
+            BufferedImage waterImage = ImageIO.read(getClass().getResourceAsStream("/resources/spells/water.png"));
+
+            waterSprites[0] = waterImage.getSubimage(0, 0, 64, 64);
+            waterSprites[1] = waterImage.getSubimage(64, 0, 64, 64);
+            waterSprites[2] = waterImage.getSubimage(128, 0, 64, 64);
+            waterSprites[3] = waterImage.getSubimage(192, 0, 64, 64);
+            waterSprites[4] = waterImage.getSubimage(0, 64, 64, 64);
+            waterSprites[5] = waterImage.getSubimage(64, 64, 64, 64);
+            waterSprites[6] = waterImage.getSubimage(128, 64, 64, 64);
+            waterSprites[7] = waterImage.getSubimage(192, 64, 64, 64);
+            waterSprites[8] = waterImage.getSubimage(0, 128, 64, 64);
+            waterSprites[9] = waterImage.getSubimage(64, 128, 64, 64);
+            waterSprites[10] = waterImage.getSubimage(128, 128, 64, 64);
+            waterSprites[11] = waterImage.getSubimage(192, 128, 64, 64);
+            waterSprites[12] = waterImage.getSubimage(0, 192, 64, 64);
+            waterSprites[13] = waterImage.getSubimage(64, 192, 64, 64);
+            waterSprites[14] = waterImage.getSubimage(128, 192, 64, 64);
+            waterSprites[15] = waterImage.getSubimage(192, 192, 64, 64);
+        } catch (IOException e) { 
+            System.out.println("IOException from WaterSpell.java");
+        } */
     }
 
     // Static Rendering
@@ -51,6 +87,32 @@ public class WaterSpell extends Spell {
         this.endingBar = endingBar;
 
         expired = false;
+
+        /* waterSprites = new BufferedImage[16];
+        animationCounter = 0;
+        currentFrame = 0;
+        try {
+            BufferedImage waterImage = ImageIO.read(getClass().getResourceAsStream("/resources/spells/water.png"));
+
+            waterSprites[0] = waterImage.getSubimage(0, 0, 64, 64);
+            waterSprites[1] = waterImage.getSubimage(64, 0, 64, 64);
+            waterSprites[2] = waterImage.getSubimage(128, 0, 64, 64);
+            waterSprites[3] = waterImage.getSubimage(192, 0, 64, 64);
+            waterSprites[4] = waterImage.getSubimage(0, 64, 64, 64);
+            waterSprites[5] = waterImage.getSubimage(64, 64, 64, 64);
+            waterSprites[6] = waterImage.getSubimage(128, 64, 64, 64);
+            waterSprites[7] = waterImage.getSubimage(192, 64, 64, 64);
+            waterSprites[8] = waterImage.getSubimage(0, 128, 64, 64);
+            waterSprites[9] = waterImage.getSubimage(64, 128, 64, 64);
+            waterSprites[10] = waterImage.getSubimage(128, 128, 64, 64);
+            waterSprites[11] = waterImage.getSubimage(192, 128, 64, 64);
+            waterSprites[12] = waterImage.getSubimage(0, 192, 64, 64);
+            waterSprites[13] = waterImage.getSubimage(64, 192, 64, 64);
+            waterSprites[14] = waterImage.getSubimage(128, 192, 64, 64);
+            waterSprites[15] = waterImage.getSubimage(192, 192, 64, 64);
+        } catch (IOException e) { 
+            System.out.println("IOException from WaterSpell.java");
+        } */
     }
 
     @Override
@@ -81,11 +143,21 @@ public class WaterSpell extends Spell {
 
     @Override
     public void handleCollisions(CollisionManager cm) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        
     }
 
     @Override
     public void drawSprite(Graphics2D g2d) {
+        System.out.println(animationCounter);
+        if (animationCounter == 10) {
+            animationCounter = 0;
+            g2d.drawImage(waterSprites[currentFrame], (int) x, (int) y, 64, 64, null);
+            currentFrame++;
+        }
+
+        System.out.println(animationCounter);
+        animationCounter++;
+
         g2d.setColor(COLOR);
         
         // Calculate the triangle dimensions for an equilateral triangle

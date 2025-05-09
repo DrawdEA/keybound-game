@@ -75,7 +75,7 @@ public class EarthSpell extends Spell {
 
     @Override
     public void handleCollisions(CollisionManager cm) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        
     }
 
     @Override

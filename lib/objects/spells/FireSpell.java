@@ -22,7 +22,10 @@ public class FireSpell extends Spell {
     private int currAgeInTicks = 0;
     private final int maxAgeInTicks = 30;
 
+    private int animationCounter;
+
     private Rectangle hitbox;
+    private boolean firstTime = true;
 
     public FireSpell(int casterId, double x, double y, Direction dir) {
         super("FIRE_SPELL", casterId, x, y, 25, 25, dir);
@@ -44,6 +47,8 @@ public class FireSpell extends Spell {
             this.x = x + TILE * 2 - 25/2;
             this.y = y + TILE * 0.75 - 25/2;
         }
+
+        animationCounter = 0;
     }
 
     public String getDataString() {
@@ -92,6 +97,12 @@ public class FireSpell extends Spell {
     
     @Override
     public void drawSprite(Graphics2D g2d) {
+        if (firstTime) {
+            System.out.println(firstTime);
+            firstTime = false;
+        }
+        System.out.println(animationCounter);
+        animationCounter++;
         g2d.setColor(COLOR);
         hitbox = new Rectangle((int) x, (int) y, width, height);
         g2d.fill(hitbox);
