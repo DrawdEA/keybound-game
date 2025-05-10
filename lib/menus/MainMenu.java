@@ -17,6 +17,10 @@ public class MainMenu extends JPanel implements ActionListener {
 
     private BufferedImage bgImage;
 
+    private final Color buttonBg1 = new Color(58,68,102);
+    private final Color buttonBg2 = new Color(38,43,68);
+    private final Color buttonTextColor = Color.WHITE;
+
     // Fonts
     private Font Jacquard, Pixelify;
 
@@ -43,8 +47,19 @@ public class MainMenu extends JPanel implements ActionListener {
 
         // Style components
         onlinePlayBtn.setFont(Pixelify);
+        onlinePlayBtn.setBackground(buttonBg1);
+        onlinePlayBtn.setForeground(buttonTextColor);
+        onlinePlayBtn.setFocusable(false);
+        
         localPlayBtn.setFont(Pixelify);
-        tutorialBtn.setFont(Pixelify);
+        localPlayBtn.setBackground(buttonBg1);
+        localPlayBtn.setForeground(buttonTextColor);
+        localPlayBtn.setFocusable(false);
+
+        tutorialBtn.setFont(Pixelify);        
+        tutorialBtn.setBackground(buttonBg1);
+        tutorialBtn.setForeground(buttonTextColor);
+        tutorialBtn.setFocusable(false);
         
         content = new JPanel();
         content.setLayout(new GridBagLayout());
@@ -57,11 +72,12 @@ public class MainMenu extends JPanel implements ActionListener {
 
         // ----- Styling Components ----- //
         title.setFont(Jacquard);
+        title.setForeground(buttonBg2);
         gbc.gridx = 1;
         gbc.gridy = 0;
         gbc.gridwidth = 5;
         gbc.weightx = 1.0;
-        gbc.insets = new Insets(0, 5, 0, 5);
+        gbc.insets = new Insets(20, 5, 0, 5);
         gbc.fill = GridBagConstraints.HORIZONTAL;
         content.add(title, gbc);
 
@@ -71,7 +87,7 @@ public class MainMenu extends JPanel implements ActionListener {
         
         gbc.gridx = 2;
         gbc.gridy = 1;
-        gbc.insets = new Insets(120, 0, 0, 0);
+        gbc.insets = new Insets(100, 0, 0, 0);
         gbc.fill = GridBagConstraints.NONE;
         content.add(buttonsPanel, gbc);
 
