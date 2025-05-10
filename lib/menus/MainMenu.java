@@ -39,7 +39,7 @@ public class MainMenu extends JPanel implements ActionListener {
             stream = ClassLoader.getSystemClassLoader().getResourceAsStream("resources/fonts/Pixelify/PixelifySans-Regular.ttf");
             Pixelify = Font.createFont(Font.TRUETYPE_FONT, stream).deriveFont(50f);
 
-            InputStream imgStream = ClassLoader.getSystemClassLoader().getResourceAsStream("resources/images/menuBg.png");
+            InputStream imgStream = ClassLoader.getSystemClassLoader().getResourceAsStream("resources/images/MainMenuBg.png");
             bgImage = ImageIO.read(imgStream);
         } catch (Exception ex) {
             System.out.println(ex);
@@ -149,18 +149,7 @@ public class MainMenu extends JPanel implements ActionListener {
             mainFrame.repaint();
         } else if (e.getSource() == localPlayBtn) {
             mainFrame.remove(this);
-
-            // Player stuff for sir choob
-            Player p = new Player();
-            mainFrame.add(p.getCanvas());
-            p.connectToServer();
-            
-
-            // legacy canvas
-            //GameCanvas gc = new GameCanvas();
-            //mainFrame.add(gc);
-            //gc.connectToServer();
-            //gc.addPlayers();
+            mainFrame.add(new LocalPlayMenu());
 
             mainFrame.revalidate();
             mainFrame.repaint();
