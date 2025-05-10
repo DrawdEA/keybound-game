@@ -2,30 +2,71 @@ package lib.menus;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.InputStream;
 import javax.swing.*;
-
 import lib.GameConfig;
 import lib.network.*;
 
 public class MainMenu extends JPanel implements ActionListener {
-    JLabel title;
-    JButton host, join;
+    // Components
+    private JLabel title;
+    private JButton onlinePlayBtn, localPlayBtn, tutorialBtn;
+    private JPanel content;
+
+    // Fonts
+    private Font Jacquard, Pixelify;
 
     public MainMenu() {
-        title = new JLabel("KEYBOUND");
-        host = new JButton("Host Lobby");
-        join = new JButton("Join Lobby");
-        
-        JPanel content = new JPanel();
-        content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
+        title = new JLabel("Keybound", SwingConstants.CENTER);
+        onlinePlayBtn = new JButton("Online");
+        localPlayBtn = new JButton("Local");
+        tutorialBtn = new JButton("Tutorial");
 
-        content.add(title);
-        content.add(host);
-        content.add(join);
+        // Load Fonts
+        try {
+            InputStream stream = ClassLoader.getSystemClassLoader().getResourceAsStream("resources/fonts/Jacquard12-Regular.ttf");
+            Jacquard = Font.createFont(Font.TRUETYPE_FONT, stream).deriveFont(110f);
+
+            stream = ClassLoader.getSystemClassLoader().getResourceAsStream("resources/fonts/Pixelify/PixelifySans-Regular.ttf");
+            Pixelify = Font.createFont(Font.TRUETYPE_FONT, stream).deriveFont(24f);
+        } catch (Exception ex) {
+            System.out.println(ex);
+        }
+
+        // Style components
+        onlinePlayBtn.setFont(Pixelify);
+        localPlayBtn.setFont(Pixelify);
+        tutorialBtn.setFont(Pixelify);
+        
+        content = new JPanel();
+        content.setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+
+        JPanel buttonsPanel = new JPanel();
+        buttonsPanel.setLayout(new GridLayout(4,1,0,15));
+
+        // ----- Styling Components -----
+        title.setFont(Jacquard);
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        gbc.gridwidth = 5;
+        gbc.weightx = 1.0;
+        gbc.insets = new Insets(0, 5, 20, 5);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        content.add(title, gbc);
+
+        buttonsPanel.add(onlinePlayBtn);
+        buttonsPanel.add(localPlayBtn);
+        buttonsPanel.add(tutorialBtn);
+        
+        gbc.gridx = 2;
+        gbc.gridy = 1;
+        gbc.fill = GridBagConstraints.NONE;
+        content.add(buttonsPanel, gbc);
 
         // ----- Button listeners added ---- //
-        host.addActionListener(this);
-        join.addActionListener(this);
+        onlinePlayBtn.addActionListener(this);
+        localPlayBtn.addActionListener(this);
         
         // ---- Set up frame ----- // 
         this.setFocusable(true);
@@ -40,7 +81,7 @@ public class MainMenu extends JPanel implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         JPanel mainFrame = (JPanel) this.getParent();
-        if (e.getSource() == host) {
+        if (e.getSource() == onlinePlayBtn) {
             mainFrame.remove(this);
             mainFrame.repaint();
             mainFrame.add(new ServerMenu(), BorderLayout.CENTER);
@@ -55,14 +96,14 @@ public class MainMenu extends JPanel implements ActionListener {
                 }
             }.start();
 
-            // Join the created server as a new player
+            // localPlayBtn the created server as a new player
             Player p = new Player();
             mainFrame.add(p.getCanvas());
             p.connectToServer();
 
             mainFrame.revalidate();
             mainFrame.repaint();
-        } else if (e.getSource() == join) {
+        } else if (e.getSource() == localPlayBtn) {
             mainFrame.remove(this);
 
             // Player stuff for sir choob

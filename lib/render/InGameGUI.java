@@ -3,9 +3,7 @@ package lib.render;
 import java.awt.*;
 import java.awt.image.*;
 import java.io.InputStream;
-
 import javax.imageio.ImageIO;
-
 import lib.GameConfig;
 import lib.input.KeyBindings;
 
