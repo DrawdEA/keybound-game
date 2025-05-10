@@ -26,7 +26,7 @@ public class Player {
 
     public void connectToServer() {
         try {
-            socket = new Socket("10.168.131.164", 10000);
+            socket = new Socket("localhost", 10000);
             DataInputStream in = new DataInputStream(socket.getInputStream());
             DataOutputStream out = new DataOutputStream(socket.getOutputStream());
             playerID = in.readInt();
