@@ -18,7 +18,7 @@ public class MainMenu extends JPanel implements ActionListener {
     private BufferedImage bgImage;
 
     private final Color buttonBg1 = new Color(58,68,102);
-    private final Color buttonBg2 = new Color(38,43,68);
+    private final Color titleTextColor = new Color(38,43,68);
     private final Color buttonTextColor = Color.WHITE;
 
     // Fonts
@@ -72,7 +72,7 @@ public class MainMenu extends JPanel implements ActionListener {
 
         // ----- Styling Components ----- //
         title.setFont(Jacquard);
-        title.setForeground(buttonBg2);
+        title.setForeground(titleTextColor);
         gbc.gridx = 1;
         gbc.gridy = 0;
         gbc.gridwidth = 5;
@@ -149,7 +149,7 @@ public class MainMenu extends JPanel implements ActionListener {
             mainFrame.repaint();
         } else if (e.getSource() == localPlayBtn) {
             mainFrame.remove(this);
-            mainFrame.add(new LocalPlayMenu());
+            mainFrame.add(new LocalPlaySelectionMenu());
 
             mainFrame.revalidate();
             mainFrame.repaint();

@@ -9,7 +9,7 @@ import javax.swing.*;
 import lib.GameConfig;
 import lib.network.*;
 
-public class LocalPlayMenu extends JPanel implements ActionListener {
+public class LocalPlaySelectionMenu extends JPanel implements ActionListener {
     // Components
     private JLabel title, subtitle;
     private JButton hostBtn, joinBtn, practiceBtn, backBtn;
@@ -18,13 +18,13 @@ public class LocalPlayMenu extends JPanel implements ActionListener {
     private BufferedImage bgImage;
 
     private final Color buttonBg1 = new Color(58,68,102);
-    private final Color buttonBg2 = new Color(38,43,68);
+    private final Color titleTextColor = new Color(38,43,68);
     private final Color buttonTextColor = Color.WHITE;
 
     // Fonts
     private Font Jacquard, Pixelify;
 
-    public LocalPlayMenu() {
+    public LocalPlaySelectionMenu() {
         title = new JLabel("Keybound", SwingConstants.CENTER);
         subtitle = new JLabel("Local Play", SwingConstants.CENTER);
         backBtn = new JButton("< Back");
@@ -40,12 +40,13 @@ public class LocalPlayMenu extends JPanel implements ActionListener {
             stream = ClassLoader.getSystemClassLoader().getResourceAsStream("resources/fonts/Pixelify/PixelifySans-Regular.ttf");
             Pixelify = Font.createFont(Font.TRUETYPE_FONT, stream).deriveFont(30f);
 
-            InputStream imgStream = ClassLoader.getSystemClassLoader().getResourceAsStream("resources/images/LocalPlayMenuBg.png");
+            InputStream imgStream = ClassLoader.getSystemClassLoader().getResourceAsStream("resources/images/LocalPlaySelectionMenuBg.png");
             bgImage = ImageIO.read(imgStream);
         } catch (Exception ex) {
             System.out.println(ex);
         }
 
+        // Setup JPanel that holds everything
         content = new JPanel();
         content.setLayout(null);
         content.setOpaque(false);
@@ -70,7 +71,7 @@ public class LocalPlayMenu extends JPanel implements ActionListener {
             (int) (GameConfig.SCREEN_HEIGHT * 0.15)
         );
         title.setFont(Jacquard);
-        title.setForeground(buttonBg2);
+        title.setForeground(titleTextColor);
 
         // Subtitle
         subtitle.setBounds(            
@@ -80,7 +81,7 @@ public class LocalPlayMenu extends JPanel implements ActionListener {
             (int) (GameConfig.SCREEN_HEIGHT * 0.05)
         );
         subtitle.setFont(Pixelify);
-        subtitle.setForeground(buttonBg2);
+        subtitle.setForeground(titleTextColor);
 
         // Host Lobby Button
         hostBtn.setBounds(            
@@ -166,32 +167,17 @@ public class LocalPlayMenu extends JPanel implements ActionListener {
         if (e.getSource() == backBtn) {
             mainFrame.remove(this);
             mainFrame.repaint();
-            mainFrame.add(new MainMenu());
+            mainFrame.add(new MainMenu(), BorderLayout.CENTER);
             mainFrame.revalidate();
             mainFrame.repaint();
 
         } else if (e.getSource() == hostBtn) {
             mainFrame.remove(this);
             mainFrame.repaint();
-            mainFrame.add(new ServerMenu(), BorderLayout.CENTER);
-
-            // Start a Game Server using an anonymous Thread
-            new Thread() {
-                public void run() {
-                    // Game Server Stuff for sir choob
-                    // Create a server
-                    GameServer gs = new GameServer();
-                    gs.acceptConnections();
-                }
-            }.start();
-
-            // joinBtn the created server as a new player
-            Player p = new Player();
-            mainFrame.add(p.getCanvas());
-            p.connectToServer();
-
+            mainFrame.add(new LocalHostLobbyMenu(), BorderLayout.CENTER);
             mainFrame.revalidate();
             mainFrame.repaint();
+
         } else if (e.getSource() == joinBtn) {
             mainFrame.remove(this);
 

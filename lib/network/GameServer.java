@@ -86,6 +86,18 @@ public class GameServer {
         }
     }
 
+    public void closeConnections() {
+        System.out.println("Initiating server shutdown...");
+        try {
+            if (ss != null && !ss.isClosed()) {
+                ss.close();
+                System.out.println("ServerSocket closed.");
+            }
+        } catch (IOException ex) {
+            System.err.println("IOException while closing server socket: " + ex.getMessage());
+        }
+    }
+
     private class ReadFromClient implements Runnable {
         private int playerID;
         private DataInputStream dataIn;

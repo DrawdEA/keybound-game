@@ -13,6 +13,10 @@ https://docs.oracle.com/javase/tutorial/uiswing/layout/gridbag.html
 https://github.com/nr-johnson/flip-sprite
 https://www.geeksforgeeks.org/enum-in-java/
 https://www.geeksforgeeks.org/arraylist-removeif-method-in-java/
+https://stackoverflow.com/questions/6810581/how-to-center-the-text-in-a-jlabel
+https://stackoverflow.com/questions/9481865/getting-the-ip-address-of-the-current-machine-using-java
+https://stackoverflow.com/questions/685521/multiline-text-in-jlabel
+https://stackoverflow.com/questions/14740979/adding-margins-in-a-jtextarea
 
 Sprites
 https://hochupitsu.itch.io/heart-and-mana
