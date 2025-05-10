@@ -4,6 +4,10 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Polygon;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+
 import lib.GameConfig;
 import lib.render.CollisionManager;
 import lib.render.Direction;
@@ -23,31 +27,11 @@ public class WaterSpell extends Spell {
     private int currAgeInTicks = 0;
     private final int maxAgeInTicks = 60;
 
-    private BufferedImage waterSprites[];
+    private static BufferedImage waterSprites[] = new BufferedImage[16];
     private int animationCounter;
     private int currentFrame;
 
-    // Initial Creation
-    public WaterSpell(int casterId, double x, double y, Direction dir) {
-        super("WATER_SPELL", casterId, x, y, 25, 25, dir);
-
-        this.x = adjustToPlayerEdgeCenterX(x, dir);
-        this.y = adjustToPlayerEdgeCenterY(y, dir);
-        this.dir = dir;
-
-        // Initialize endingBar to match axis of initial direction
-        if (dir == Direction.LEFT || dir == Direction.RIGHT) {
-            endingBar = adjustToPlayerEdgeCenterX(x, dir);
-        } else if (dir == Direction.UP || dir == Direction.DOWN) {
-            endingBar = adjustToPlayerEdgeCenterY(y, dir);
-        }
-
-        expired = false;
-
-        waterSprites = new BufferedImage[16];
-        animationCounter = 0;
-        currentFrame = 0;
-
+    public static void initializeSprites() {
         /* try {
             BufferedImage waterImage = ImageIO.read(getClass().getResourceAsStream("/resources/spells/water.png"));
 
@@ -66,10 +50,28 @@ public class WaterSpell extends Spell {
             waterSprites[12] = waterImage.getSubimage(0, 192, 64, 64);
             waterSprites[13] = waterImage.getSubimage(64, 192, 64, 64);
             waterSprites[14] = waterImage.getSubimage(128, 192, 64, 64);
-            waterSprites[15] = waterImage.getSubimage(192, 192, 64, 64);
+            waterSprites[15] = waterImage.getSubimage(192, 192, 64, 64);    
         } catch (IOException e) { 
             System.out.println("IOException from WaterSpell.java");
         } */
+    }
+
+    // Initial Creation
+    public WaterSpell(int casterId, double x, double y, Direction dir) {
+        super("WATER_SPELL", casterId, x, y, 25, 25, dir);
+
+        this.x = adjustToPlayerEdgeCenterX(x, dir);
+        this.y = adjustToPlayerEdgeCenterY(y, dir);
+        this.dir = dir;
+
+        // Initialize endingBar to match axis of initial direction
+        if (dir == Direction.LEFT || dir == Direction.RIGHT) {
+            endingBar = adjustToPlayerEdgeCenterX(x, dir);
+        } else if (dir == Direction.UP || dir == Direction.DOWN) {
+            endingBar = adjustToPlayerEdgeCenterY(y, dir);
+        }
+
+        expired = false;
     }
 
     // Static Rendering
@@ -85,32 +87,6 @@ public class WaterSpell extends Spell {
         this.currentFrame = currentFrame;
 
         expired = false;
-
-        /* waterSprites = new BufferedImage[16];
-        animationCounter = 0;
-        currentFrame = 0;
-        try {
-            BufferedImage waterImage = ImageIO.read(getClass().getResourceAsStream("/resources/spells/water.png"));
-
-            waterSprites[0] = waterImage.getSubimage(0, 0, 64, 64);
-            waterSprites[1] = waterImage.getSubimage(64, 0, 64, 64);
-            waterSprites[2] = waterImage.getSubimage(128, 0, 64, 64);
-            waterSprites[3] = waterImage.getSubimage(192, 0, 64, 64);
-            waterSprites[4] = waterImage.getSubimage(0, 64, 64, 64);
-            waterSprites[5] = waterImage.getSubimage(64, 64, 64, 64);
-            waterSprites[6] = waterImage.getSubimage(128, 64, 64, 64);
-            waterSprites[7] = waterImage.getSubimage(192, 64, 64, 64);
-            waterSprites[8] = waterImage.getSubimage(0, 128, 64, 64);
-            waterSprites[9] = waterImage.getSubimage(64, 128, 64, 64);
-            waterSprites[10] = waterImage.getSubimage(128, 128, 64, 64);
-            waterSprites[11] = waterImage.getSubimage(192, 128, 64, 64);
-            waterSprites[12] = waterImage.getSubimage(0, 192, 64, 64);
-            waterSprites[13] = waterImage.getSubimage(64, 192, 64, 64);
-            waterSprites[14] = waterImage.getSubimage(128, 192, 64, 64);
-            waterSprites[15] = waterImage.getSubimage(192, 192, 64, 64);
-        } catch (IOException e) { 
-            System.out.println("IOException from WaterSpell.java");
-        } */
     }
 
     @Override

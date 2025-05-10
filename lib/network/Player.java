@@ -26,7 +26,7 @@ public class Player {
 
     public void connectToServer() {
         try {
-            socket = new Socket("localhost", 10000);
+            socket = new Socket("10.168.131.164", 10000);
             DataInputStream in = new DataInputStream(socket.getInputStream());
             DataOutputStream out = new DataOutputStream(socket.getOutputStream());
             playerID = in.readInt();
@@ -77,6 +77,7 @@ public class Player {
                         String[] enemyPosition = enemyData[1].split("-");
                         enemy.setX(Double.parseDouble(enemyPosition[1]) - player.getX() + player.getScreenX());
                         enemy.setY(Double.parseDouble(enemyPosition[2]) - player.getY() + player.getScreenY());
+                        //enemy.updatePlayerAnimation(something, something); // TODO: handle this
                         
                         gameCanvas.clearSpells();
                         for (int i = 2; i < enemyData.length; i++) {
@@ -86,7 +87,7 @@ public class Player {
                             double y;
                             Direction dir;
 
-                            if (spellData[0].contains("_SPELL")){
+                            if (spellData[0].contains("_SPELL")) {
                                 // Transform the x and the y based on the POV of the player 
                                 x = Double.parseDouble(spellData[1]) - player.getX() + player.getScreenX();
                                 y = Double.parseDouble(spellData[2]) - player.getY() + player.getScreenY();

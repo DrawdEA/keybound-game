@@ -85,11 +85,11 @@ public class FireSpell extends Spell {
         PlayerObject playerHit = cm.checkProjectileCollision(hitbox);
         if (playerHit != null) {
             System.out.println("FIRE SPELL HIT!");
-            playerHit.damagePlayer(1);
-        }
+            playerHit.damagePlayer(1); // request to server for damage
 
-        // Remove the firespell.
-        expired = true;
+            // Remove the firespell.
+            expired = true;
+        }
     }
 
     

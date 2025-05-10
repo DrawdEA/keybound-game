@@ -13,6 +13,8 @@ public class CollisionManager {
         environment = e;
     }
 
+    public CollisionManager() {}
+
     public void setupPlayer(PlayerObject p) {
         player = p;
     }
@@ -34,7 +36,7 @@ public class CollisionManager {
         boolean collided = false;
 
         if (direction == "Left") {
-            playerLeftColumn = (int) Math.floor(((double) playerLeftWorldX - GameConfig.PLAYER_SPEED) / GameConfig.TILE_SIZE);;
+            playerLeftColumn = (int) Math.floor(((double) playerLeftWorldX - GameConfig.PLAYER_SPEED) / GameConfig.TILE_SIZE);
             tileNum1 = environment.getMapNumbers()[playerLeftColumn][playerTopRow];
             tileNum2 = environment.getMapNumbers()[playerLeftColumn][playerBottomRow];
             if (environment.getTiles()[tileNum1].canCollide || environment.getTiles()[tileNum2].canCollide) {

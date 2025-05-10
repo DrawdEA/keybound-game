@@ -258,6 +258,7 @@ public class GameServer {
                 // Update all spells
                 for (Spell spell : activeSpells) {
                     spell.update();
+                    spell.handleCollisions(null);
                 }
                 
                 // Remove all expired spells
