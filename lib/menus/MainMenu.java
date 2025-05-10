@@ -2,16 +2,20 @@ package lib.menus;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
 import java.io.InputStream;
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import lib.GameConfig;
 import lib.network.*;
 
 public class MainMenu extends JPanel implements ActionListener {
     // Components
-    private JLabel title;
+    private JLabel title, names;
     private JButton onlinePlayBtn, localPlayBtn, tutorialBtn;
     private JPanel content;
+
+    private BufferedImage bgImage;
 
     // Fonts
     private Font Jacquard, Pixelify;
@@ -21,14 +25,18 @@ public class MainMenu extends JPanel implements ActionListener {
         onlinePlayBtn = new JButton("Online");
         localPlayBtn = new JButton("Local");
         tutorialBtn = new JButton("Tutorial");
+        names = new JLabel("By: Diesta, Edward & Uy, Charles Joshua");
 
-        // Load Fonts
+        // Load Fonts and Bg image
         try {
             InputStream stream = ClassLoader.getSystemClassLoader().getResourceAsStream("resources/fonts/Jacquard12-Regular.ttf");
             Jacquard = Font.createFont(Font.TRUETYPE_FONT, stream).deriveFont(110f);
 
             stream = ClassLoader.getSystemClassLoader().getResourceAsStream("resources/fonts/Pixelify/PixelifySans-Regular.ttf");
-            Pixelify = Font.createFont(Font.TRUETYPE_FONT, stream).deriveFont(24f);
+            Pixelify = Font.createFont(Font.TRUETYPE_FONT, stream).deriveFont(50f);
+
+            InputStream imgStream = ClassLoader.getSystemClassLoader().getResourceAsStream("resources/images/menuBg.png");
+            bgImage = ImageIO.read(imgStream);
         } catch (Exception ex) {
             System.out.println(ex);
         }
@@ -40,18 +48,20 @@ public class MainMenu extends JPanel implements ActionListener {
         
         content = new JPanel();
         content.setLayout(new GridBagLayout());
+        content.setOpaque(false);
         GridBagConstraints gbc = new GridBagConstraints();
 
         JPanel buttonsPanel = new JPanel();
-        buttonsPanel.setLayout(new GridLayout(4,1,0,15));
+        buttonsPanel.setLayout(new GridLayout(4,1,0,35));
+        buttonsPanel.setOpaque(false);
 
-        // ----- Styling Components -----
+        // ----- Styling Components ----- //
         title.setFont(Jacquard);
         gbc.gridx = 1;
         gbc.gridy = 0;
         gbc.gridwidth = 5;
         gbc.weightx = 1.0;
-        gbc.insets = new Insets(0, 5, 20, 5);
+        gbc.insets = new Insets(0, 5, 0, 5);
         gbc.fill = GridBagConstraints.HORIZONTAL;
         content.add(title, gbc);
 
@@ -61,8 +71,15 @@ public class MainMenu extends JPanel implements ActionListener {
         
         gbc.gridx = 2;
         gbc.gridy = 1;
+        gbc.insets = new Insets(120, 0, 0, 0);
         gbc.fill = GridBagConstraints.NONE;
         content.add(buttonsPanel, gbc);
+
+        names.setForeground(Color.white);
+        gbc.gridx = 2;
+        gbc.gridy = 2;
+        gbc.insets = new Insets(100, 0, 0, 0);
+        content.add(names, gbc);
 
         // ----- Button listeners added ---- //
         onlinePlayBtn.addActionListener(this);
@@ -76,6 +93,17 @@ public class MainMenu extends JPanel implements ActionListener {
 
         // ----- Add components ----- //
         this.add(content, BorderLayout.CENTER);
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        if (bgImage != null) {
+            g.drawImage(bgImage, 0, 0, this.getWidth(), this.getHeight(), this);
+        } else {
+            g.setColor(Color.DARK_GRAY);
+            g.fillRect(0, 0, this.getWidth(), this.getHeight());
+        }
     }
 
     @Override
