@@ -31,6 +31,10 @@ public abstract class Spell extends GameObject {
         this.direction = null;
     }
 
+    public int getCasterId() {
+        return casterId;
+    }
+
     // Abstract update method: must be implemented by subclasses
     public abstract void update();
 

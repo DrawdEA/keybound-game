@@ -5,6 +5,11 @@ import java.awt.Graphics2D;
 
 import lib.render.CollisionManager;
 import java.awt.geom.Ellipse2D;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+
 import lib.GameConfig;
 import lib.render.Direction;
 
@@ -22,7 +27,32 @@ public class WindSpell extends Spell {
     private int currAgeInTicks = 0;
     private final int maxAgeInTicks = 15;
 
-    public WindSpell(int casterId, double x, double y, Direction dir) {
+    private int animationCounter;
+    private static BufferedImage[] wind;
+
+    public static void initializeSprites() {
+        wind = new BufferedImage[9];
+
+        try {
+            BufferedImage fireImage = ImageIO.read(WindSpell.class.getResourceAsStream("/resources/spells/wind.png"));
+
+            wind[0] = fireImage.getSubimage(0, 0, 48, 48);
+            wind[1] = fireImage.getSubimage(48, 0, 48, 48);
+            wind[2] = fireImage.getSubimage(96, 0, 48, 48);
+            wind[3] = fireImage.getSubimage(0, 48, 48, 48);
+            wind[4] = fireImage.getSubimage(48, 48, 48, 48);
+            wind[5] = fireImage.getSubimage(96, 48, 48, 48);
+            wind[6] = fireImage.getSubimage(0, 96, 48, 48);
+            wind[7] = fireImage.getSubimage(48, 96, 48, 48);
+            wind[8] = fireImage.getSubimage(96, 96, 48, 48);
+
+  
+        } catch (IOException e) { 
+            System.out.println("IOException from FireSpell.java");
+        }
+    }
+
+    public WindSpell(int casterId, double x, double y, Direction dir, int aC) {
         super("WIND_SPELL", casterId, x, y, 25, 25);
 
         this.x = x;
@@ -45,6 +75,7 @@ public class WindSpell extends Spell {
 
         this.dir = dir;
         expired = false;
+        animationCounter = aC;
     }
 
     @Override
@@ -63,11 +94,15 @@ public class WindSpell extends Spell {
         if(currAgeInTicks >= maxAgeInTicks) {
             expired = true;
         }
+
+        animationCounter++;
     }
 
     @Override
     public String getDataString() {
-        return String.format("WIND_SPELL-%f-%f-%s-%d", x, y, dir.toString(), casterId);
+        String data = String.format("WIND_SPELL-%f-%f-%s-%d", x, y, dir.toString(), animationCounter);
+        System.out.println(data);
+        return String.format("WIND_SPELL-%f-%f-%s-%d", x, y, dir.toString(), animationCounter);
     }
 
     @Override
@@ -82,6 +117,9 @@ public class WindSpell extends Spell {
 
     @Override
     public void drawSprite(Graphics2D g2d) {
+        int currentFrame = (animationCounter / 5) % 9;
+        g2d.drawImage(wind[currentFrame], (int) x - 48, (int) y - 48, 96, 96, null);
+
         g2d.setColor(COLOR);
         if (dir == Direction.DOWN || dir == Direction.UP){
             g2d.fill(new Ellipse2D.Double(x, y, TILE * 2, TILE * 4));

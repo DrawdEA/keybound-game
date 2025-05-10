@@ -1,22 +1,27 @@
 package lib.render;
 
 import java.awt.Rectangle;
+import java.util.ArrayList;
 
 import lib.GameConfig;
+import lib.network.Player;
 import lib.objects.Environment;
 
 public class CollisionManager {
     private Environment environment;
-    private PlayerObject player;
+    private ArrayList<PlayerObject> players;
     
     public CollisionManager(Environment e) {
+        players = new ArrayList<>();
         environment = e;
     }
 
-    public CollisionManager() {}
+    public CollisionManager() {
+        players = new ArrayList<>();
+    }
 
-    public void setupPlayer(PlayerObject p) {
-        player = p;
+    public void addPlayer(PlayerObject p) {
+        players.add(p);
     }
 
     public boolean checkWorldCollision(PlayerObject playerObject, String direction) {
@@ -68,10 +73,30 @@ public class CollisionManager {
         return collided;
     }
 
-    public PlayerObject checkProjectileCollision(Rectangle projectileHitbox) {
-        if (projectileHitbox.intersects(player.getRelativeHitbox())) {
-            return player;
+    /**
+     * Checks if the projectile sent is intersecting with another player that isn't themselves.
+     * 
+     * @param projectileHitbox is the hitbox sent by the player
+     * @param playerId the id of the player that owns the projectile
+     * 
+     * @return the player hit
+     */
+    public PlayerObject checkProjectileCollision(Rectangle projectileHitbox, int playerId) {
+        for (PlayerObject player : players) {
+            Rectangle playerHitbox = player.getRelativeHitbox();
+                
+            if (player.getId() != playerId) {
+                // Manual intersection check using direct field access
+                if (projectileHitbox.intersects(playerHitbox)) { 
+                    System.out.println("PLAYER: " + player.getId());
+                    System.out.println(player.getRelativeHitbox().x);
+                    System.out.println("PROJECTILE: " + player.getId());
+                    System.out.println(projectileHitbox.x);
+                    return player;
+                }
+            }
         }
+        
         return null;
     }
 }

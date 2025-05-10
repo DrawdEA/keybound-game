@@ -4,9 +4,14 @@ import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
+
+import javax.print.attribute.standard.PagesPerMinute;
+
 import lib.*;
 import lib.objects.spells.*;
+import lib.render.CollisionManager;
 import lib.render.Direction;
+import lib.render.PlayerObject;
 
 public class GameServer {
     private ServerSocket ss;
@@ -19,6 +24,10 @@ public class GameServer {
 
     private CopyOnWriteArrayList<Spell> activeSpells;
 
+    private CollisionManager collisionManager;
+
+    private ArrayList<PlayerObject> playerObjects;
+
     public GameServer() {
         System.out.println("==== GAME SERVER ====");
         players = 0;
@@ -26,6 +35,16 @@ public class GameServer {
         playerPositions = new ArrayList<>();
         playerPositions.add(new double[]{50, 50});
         playerPositions.add(new double[]{50, 500});
+
+        // Initialize sprites.
+        FireSpell.initializeSprites();
+        WindSpell.initializeSprites();
+
+        // Initialize collision manager.
+        collisionManager = new CollisionManager();
+
+        // Initialize the players.
+        playerObjects = new ArrayList<>();
 
         activeSpells = new CopyOnWriteArrayList<>();
 
@@ -47,11 +66,12 @@ public class GameServer {
                 Socket s = ss.accept();
                 DataInputStream in = new DataInputStream(s.getInputStream());
                 DataOutputStream out = new DataOutputStream(s.getOutputStream());
-
                 players++;
+                PlayerObject player = new PlayerObject(GameConfig.TILE_SIZE * 64, GameConfig.TILE_SIZE * 43, GameConfig.TILE_SIZE, false, players);
+                playerObjects.add(player);
+                collisionManager.addPlayer(player);
                 out.writeInt(players);
                 System.out.println("Player #" + players + " has connected.");
-                
                 ReadFromClient rfc = new ReadFromClient(players, in);
                 WriteToClient wtc = new WriteToClient(players, out);
 
@@ -110,18 +130,37 @@ public class GameServer {
                     playerPositions.get(playerID-1)[0] = Double.parseDouble(positionData[1]);
                     playerPositions.get(playerID-1)[1] = Double.parseDouble(positionData[2]);
 
+                    if (playerObjects.get(playerID-1) != null) {
+                        playerObjects.get(playerID-1).setX(playerPositions.get(playerID-1)[0]);
+                        playerObjects.get(playerID-1).setY(playerPositions.get(playerID-1)[1]);
+                    }
+                    
                     // Implement spells
                     for (String entity : data){
                         
                         // FIRE_SPELL 
                         if (entity.startsWith("FIRE_SPELL")) {
                             String[] params = entity.split("-");
-                            activeSpells.add(new FireSpell(
-                                playerID,
-                                Double.parseDouble(params[1]), 
-                                Double.parseDouble(params[2]), 
-                                Direction.valueOf(params[3]))
-                            );
+                            if (params.length == 6) {
+                                activeSpells.add(new FireSpell(
+                                    playerID,
+                                    Double.parseDouble(params[1]), 
+                                    Double.parseDouble(params[2]), 
+                                    Direction.valueOf(params[3]),
+                                    Integer.parseInt(params[4]),
+                                    Boolean.parseBoolean(params[5]))
+                                );
+                            } else {
+                                activeSpells.add(new FireSpell(
+                                    playerID,
+                                    Double.parseDouble(params[1]), 
+                                    Double.parseDouble(params[2]), 
+                                    Direction.valueOf(params[3]),
+                                    Integer.parseInt(params[4]),
+                                    false)
+                                );
+                            }
+                            
                         
                         // WATER_SPELL
                         } else if (entity.startsWith("WATER_SPELL")) {
@@ -144,8 +183,7 @@ public class GameServer {
                                     Double.parseDouble(params[2]), 
                                     Direction.valueOf(params[3]),
                                     Double.parseDouble(params[4]),
-                                    Integer.parseInt(params[5]),
-                                    Integer.parseInt(params[6])
+                                    Integer.parseInt(params[5])
                                 ));
                             }
                         
@@ -161,7 +199,8 @@ public class GameServer {
                                     playerID,
                                     Double.parseDouble(params[1]), 
                                     Double.parseDouble(params[2]), 
-                                    Direction.valueOf(params[3]))
+                                    Direction.valueOf(params[3]),
+                                    Integer.parseInt(params[4]))
                                 );
                         
                         // EARTH SPELL
@@ -258,7 +297,7 @@ public class GameServer {
                 // Update all spells
                 for (Spell spell : activeSpells) {
                     spell.update();
-                    spell.handleCollisions(null);
+                    spell.handleCollisions(collisionManager);
                 }
                 
                 // Remove all expired spells

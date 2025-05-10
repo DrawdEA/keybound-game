@@ -32,8 +32,8 @@ public class WaterSpell extends Spell {
     private int currentFrame;
 
     public static void initializeSprites() {
-        /* try {
-            BufferedImage waterImage = ImageIO.read(getClass().getResourceAsStream("/resources/spells/water.png"));
+        try {
+            BufferedImage waterImage = ImageIO.read(WaterSpell.class.getResourceAsStream("/resources/spells/water.png"));
 
             waterSprites[0] = waterImage.getSubimage(0, 0, 64, 64);
             waterSprites[1] = waterImage.getSubimage(64, 0, 64, 64);
@@ -53,7 +53,7 @@ public class WaterSpell extends Spell {
             waterSprites[15] = waterImage.getSubimage(192, 192, 64, 64);    
         } catch (IOException e) { 
             System.out.println("IOException from WaterSpell.java");
-        } */
+        }
     }
 
     // Initial Creation
@@ -75,7 +75,7 @@ public class WaterSpell extends Spell {
     }
 
     // Static Rendering
-    public WaterSpell(int casterId, double x, double y, Direction dir, double endingBar, int animationCounter, int currentFrame) {
+    public WaterSpell(int casterId, double x, double y, Direction dir, double endingBar, int animationCounter) {
         super("WATER_SPELL", casterId, x, y, 25, 25, dir);
 
         this.x = x;
@@ -103,11 +103,13 @@ public class WaterSpell extends Spell {
         if (currAgeInTicks >= maxAgeInTicks) {
             expired = true;
         }
+
+        animationCounter++;
     }
 
     @Override
     public String getDataString() {
-        return String.format("WATER_SPELL-%f-%f-%s-%f-%d-%d", x, y, dir.toString(), endingBar, animationCounter, currentFrame);
+        return String.format("WATER_SPELL-%f-%f-%s-%f-%d", x, y, dir.toString(), endingBar, animationCounter);
     }
 
     @Override
