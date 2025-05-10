@@ -12,5 +12,7 @@ https://github.com/nr-johnson/flip-sprite
 https://www.geeksforgeeks.org/enum-in-java/
 https://www.geeksforgeeks.org/arraylist-removeif-method-in-java/
 
+Sprites
 https://hochupitsu.itch.io/heart-and-mana
 https://pimen.itch.io/
+https://mounirtohami.itch.io/pixel-art-gui-elements
