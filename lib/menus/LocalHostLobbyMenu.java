@@ -10,6 +10,7 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import lib.GameConfig;
 import lib.network.*;
+import org.ietf.jgss.GSSContext;
 
 public class LocalHostLobbyMenu extends JPanel implements ActionListener {
     // Components
@@ -33,6 +34,7 @@ public class LocalHostLobbyMenu extends JPanel implements ActionListener {
     private GameServer gs;
     private String ip;
     private int port;
+    private Player p;
 
     // Constructor for lobby hosts
     public LocalHostLobbyMenu() {
@@ -262,7 +264,7 @@ public class LocalHostLobbyMenu extends JPanel implements ActionListener {
         }.start();
 
         // Join the created host's lobby as a player
-        Player p = new Player();
+        p = new Player();
         p.connectToServer(ip);
     }
 
@@ -289,25 +291,12 @@ public class LocalHostLobbyMenu extends JPanel implements ActionListener {
             mainFrame.revalidate();
             mainFrame.repaint();
         } else if (e.getSource() == startBtn) {
-
-            try {
-                Box box = Box.createHorizontalBox();
-                BufferedImage image = ImageIO.read(getClass().getResourceAsStream("/resources/player/blue.png")).getSubimage(0, 0, 64, 32);
-            
-                JLabel imageLabel = new JLabel();
-                imageLabel.setIcon(new ImageIcon(image));
-
-                box.add(imageLabel);
-                box.add(new JLabel("Player 1"));
-
-                players.add(box);
-                mainFrame.revalidate();
-                mainFrame.repaint();
-
-            } catch (Exception ex) {
-                System.err.println(ex);
-            }
-            
+            gs.startGame();
+            mainFrame.remove(this);
+            mainFrame.repaint();
+            mainFrame.add(p.getCanvas());
+            mainFrame.revalidate();
+            mainFrame.repaint();
         }
     }
 }

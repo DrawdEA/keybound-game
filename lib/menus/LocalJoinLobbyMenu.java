@@ -31,6 +31,8 @@ public class LocalJoinLobbyMenu extends JPanel implements ActionListener {
     private String ip;
     private int port;
     private Player p;
+    
+    final LocalJoinLobbyMenu thisMenu = this;
 
     // Constructor for lobby hosts
     public LocalJoinLobbyMenu(String ip) {
@@ -163,34 +165,43 @@ public class LocalJoinLobbyMenu extends JPanel implements ActionListener {
                 String[] colorPaths = {"purple", "red", "green", "gray", "yellow", "blue", "orange"};
 
                 while (true) {
-                    int currentPlayersInLobby = p.getNumOfConnectedPlayers();
+                    if (!p.getIsInGame()) {
+                        int currentPlayersInLobby = p.getNumOfConnectedPlayers();
 
-                    if (currentPlayersInLobby != displayedPlayers) {
-                        players.removeAll();
-                        // Add new player JLabels
-                        for (int i = 0; i < currentPlayersInLobby; i++) {
+                        if (currentPlayersInLobby != displayedPlayers) {
+                            players.removeAll();
+                            // Add new player JLabels
+                            for (int i = 0; i < currentPlayersInLobby; i++) {
 
-                            try {
-                                Box box = Box.createHorizontalBox();
-                                BufferedImage image = ImageIO.read(getClass().getResourceAsStream(String.format("/resources/player/%s.png", colorPaths[i]))).getSubimage(0, 0, 64, 32);
-                            
-                                JLabel imageLabel = new JLabel();
-                                imageLabel.setIcon(new ImageIcon(image));
+                                try {
+                                    Box box = Box.createHorizontalBox();
+                                    BufferedImage image = ImageIO.read(getClass().getResourceAsStream(String.format("/resources/player/%s.png", colorPaths[i]))).getSubimage(0, 0, 64, 32);
+                                
+                                    JLabel imageLabel = new JLabel();
+                                    imageLabel.setIcon(new ImageIcon(image));
 
-                                box.add(imageLabel);
-                                box.add(new JLabel("Player " + (i+1)), SwingConstants.CENTER);
+                                    box.add(imageLabel);
+                                    box.add(new JLabel("Player " + (i+1)), SwingConstants.CENTER);
 
-                                players.add(box, SwingConstants.CENTER);
-                                players.revalidate();
-                                players.repaint();
+                                    players.add(box, SwingConstants.CENTER);
+                                    players.revalidate();
+                                    players.repaint();
 
-                                System.out.printf("Player %d has joined the lobby", i+1);
+                                    System.out.printf("Player %d has joined the lobby", i+1);
 
-                            } catch (Exception ex) {
-                                System.err.println(ex);
+                                } catch (Exception ex) {
+                                    System.err.println(ex);
+                                }
                             }
+                            displayedPlayers = currentPlayersInLobby;
                         }
-                        displayedPlayers = currentPlayersInLobby;
+                    } else {
+                        JPanel mainFrame = (JPanel) thisMenu.getParent();
+                        mainFrame.remove(thisMenu);
+                        mainFrame.repaint();
+                        mainFrame.add(p.getCanvas());
+                        mainFrame.revalidate();
+                        mainFrame.repaint();
                     }
 
                     // Prevent this loop from consuming 100% CPU
@@ -220,32 +231,11 @@ public class LocalJoinLobbyMenu extends JPanel implements ActionListener {
         JPanel mainFrame = (JPanel) this.getParent();
         
         if (e.getSource() == backBtn) {
-
             mainFrame.remove(this);
             mainFrame.repaint();
             mainFrame.add(new LocalPlaySelectionMenu(), BorderLayout.CENTER);
             mainFrame.revalidate();
             mainFrame.repaint();
-        } else if (e.getSource() == startBtn) {
-
-            try {
-                Box box = Box.createHorizontalBox();
-                BufferedImage image = ImageIO.read(getClass().getResourceAsStream("/resources/player/blue.png")).getSubimage(0, 0, 64, 32);
-            
-                JLabel imageLabel = new JLabel();
-                imageLabel.setIcon(new ImageIcon(image));
-
-                box.add(imageLabel);
-                box.add(new JLabel("Player 1"));
-
-                players.add(box);
-                mainFrame.revalidate();
-                mainFrame.repaint();
-
-            } catch (Exception ex) {
-                System.err.println(ex);
-            }
-            
         }
     }
 }

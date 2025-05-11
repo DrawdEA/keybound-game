@@ -15,12 +15,14 @@ public class Player {
     private ReadFromServer rfsRunnable;
     private WriteToServer wtsRunnable;
     private int numOfConnectedPlayers; 
+    private boolean isInGame;
 
     private GameCanvas gameCanvas;
     
     private String wantsToCast = "";
     
     public Player() {
+        isInGame = false;
         gameCanvas = new GameCanvas();
         gameCanvas.setPlayerClient(this);
     }
@@ -75,10 +77,12 @@ public class Player {
 
                     // Lobby Messages
                     if (messageType == 0) {
+                        isInGame = false;
                         numOfConnectedPlayers = dataIn.readInt();
 
                     // Game Messages
                     } else if (messageType == 1){
+                        isInGame = true;
                         PlayerObject enemy = gameCanvas.getEnemy();
                         if (enemy != null) {
                             PlayerObject player = gameCanvas.getOwnPlayer();
@@ -224,5 +228,9 @@ public class Player {
 
     public int getNumOfConnectedPlayers() {
         return numOfConnectedPlayers;
+    }
+
+    public boolean getIsInGame() {
+        return isInGame;
     }
 }
