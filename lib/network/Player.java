@@ -14,6 +14,7 @@ public class Player {
     private int playerID;
     private ReadFromServer rfsRunnable;
     private WriteToServer wtsRunnable;
+    private int numOfConnectedPlayers; 
 
     private GameCanvas gameCanvas;
     
@@ -41,7 +42,13 @@ public class Player {
 
             rfsRunnable = new ReadFromServer(in);
             wtsRunnable = new WriteToServer(out);
-            // rfsRunnable.waitForStartMsg();
+
+            // Start the read thread immediately to receive lobby updates
+            System.out.println("Starting ReadFromServer thread...");
+            Thread readThread = new Thread(rfsRunnable);
+            readThread.start();
+            
+            System.out.println("ReadFromServer thread started");
         } catch (IOException ex) {
             System.out.println("IOException from connectToServer()");
         }
@@ -62,79 +69,90 @@ public class Player {
         public void run() {
             try {
                 while (true) { 
-                    PlayerObject enemy = gameCanvas.getEnemy();
-                    if (enemy != null) {
-                        PlayerObject player = gameCanvas.getOwnPlayer();
-                        
-                        // Enemy position
-                        String enemyDataRaw = dataIn.readUTF();
-                        String[] enemyData = enemyDataRaw.split(" ");
-                        
-                        // enemyData[0] = enemy's ID
-                        // enemyData[1] = enemy's position token
-                        // enemyData[2::] = enemy's objects
-                        
-                        // Set position
-                        String[] enemyPosition = enemyData[1].split("-");
-                        enemy.setX(Double.parseDouble(enemyPosition[1]) - player.getX() + player.getScreenX());
-                        enemy.setY(Double.parseDouble(enemyPosition[2]) - player.getY() + player.getScreenY());
-                        //enemy.updatePlayerAnimation(something, something); // TODO: handle this
-                        
-                        gameCanvas.clearSpells();
-                        for (int i = 2; i < enemyData.length; i++) {
-                            String[] spellData = enemyData[i].split("-");
+                    
+                    // message type tells us if it is lobby data or game data
+                    int messageType = dataIn.readInt();
+
+                    // Lobby Messages
+                    if (messageType == 0) {
+                        numOfConnectedPlayers = dataIn.readInt();
+
+                    // Game Messages
+                    } else if (messageType == 1){
+                        PlayerObject enemy = gameCanvas.getEnemy();
+                        if (enemy != null) {
+                            PlayerObject player = gameCanvas.getOwnPlayer();
                             
-                            double x;
-                            double y;
-                            Direction dir;
-
-                            if (spellData[0].contains("_SPELL")) {
-                                // Transform the x and the y based on the POV of the player 
-                                x = Double.parseDouble(spellData[1]) - player.getX() + player.getScreenX();
-                                y = Double.parseDouble(spellData[2]) - player.getY() + player.getScreenY();
-                                dir = Direction.valueOf(spellData[3]);
-
-                                // FIRE SPELL
-                                if (spellData[0].equals("FIRE_SPELL")) {
-                                    gameCanvas.addSpell(new FireSpell(playerID, x, y, dir));
+                            // Enemy position
+                            String enemyDataRaw = dataIn.readUTF();
+                            String[] enemyData = enemyDataRaw.split(" ");
+                            
+                            // enemyData[0] = enemy's ID
+                            // enemyData[1] = enemy's position token
+                            // enemyData[2::] = enemy's objects
+                            
+                            // Set position
+                            String[] enemyPosition = enemyData[1].split("-");
+                            enemy.setX(Double.parseDouble(enemyPosition[1]) - player.getX() + player.getScreenX());
+                            enemy.setY(Double.parseDouble(enemyPosition[2]) - player.getY() + player.getScreenY());
+                            //enemy.updatePlayerAnimation(something, something); // TODO: handle this
+                            
+                            gameCanvas.clearSpells();
+                            for (int i = 2; i < enemyData.length; i++) {
+                                String[] spellData = enemyData[i].split("-");
                                 
-                                // WATER SPELL
-                                } else if (spellData[0].equals("WATER_SPELL")) {
-                                    if (spellData.length > 4) {
-                                        double serverEndingBar = Double.parseDouble(spellData[4]);
-                                        
-                                        // Transform the endingBar to screen coordinates
-                                        double transformedEndingBar = 0;
-                                        if (dir == Direction.LEFT || dir == Direction.RIGHT) {
-                                            transformedEndingBar = serverEndingBar - player.getX() + player.getScreenX();
-                                        } else if (dir == Direction.UP || dir == Direction.DOWN) {
-                                            transformedEndingBar = serverEndingBar - player.getY() + player.getScreenY();
+                                double x;
+                                double y;
+                                Direction dir;
+
+                                if (spellData[0].contains("_SPELL")) {
+                                    // Transform the x and the y based on the POV of the player 
+                                    x = Double.parseDouble(spellData[1]) - player.getX() + player.getScreenX();
+                                    y = Double.parseDouble(spellData[2]) - player.getY() + player.getScreenY();
+                                    dir = Direction.valueOf(spellData[3]);
+
+                                    // FIRE SPELL
+                                    if (spellData[0].equals("FIRE_SPELL")) {
+                                        gameCanvas.addSpell(new FireSpell(playerID, x, y, dir));
+                                    
+                                    // WATER SPELL
+                                    } else if (spellData[0].equals("WATER_SPELL")) {
+                                        if (spellData.length > 4) {
+                                            double serverEndingBar = Double.parseDouble(spellData[4]);
+                                            
+                                            // Transform the endingBar to screen coordinates
+                                            double transformedEndingBar = 0;
+                                            if (dir == Direction.LEFT || dir == Direction.RIGHT) {
+                                                transformedEndingBar = serverEndingBar - player.getX() + player.getScreenX();
+                                            } else if (dir == Direction.UP || dir == Direction.DOWN) {
+                                                transformedEndingBar = serverEndingBar - player.getY() + player.getScreenY();
+                                            }
+                                            
+                                            int animationCounter = Integer.parseInt(spellData[5]);
+                                            int currentFrame = Integer.parseInt(spellData[6]);
+
+                                            gameCanvas.addSpell(new WaterSpell(playerID, x, y, dir, transformedEndingBar, animationCounter, currentFrame));
+                                        }
+                                    
+                                    // WIND SPELL
+                                    } else if (spellData[0].equals("WIND_SPELL")){
+                                        int spellCasterId = Integer.parseInt(spellData[4]);
+
+                                        if (spellCasterId == playerID) {
+                                            gameCanvas.getOwnPlayer().setNewPosition(
+                                                Double.parseDouble(spellData[1]), 
+                                                Double.parseDouble(spellData[2])
+                                            );
                                         }
                                         
-                                        int animationCounter = Integer.parseInt(spellData[5]);
-                                        int currentFrame = Integer.parseInt(spellData[6]);
-
-                                        gameCanvas.addSpell(new WaterSpell(playerID, x, y, dir, transformedEndingBar, animationCounter, currentFrame));
+                                        gameCanvas.addSpell(new WindSpell(playerID, x, y, dir));
+                                    // EARTH SPELL
+                                    } else if (spellData[0].equals("EARTH_SPELL")){
+                                        gameCanvas.addSpell(new EarthSpell(playerID, x, y, dir));
                                     }
-                                
-                                // WIND SPELL
-                                } else if (spellData[0].equals("WIND_SPELL")){
-                                    int spellCasterId = Integer.parseInt(spellData[4]);
-
-                                    if (spellCasterId == playerID) {
-                                        gameCanvas.getOwnPlayer().setNewPosition(
-                                            Double.parseDouble(spellData[1]), 
-                                            Double.parseDouble(spellData[2])
-                                        );
-                                    }
-                                    
-                                    gameCanvas.addSpell(new WindSpell(playerID, x, y, dir));
-                                // EARTH SPELL
-                                } else if (spellData[0].equals("EARTH_SPELL")){
-                                    gameCanvas.addSpell(new EarthSpell(playerID, x, y, dir));
                                 }
                             }
-                        }
+                        }   
                     }
                 }
             } catch(IOException ex) {
@@ -202,5 +220,9 @@ public class Player {
     public void requestToCast(String spellName) {
         gameCanvas.getOwnPlayer().overrideAnimation("Attacking1");
         wantsToCast = spellName;
+    }
+
+    public int getNumOfConnectedPlayers() {
+        return numOfConnectedPlayers;
     }
 }

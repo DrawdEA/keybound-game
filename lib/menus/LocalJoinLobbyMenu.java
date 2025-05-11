@@ -11,13 +11,11 @@ import javax.swing.*;
 import lib.GameConfig;
 import lib.network.*;
 
-public class LocalHostLobbyMenu extends JPanel implements ActionListener {
+public class LocalJoinLobbyMenu extends JPanel implements ActionListener {
     // Components
     private JLabel title, subtitle;
     private JTextArea connectionDetails;
     private JButton startBtn, backBtn;
-    private JRadioButton arcaneModeRadioButton, apprenticeModeRadioButton;
-    private ButtonGroup modeRadioButtonGroup;
     private JPanel players, content;
 
     private BufferedImage bgImage;
@@ -30,31 +28,19 @@ public class LocalHostLobbyMenu extends JPanel implements ActionListener {
     private Font Jacquard, Pixelify;
 
     // Server Networking
-    private GameServer gs;
     private String ip;
     private int port;
+    private Player p;
 
     // Constructor for lobby hosts
-    public LocalHostLobbyMenu() {
+    public LocalJoinLobbyMenu(String ip) {
         // Collection connection details
-        try(final DatagramSocket socket = new DatagramSocket()){
-            socket.connect(InetAddress.getByName("8.8.8.8"), 10002);
-            ip = socket.getLocalAddress().getHostAddress();
-        } catch (Exception ex){
-            System.err.println(ex);
-        }
+        this.ip = ip;
         port = 10000;
 
         title = new JLabel("Keybound", SwingConstants.CENTER);
         subtitle = new JLabel("Local Lobby", SwingConstants.CENTER);
         backBtn = new JButton("< Back");
-        startBtn = new JButton("Start!");
-        arcaneModeRadioButton = new JRadioButton("Arcane Mode", true);
-        apprenticeModeRadioButton = new JRadioButton("Apprentice Mode", false);
-
-        modeRadioButtonGroup = new ButtonGroup();
-        modeRadioButtonGroup.add(arcaneModeRadioButton);
-        modeRadioButtonGroup.add(apprenticeModeRadioButton);
 
         players = new JPanel();
         players.setLayout(new GridLayout(5,1));
@@ -146,52 +132,13 @@ public class LocalHostLobbyMenu extends JPanel implements ActionListener {
         connectionDetails.setBackground(new Color(228, 166, 114));
         connectionDetails.setMargin(new Insets(15,15,15,15));
 
-        // Mode Selection
-        arcaneModeRadioButton.setBounds(            
-            (int) (GameConfig.SCREEN_LENGTH * 0.625), 
-            (int) (GameConfig.SCREEN_HEIGHT * 0.575), 
-            (int) (GameConfig.SCREEN_LENGTH * 0.3), 
-            (int) (GameConfig.SCREEN_HEIGHT * 0.1)
-        );
-        arcaneModeRadioButton.setFont(Pixelify.deriveFont(25f));
-        arcaneModeRadioButton.setForeground(titleTextColor);
-        arcaneModeRadioButton.setOpaque(false);
-        arcaneModeRadioButton.setFocusable(false);
-
-        apprenticeModeRadioButton.setBounds(            
-            (int) (GameConfig.SCREEN_LENGTH * 0.625), 
-            (int) (GameConfig.SCREEN_HEIGHT * 0.625), 
-            (int) (GameConfig.SCREEN_LENGTH * 0.3), 
-            (int) (GameConfig.SCREEN_HEIGHT * 0.1)
-        );
-        apprenticeModeRadioButton.setFont(Pixelify.deriveFont(25f));
-        apprenticeModeRadioButton.setForeground(titleTextColor);
-        apprenticeModeRadioButton.setOpaque(false);
-        apprenticeModeRadioButton.setFocusable(false);
-
-        // Start Button
-        startBtn.setBounds(            
-            (int) (GameConfig.SCREEN_LENGTH * 0.7), 
-            (int) (GameConfig.SCREEN_HEIGHT * 0.75), 
-            (int) (GameConfig.SCREEN_LENGTH * 0.15), 
-            (int) (GameConfig.SCREEN_HEIGHT * 0.1)
-        );
-        startBtn.setFont(Pixelify);
-        startBtn.setForeground(buttonTextColor);
-        startBtn.setBackground(buttonBg1);
-        startBtn.setFocusable(false);
-
         backBtn.addActionListener(this);
-        startBtn.addActionListener(this);
 
         content.add(title);
         content.add(subtitle);
         content.add(backBtn);
         content.add(players);
         content.add(connectionDetails);
-        content.add(arcaneModeRadioButton);
-        content.add(apprenticeModeRadioButton);
-        content.add(startBtn);
         content.add(menuBackground);
 
         // ---- Set up frame ----- // 
@@ -205,8 +152,9 @@ public class LocalHostLobbyMenu extends JPanel implements ActionListener {
 
 
         // ----- Server Thread ----- // 
-        // Start game server on host machine
-        gs = new GameServer();
+        // Join the created host's lobby as a player
+        p = new Player();
+        p.connectToServer(ip);
 
         // Thread to show all new players connected to the lobby
         new Thread() {
@@ -215,7 +163,8 @@ public class LocalHostLobbyMenu extends JPanel implements ActionListener {
                 String[] colorPaths = {"purple", "red", "green", "gray", "yellow", "blue", "orange"};
 
                 while (true) {
-                    int currentPlayersInLobby = gs.getNumPlayersInLobby();
+                    int currentPlayersInLobby = p.getNumOfConnectedPlayers();
+
                     if (currentPlayersInLobby != displayedPlayers) {
                         players.removeAll();
                         // Add new player JLabels
@@ -253,17 +202,6 @@ public class LocalHostLobbyMenu extends JPanel implements ActionListener {
                 }
             }
         }.start();
-        
-        // Thread to accept connections
-        new Thread() {
-            public void run() {
-                gs.acceptConnections();
-            }
-        }.start();
-
-        // Join the created host's lobby as a player
-        Player p = new Player();
-        p.connectToServer(ip);
     }
 
     @Override
@@ -282,7 +220,7 @@ public class LocalHostLobbyMenu extends JPanel implements ActionListener {
         JPanel mainFrame = (JPanel) this.getParent();
         
         if (e.getSource() == backBtn) {
-            gs.closeConnections();
+
             mainFrame.remove(this);
             mainFrame.repaint();
             mainFrame.add(new LocalPlaySelectionMenu(), BorderLayout.CENTER);

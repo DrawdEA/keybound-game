@@ -11,6 +11,7 @@ import lib.render.Direction;
 public class GameServer {
     private ServerSocket ss;
     private int players;
+    private boolean isGameStarted;
 
     private ReadFromClient p1ReadRunnable, p2ReadRunnable;
     private WriteToClient p1WriteRunnable, p2WriteRunnable;
@@ -22,6 +23,7 @@ public class GameServer {
     public GameServer() {
         System.out.println("==== GAME SERVER ====");
         players = 0;
+        isGameStarted = false;
 
         playerPositions = new ArrayList<>();
         playerPositions.add(new double[]{50, 50});
@@ -62,6 +64,10 @@ public class GameServer {
                     p2ReadRunnable = rfc;
                     p2WriteRunnable = wtc;
                 }
+
+                // Start write thread to send lobby data
+                Thread writeThread = new Thread(wtc);
+                writeThread.start();
             }
 
             System.out.println("No longer accepting connections");
@@ -71,6 +77,8 @@ public class GameServer {
     }
 
     public void startGame() {
+        isGameStarted = true;
+
         // Start the game.
         p1WriteRunnable.sendStartMsg();
         p2WriteRunnable.sendStartMsg();
@@ -218,41 +226,60 @@ public class GameServer {
         public void run() {
             try {
                 while (true) {
+                    // Sending Lobby Data
+                    if (!isGameStarted) {
+                        dataOut.writeInt(0);
+                        dataOut.writeInt(players);
+                        dataOut.flush();
 
-                    String spellString = "";
-                    for (Spell spell : activeSpells) {
-                        spellString += spell.getDataString();
-                        spellString += " ";
+                        // Add a sleep to avoid overwhelming the connection
+                        try {
+                            Thread.sleep(500);
+                        } catch (InterruptedException ex) {
+                            System.out.println("InterruptedException from WTC run()");
+                        }
+
+                    // Sending Game Data
+                    } else {
+                        dataOut.writeInt(1);
+                        
+                        String spellString = "";
+                        for (Spell spell : activeSpells) {
+                            spellString += spell.getDataString();
+                            spellString += " ";
+                        }
+                        
+                        // Send the enemy positions
+                        if (playerID == 1) {
+                            dataOut.writeUTF(
+                                String.format("%d POSITION-%f-%f %s", 
+                                    playerID, 
+                                    playerPositions.get(1)[0], 
+                                    playerPositions.get(1)[1], 
+                                    spellString
+                                )
+                            );
+                        } else if (playerID == 2) {
+                            dataOut.writeUTF(
+                                String.format("%d POSITION-%f-%f %s", 
+                                    playerID, 
+                                    playerPositions.get(0)[0], 
+                                    playerPositions.get(0)[1], 
+                                    spellString
+                                )
+                            );
+                        }
+
+                        dataOut.flush();
+                        try {
+                            Thread.sleep(25);
+                        } catch (InterruptedException ex) {
+                            System.out.println("InterruptedException from WTC run()");
+                        } 
+                        
                     }
                     
-                    // Send the enemy positions
-                    if (playerID == 1) {
-                        dataOut.writeUTF(
-                            String.format("%d POSITION-%f-%f %s", 
-                                playerID, 
-                                playerPositions.get(1)[0], 
-                                playerPositions.get(1)[1], 
-                                spellString
-                            )
-                        );
-                    } else if (playerID == 2) {
-                        dataOut.writeUTF(
-                            String.format("%d POSITION-%f-%f %s", 
-                                playerID, 
-                                playerPositions.get(0)[0], 
-                                playerPositions.get(0)[1], 
-                                spellString
-                            )
-                        );
-                    }
-                    
-                   
-                    dataOut.flush();
-                    try {
-                        Thread.sleep(25);
-                    } catch (InterruptedException ex) {
-                        System.out.println("InterruptedException from WTC run()");
-                    } 
+
                 }
             } catch (IOException ex) {
                 System.out.println("IOException from WTC run()");
