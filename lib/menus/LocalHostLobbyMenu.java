@@ -45,14 +45,6 @@ public class LocalHostLobbyMenu extends JPanel implements ActionListener {
         }
         port = 10000;
 
-        // Start game server on host machine
-        new Thread() {
-        public void run() {
-                gs = new GameServer();
-                gs.acceptConnections();
-            }
-        }.start();
-
         title = new JLabel("Keybound", SwingConstants.CENTER);
         subtitle = new JLabel("Local Lobby", SwingConstants.CENTER);
         backBtn = new JButton("< Back");
@@ -209,6 +201,46 @@ public class LocalHostLobbyMenu extends JPanel implements ActionListener {
 
         // ----- Add components ----- //
         this.add(content, BorderLayout.CENTER);
+
+
+        // ----- Server Thread ----- // 
+        // Start game server on host machine
+        gs = new GameServer();
+
+        // Thread to show all new players connected to the lobby
+        new Thread() {
+            public void run() {
+                int displayedPlayers = 0;
+
+                while (true) {
+                    int currentPlayersInLobby = gs.getNumPlayersInLobby();
+                    if (currentPlayersInLobby != displayedPlayers) {
+                        // Add new player JLabels
+                        for (int i = 0; i < currentPlayersInLobby; i++) {
+                            players.add(new JLabel(String.format("Player %d", i+1), SwingConstants.CENTER));
+                            players.revalidate();
+                            players.repaint();  
+                            System.out.println("Added UI for Player " + (i + 1));
+                        }
+                        displayedPlayers = currentPlayersInLobby;
+                    }
+
+                    // Prevent this loop from consuming 100% CPU
+                    try {
+                        Thread.sleep(500); // Check every 500ms
+                    } catch (InterruptedException ex) {
+                        System.err.println(ex);
+                    }
+                }
+            }
+        }.start();
+        
+        // Thread to accept connections
+        new Thread() {
+            public void run() {
+                gs.acceptConnections();
+            }
+        }.start();
     }
 
     @Override

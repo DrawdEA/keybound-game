@@ -61,22 +61,6 @@ public class GameServer {
                 } else {
                     p2ReadRunnable = rfc;
                     p2WriteRunnable = wtc;
-
-                    // Start the game.
-                    p1WriteRunnable.sendStartMsg();
-                    p2WriteRunnable.sendStartMsg();
-
-                    // Start the read threads first.
-                    Thread readThread1 = new Thread(p1ReadRunnable);
-                    Thread readThread2 = new Thread(p2ReadRunnable);
-                    readThread1.start();
-                    readThread2.start();
-
-                    // Start the write threads first.
-                    Thread writeThread1 = new Thread(p1WriteRunnable);
-                    Thread writeThread2 = new Thread(p2WriteRunnable);
-                    writeThread1.start();
-                    writeThread2.start();
                 }
             }
 
@@ -84,6 +68,24 @@ public class GameServer {
         } catch(IOException ex) {
             System.out.println("IOException from acceptConnections()");
         }
+    }
+
+    public void startGame() {
+        // Start the game.
+        p1WriteRunnable.sendStartMsg();
+        p2WriteRunnable.sendStartMsg();
+
+        // Start the read threads first.
+        Thread readThread1 = new Thread(p1ReadRunnable);
+        Thread readThread2 = new Thread(p2ReadRunnable);
+        readThread1.start();
+        readThread2.start();
+
+        // Start the write threads first.
+        Thread writeThread1 = new Thread(p1WriteRunnable);
+        Thread writeThread2 = new Thread(p2WriteRunnable);
+        writeThread1.start();
+        writeThread2.start();
     }
 
     public void closeConnections() {
@@ -96,6 +98,10 @@ public class GameServer {
         } catch (IOException ex) {
             System.err.println("IOException while closing server socket: " + ex.getMessage());
         }
+    }
+
+    public int getNumPlayersInLobby() {
+        return players;
     }
 
     private class ReadFromClient implements Runnable {
