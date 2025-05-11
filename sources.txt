@@ -17,6 +17,8 @@ https://stackoverflow.com/questions/6810581/how-to-center-the-text-in-a-jlabel
 https://stackoverflow.com/questions/9481865/getting-the-ip-address-of-the-current-machine-using-java
 https://stackoverflow.com/questions/685521/multiline-text-in-jlabel
 https://stackoverflow.com/questions/14740979/adding-margins-in-a-jtextarea
+https://stackoverflow.com/questions/13648890/convert-bufferedimage-to-imageicon
+https://stackoverflow.com/questions/38406482/java-jlabel-with-text-and-icon
 
 Sprites
 https://hochupitsu.itch.io/heart-and-mana

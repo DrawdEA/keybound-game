@@ -184,14 +184,7 @@ public class LocalPlaySelectionMenu extends JPanel implements ActionListener {
             // Player stuff for sir choob
             Player p = new Player();
             mainFrame.add(p.getCanvas());
-            p.connectToServer();
-            
-
-            // legacy canvas
-            //GameCanvas gc = new GameCanvas();
-            //mainFrame.add(gc);
-            //gc.connectToServer();
-            //gc.addPlayers();
+            p.connectToServer("localhost");
 
             mainFrame.revalidate();
             mainFrame.repaint();

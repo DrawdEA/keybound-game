@@ -143,7 +143,7 @@ public class MainMenu extends JPanel implements ActionListener {
             // localPlayBtn the created server as a new player
             Player p = new Player();
             mainFrame.add(p.getCanvas());
-            p.connectToServer();
+            p.connectToServer("localhost");
 
             mainFrame.revalidate();
             mainFrame.repaint();

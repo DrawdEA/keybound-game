@@ -24,13 +24,14 @@ public class Player {
         gameCanvas.setPlayerClient(this);
     }
 
-    public void connectToServer() {
+    public void connectToServer(String ip) {
         try {
-            socket = new Socket("localhost", 10000);
+            socket = new Socket(ip, 10000);
             DataInputStream in = new DataInputStream(socket.getInputStream());
             DataOutputStream out = new DataOutputStream(socket.getOutputStream());
             playerID = in.readInt();
             System.out.println("You are player # " + playerID);
+            
             if (playerID == 1) {
                 System.out.println("Waiting for Player #2 to connect...");
             }
@@ -40,7 +41,7 @@ public class Player {
 
             rfsRunnable = new ReadFromServer(in);
             wtsRunnable = new WriteToServer(out);
-            rfsRunnable.waitForStartMsg();
+            // rfsRunnable.waitForStartMsg();
         } catch (IOException ex) {
             System.out.println("IOException from connectToServer()");
         }

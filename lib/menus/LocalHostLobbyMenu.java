@@ -179,6 +179,7 @@ public class LocalHostLobbyMenu extends JPanel implements ActionListener {
         startBtn.setFont(Pixelify);
         startBtn.setForeground(buttonTextColor);
         startBtn.setBackground(buttonBg1);
+        startBtn.setFocusable(false);
 
         backBtn.addActionListener(this);
         startBtn.addActionListener(this);
@@ -211,16 +212,33 @@ public class LocalHostLobbyMenu extends JPanel implements ActionListener {
         new Thread() {
             public void run() {
                 int displayedPlayers = 0;
+                String[] colorPaths = {"purple", "red", "green", "gray", "yellow", "blue", "orange"};
 
                 while (true) {
                     int currentPlayersInLobby = gs.getNumPlayersInLobby();
                     if (currentPlayersInLobby != displayedPlayers) {
                         // Add new player JLabels
                         for (int i = 0; i < currentPlayersInLobby; i++) {
-                            players.add(new JLabel(String.format("Player %d", i+1), SwingConstants.CENTER));
-                            players.revalidate();
-                            players.repaint();  
-                            System.out.println("Added UI for Player " + (i + 1));
+
+                            try {
+                                Box box = Box.createHorizontalBox();
+                                BufferedImage image = ImageIO.read(getClass().getResourceAsStream(String.format("/resources/player/%s.png", colorPaths[i]))).getSubimage(0, 0, 64, 32);
+                            
+                                JLabel imageLabel = new JLabel();
+                                imageLabel.setIcon(new ImageIcon(image));
+
+                                box.add(imageLabel);
+                                box.add(new JLabel("Player " + (i+1)), SwingConstants.CENTER);
+
+                                players.add(box, SwingConstants.CENTER);
+                                players.revalidate();
+                                players.repaint();
+
+                                System.out.printf("Player %d has joined the lobby", i+1);
+
+                            } catch (Exception ex) {
+                                System.err.println(ex);
+                            }
                         }
                         displayedPlayers = currentPlayersInLobby;
                     }
@@ -241,6 +259,10 @@ public class LocalHostLobbyMenu extends JPanel implements ActionListener {
                 gs.acceptConnections();
             }
         }.start();
+
+        // Join the created host's lobby as a player
+        Player p = new Player();
+        p.connectToServer(ip);
     }
 
     @Override
@@ -266,9 +288,26 @@ public class LocalHostLobbyMenu extends JPanel implements ActionListener {
             mainFrame.revalidate();
             mainFrame.repaint();
         } else if (e.getSource() == startBtn) {
-            players.add(new JLabel("HELLO"));
-            mainFrame.revalidate();
-            mainFrame.repaint();
+
+            try {
+                Box box = Box.createHorizontalBox();
+                BufferedImage image = ImageIO.read(getClass().getResourceAsStream("/resources/player/blue.png")).getSubimage(0, 0, 64, 32);
+            
+                JLabel imageLabel = new JLabel();
+                imageLabel.setIcon(new ImageIcon(image));
+
+                box.add(imageLabel);
+                box.add(new JLabel("Player 1"));
+
+                players.removeAll();
+                players.add(box);
+                mainFrame.revalidate();
+                mainFrame.repaint();
+
+            } catch (Exception ex) {
+                System.err.println(ex);
+            }
+            
         }
     }
 }
