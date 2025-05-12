@@ -7,7 +7,6 @@ import java.io.InputStream;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import lib.GameConfig;
-import lib.network.*;
 
 public class MainMenu extends JPanel implements ActionListener {
     // Components
@@ -126,33 +125,19 @@ public class MainMenu extends JPanel implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         JPanel mainFrame = (JPanel) this.getParent();
         if (e.getSource() == onlinePlayBtn) {
-            mainFrame.remove(this);
-            mainFrame.repaint();
-            mainFrame.add(new ServerMenu(), BorderLayout.CENTER);
-
-            // Start a Game Server using an anonymous Thread
-            new Thread() {
-                public void run() {
-                    // Game Server Stuff for sir choob
-                    // Create a server
-                    GameServer gs = new GameServer();
-                    gs.acceptConnections();
-                }
-            }.start();
-
-            // localPlayBtn the created server as a new player
-            Player p = new Player();
-            mainFrame.add(p.getCanvas());
-            p.connectToServer("localhost");
-
-            mainFrame.revalidate();
-            mainFrame.repaint();
+            
         } else if (e.getSource() == localPlayBtn) {
             mainFrame.remove(this);
             mainFrame.add(new LocalPlaySelectionMenu());
 
             mainFrame.revalidate();
             mainFrame.repaint();
-        }
+        } else if (e.getSource() == tutorialBtn) {
+            mainFrame.remove(this);
+            //  mainFrame.add(new TutorialScreen());
+
+            mainFrame.revalidate();
+            mainFrame.repaint();
+        } 
     }
 }
