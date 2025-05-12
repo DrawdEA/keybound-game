@@ -39,6 +39,7 @@ public class GameServer {
         // Initialize sprites.
         FireSpell.initializeSprites();
         WindSpell.initializeSprites();
+        EarthSpell.initializeSprites();
 
         // Initialize collision manager.
         collisionManager = new CollisionManager();
@@ -141,14 +142,14 @@ public class GameServer {
                         // FIRE_SPELL 
                         if (entity.startsWith("FIRE_SPELL")) {
                             String[] params = entity.split("-");
-                            if (params.length == 6) {
+                            if (params.length == 7) {
                                 activeSpells.add(new FireSpell(
                                     playerID,
                                     Double.parseDouble(params[1]), 
                                     Double.parseDouble(params[2]), 
                                     Direction.valueOf(params[3]),
-                                    Integer.parseInt(params[4]),
-                                    Boolean.parseBoolean(params[5]))
+                                    Integer.parseInt(params[5]),
+                                    Boolean.parseBoolean(params[6]))
                                 );
                             } else {
                                 activeSpells.add(new FireSpell(
@@ -156,7 +157,7 @@ public class GameServer {
                                     Double.parseDouble(params[1]), 
                                     Double.parseDouble(params[2]), 
                                     Direction.valueOf(params[3]),
-                                    Integer.parseInt(params[4]),
+                                    Integer.parseInt(params[5]),
                                     false)
                                 );
                             }
@@ -182,8 +183,8 @@ public class GameServer {
                                     Double.parseDouble(params[1]), 
                                     Double.parseDouble(params[2]), 
                                     Direction.valueOf(params[3]),
-                                    Double.parseDouble(params[4]),
-                                    Integer.parseInt(params[5])
+                                    Double.parseDouble(params[5]),
+                                    Integer.parseInt(params[6])
                                 ));
                             }
                         
@@ -195,13 +196,32 @@ public class GameServer {
                             playerPositions.get(playerID-1)[0] = Double.parseDouble(params[1]);
                             playerPositions.get(playerID-1)[1] = Double.parseDouble(params[2]);
 
-                            activeSpells.add(new WindSpell(
+                            if (params.length == 8) {
+                                System.out.println("OLD");
+                                activeSpells.add(new WindSpell(
                                     playerID,
                                     Double.parseDouble(params[1]), 
                                     Double.parseDouble(params[2]), 
                                     Direction.valueOf(params[3]),
-                                    Integer.parseInt(params[4]))
+                                    Integer.parseInt(params[4]),
+                                    Integer.parseInt(params[5]),
+                                    Double.parseDouble(params[6]), 
+                                    Double.parseDouble(params[7]))
                                 );
+                            } else {
+                                System.out.println("NEW!");
+                                activeSpells.add(new WindSpell(
+                                    playerID,
+                                    Double.parseDouble(params[1]), 
+                                    Double.parseDouble(params[2]), 
+                                    Direction.valueOf(params[3]),
+                                    Integer.parseInt(params[4]),
+                                    Integer.parseInt(params[5]),
+                                    0, 
+                                    0)
+                                );
+                            }
+                            
                         
                         // EARTH SPELL
                         } else if (entity.startsWith("EARTH_SPELL")) {
@@ -211,12 +231,26 @@ public class GameServer {
                             playerPositions.get(playerID-1)[0] = Double.parseDouble(params[1]);
                             playerPositions.get(playerID-1)[1] = Double.parseDouble(params[2]);
 
-                            activeSpells.add(new EarthSpell(
+                            if (params.length == 7) {
+                                activeSpells.add(new EarthSpell(
                                     playerID,
                                     Double.parseDouble(params[1]), 
                                     Double.parseDouble(params[2]), 
-                                    Direction.valueOf(params[3]))
+                                    Direction.valueOf(params[3]),
+                                    Integer.parseInt(params[5]),
+                                    Boolean.parseBoolean(params[6]))
                                 );
+                            } else {
+                                activeSpells.add(new EarthSpell(
+                                    playerID,
+                                    Double.parseDouble(params[1]), 
+                                    Double.parseDouble(params[2]), 
+                                    Direction.valueOf(params[3]),
+                                    Integer.parseInt(params[5]),
+                                    true)
+                                );
+                            }
+                            
                         } 
                     }
                 }

@@ -37,6 +37,7 @@ public class GameCanvas extends JComponent {
         // Initialize the spells.
         FireSpell.initializeSprites();
         WindSpell.initializeSprites();
+        EarthSpell.initializeSprites();
         
         // Initialize object to hold all gameObjects.
         gameObjects = new ArrayList<>();

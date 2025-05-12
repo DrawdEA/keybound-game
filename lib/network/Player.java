@@ -88,17 +88,19 @@ public class Player {
                             Direction dir;
                             int animationCounter;
                             boolean finished;
+                            boolean alive;
 
                             if (spellData[0].contains("_SPELL")) {
                                 // Transform the x and the y based on the POV of the player 
                                 x = Double.parseDouble(spellData[1]) - player.getX() + player.getScreenX();
                                 y = Double.parseDouble(spellData[2]) - player.getY() + player.getScreenY();
                                 dir = Direction.valueOf(spellData[3]);
-                                animationCounter = Integer.parseInt(spellData[4]);
-                                finished = Boolean.parseBoolean(spellData[5]);
+                                animationCounter = Integer.parseInt(spellData[5]);
+                                
 
                                 // FIRE SPELL
                                 if (spellData[0].equals("FIRE_SPELL")) {
+                                    finished = Boolean.parseBoolean(spellData[6]);
                                     gameCanvas.addSpell(new FireSpell(playerID, x, y, dir, animationCounter, finished));
                                 
                                 // WATER SPELL
@@ -120,6 +122,8 @@ public class Player {
                                 // WIND SPELL
                                 } else if (spellData[0].equals("WIND_SPELL")){
                                     int spellCasterId = Integer.parseInt(spellData[4]);
+                                    double originalX = Double.parseDouble(spellData[6]);
+                                    double originalY = Double.parseDouble(spellData[7]);
 
                                     if (spellCasterId == playerID) {
                                         gameCanvas.getOwnPlayer().setNewPosition(
@@ -128,10 +132,11 @@ public class Player {
                                         );
                                     }
                                     
-                                    gameCanvas.addSpell(new WindSpell(playerID, x, y, dir, animationCounter));
+                                    gameCanvas.addSpell(new WindSpell(playerID, x, y, dir, spellCasterId, animationCounter, originalX, originalY));
                                 // EARTH SPELL
                                 } else if (spellData[0].equals("EARTH_SPELL")){
-                                    gameCanvas.addSpell(new EarthSpell(playerID, x, y, dir));
+                                    alive = Boolean.parseBoolean(spellData[6]);
+                                    gameCanvas.addSpell(new EarthSpell(playerID, x, y, dir, animationCounter, alive));
                                 }
                             }
                         }
@@ -180,7 +185,7 @@ public class Player {
 
                         // Add spell request by the Player
                         if (!wantsToCast.equals("")) {
-                            dataString += String.format(wantsToCast + "-" + gameCanvas.getOwnPlayer().getPositionDataString() + "-0 ");
+                            dataString += String.format(wantsToCast + "-" + gameCanvas.getOwnPlayer().getPositionDataString() + "-" + gameCanvas.getOwnPlayer().getId() +"-0 ");
                             wantsToCast = "";
                         }
 

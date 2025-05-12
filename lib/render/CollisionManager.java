@@ -87,11 +87,14 @@ public class CollisionManager {
                 
             if (player.getId() != playerId) {
                 // Manual intersection check using direct field access
-                if (projectileHitbox.intersects(playerHitbox)) { 
-                    System.out.println("PLAYER: " + player.getId());
-                    System.out.println(player.getRelativeHitbox().x);
+                if (projectileHitbox.x < playerHitbox.x + playerHitbox.width &&
+                    projectileHitbox.x + projectileHitbox.width > playerHitbox.x &&
+                    projectileHitbox.y < playerHitbox.y + playerHitbox.height &&
+                    projectileHitbox.y + projectileHitbox.height > playerHitbox.y) { 
+                    /* System.out.println("PLAYER: " + player.getId());
+                    System.out.println(player.getRelativeHitbox().x + player.getRelativeHitbox().width);
                     System.out.println("PROJECTILE: " + player.getId());
-                    System.out.println(projectileHitbox.x);
+                    System.out.println(projectileHitbox.x); */
                     return player;
                 }
             }

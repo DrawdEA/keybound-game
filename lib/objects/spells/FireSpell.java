@@ -32,12 +32,12 @@ public class FireSpell extends Spell {
     boolean finished;
 
     private int animationCounter;
+
     private static BufferedImage[] fireball;
     private static BufferedImage[] impact;
 
     public FireSpell(int casterId, double x, double y, Direction dir, int aC, boolean f) {
         super("FIRE_SPELL", casterId, x, y, 50, 25, dir);
-        hitbox = new Rectangle((int) x - 5, (int) y, width, height);
         this.dir = dir;
         expired = false;
         id = casterId;
@@ -57,6 +57,8 @@ public class FireSpell extends Spell {
             this.x = x + TILE * 2 - 25/2;
             this.y = y + TILE * 0.75 - 25/2;
         }
+
+        hitbox = new Rectangle((int) x - 5, (int) y, width, height);
 
         animationCounter = aC;
     }
@@ -87,7 +89,7 @@ public class FireSpell extends Spell {
 
     public String getDataString() {
         String spellString = "";
-        spellString += String.format("FIRE_SPELL-%f-%f-%s-%d-%s", x, y, dir.toString(), animationCounter, finished);
+        spellString += String.format("FIRE_SPELL-%f-%f-%s-%d-%d-%s", x, y, dir.toString(), casterId, animationCounter, finished);
         return spellString; 
     }
 
@@ -114,22 +116,7 @@ public class FireSpell extends Spell {
 
         animationCounter++;
         // Hitboxing.
-        // Adjust to the spell to the right edge
-        if (dir == Direction.UP){
-            this.x = x + TILE - 25/2;
-            this.y = y;
-        } else if (dir == Direction.DOWN){
-            this.x = x + TILE - 25/2;
-            this.y = y + TILE;
-        } else if (dir == Direction.LEFT){
-            this.x = x;
-            this.y = y + TILE * 0.75 - 25/2;
-        } else if (dir == Direction.RIGHT){
-            this.x = x + TILE * 2 - 25/2;
-            this.y = y + TILE * 0.75 - 25/2;
-        }
-        
-        hitbox = new Rectangle((int) x - 5, (int) y, width, height);
+        hitbox = new Rectangle((int) x, (int) y, width, height);
     }
 
     @Override
