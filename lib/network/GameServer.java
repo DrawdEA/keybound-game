@@ -168,25 +168,26 @@ public class GameServer {
                         } else if (entity.startsWith("WATER_SPELL")) {
                             String[] params = entity.split("-");
                             // If we only have the basic parameters (without endingBar) meaning first initialization of the spell
-                            if (params.length == 4) {
+                            if (params.length == 6) {
                                 // Use the first constructor which calculates endingBar internally
+                                activeSpells.add(new WaterSpell(
+                                    playerID,
+                                    Double.parseDouble(params[1]), 
+                                    Double.parseDouble(params[2]), 
+                                    Direction.valueOf(params[3]),
+                                    Integer.parseInt(params[5]),
+                                    Integer.parseInt(params[4])
+                                ));
+                            } 
+                            // If we have all parameters including endingBar
+                            else if (params.length >= 5) {
+                                
                                 activeSpells.add(new WaterSpell(
                                     playerID,
                                     Double.parseDouble(params[1]), 
                                     Double.parseDouble(params[2]), 
                                     Direction.valueOf(params[3]))
                                 );
-                            } 
-                            // If we have all parameters including endingBar
-                            else if (params.length >= 5) {
-                                activeSpells.add(new WaterSpell(
-                                    playerID,
-                                    Double.parseDouble(params[1]), 
-                                    Double.parseDouble(params[2]), 
-                                    Direction.valueOf(params[3]),
-                                    Double.parseDouble(params[5]),
-                                    Integer.parseInt(params[6])
-                                ));
                             }
                         
                         // WIND_SPELL

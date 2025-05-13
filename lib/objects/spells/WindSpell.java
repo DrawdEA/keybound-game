@@ -113,13 +113,11 @@ public class WindSpell extends Spell {
             expired = true;
         }
 
-        //System.out.println(animationCounter);
         animationCounter++;
     }
 
     @Override
     public String getDataString() {
-        System.out.println(String.format("WIND_SPELL-%f-%f-%s-%d-%d-%d-%d", x, y, dir.toString(), casterId, animationCounter, incrementX, incrementY));
         return String.format("WIND_SPELL-%f-%f-%s-%d-%d-%d-%d", x, y, dir.toString(), casterId, animationCounter, incrementX, incrementY);
     }
 
@@ -151,10 +149,7 @@ public class WindSpell extends Spell {
         } else {
             tmp = incrementX;
         }
-        System.out.println(incrementY);
-        System.out.println(incrementX);
-        System.out.println("INCREMENT" + tmp);
-        System.out.println("INCREMENT" + tmp2);
+
         g2d.drawImage(wind[currentFrame], (int) x - tmp, (int) y - tmp2, 96, 96, null);
 
         g2d.setColor(COLOR);

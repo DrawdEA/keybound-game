@@ -106,7 +106,7 @@ public class Player {
                                 // WATER SPELL
                                 } else if (spellData[0].equals("WATER_SPELL")) {
                                     if (spellData.length > 4) {
-                                        double serverEndingBar = Double.parseDouble(spellData[4]);
+                                        double serverEndingBar = Double.parseDouble(spellData[5]);
                                         
                                         // Transform the endingBar to screen coordinates
                                         double transformedEndingBar = 0;
@@ -116,7 +116,7 @@ public class Player {
                                             transformedEndingBar = serverEndingBar - player.getY() + player.getScreenY();
                                         }
                                         
-                                        gameCanvas.addSpell(new WaterSpell(playerID, x, y, dir, transformedEndingBar, animationCounter));
+                                        gameCanvas.addSpell(new WaterSpell(playerID, x, y, dir, animationCounter, (int) transformedEndingBar));
                                     }
                                 
                                 // WIND SPELL

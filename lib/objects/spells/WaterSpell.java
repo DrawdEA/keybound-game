@@ -29,7 +29,6 @@ public class WaterSpell extends Spell {
 
     private static BufferedImage waterSprites[] = new BufferedImage[16];
     private int animationCounter;
-    private int currentFrame;
 
     public static void initializeSprites() {
         try {
@@ -75,7 +74,7 @@ public class WaterSpell extends Spell {
     }
 
     // Static Rendering
-    public WaterSpell(int casterId, double x, double y, Direction dir, double endingBar, int animationCounter) {
+    public WaterSpell(int casterId, double x, double y, Direction dir, int aC, double endingBar) {
         super("WATER_SPELL", casterId, x, y, 25, 25, dir);
 
         this.x = x;
@@ -83,8 +82,7 @@ public class WaterSpell extends Spell {
         this.dir = dir;
         this.endingBar = endingBar;
 
-        this.animationCounter = animationCounter;
-        this.currentFrame = currentFrame;
+        this.animationCounter = aC;
 
         expired = false;
     }
@@ -104,12 +102,13 @@ public class WaterSpell extends Spell {
             expired = true;
         }
 
+        System.out.println(animationCounter);
         animationCounter++;
     }
 
     @Override
     public String getDataString() {
-        return String.format("WATER_SPELL-%f-%f-%s-%f-%d", x, y, dir.toString(), endingBar, animationCounter);
+        return String.format("WATER_SPELL-%f-%f-%s-%d-%d-%f", x, y, dir.toString(), casterId, animationCounter, endingBar);
     }
 
     @Override
@@ -124,16 +123,11 @@ public class WaterSpell extends Spell {
 
     @Override
     public void drawSprite(Graphics2D g2d) {
-        System.out.println(animationCounter);
-        if (animationCounter == 10) {
-            animationCounter = 0;
-            g2d.drawImage(waterSprites[currentFrame], (int) x, (int) y, 64, 64, null);
-            currentFrame++;
-        }
-
-        System.out.println(animationCounter);
-        animationCounter++;
-
+        System.out.println("WHAT" + animationCounter);
+        int currentFrame = (animationCounter / 4) % 16;
+        
+        g2d.drawImage(waterSprites[currentFrame], (int) x, (int) y, 64, 64, null);
+        
         g2d.setColor(COLOR);
         
         // Calculate the triangle dimensions for an equilateral triangle
