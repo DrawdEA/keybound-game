@@ -40,6 +40,7 @@ public class GameServer {
         FireSpell.initializeSprites();
         WindSpell.initializeSprites();
         EarthSpell.initializeSprites();
+        WaterSpell.initializeSprites(); 
 
         // Initialize collision manager.
         collisionManager = new CollisionManager();

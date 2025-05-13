@@ -15,7 +15,7 @@ import lib.render.Direction;
 
 public class WindSpell extends Spell {
     // Notice though that the final size of the spell is SPEED * maxAgeInTicks 
-    private final double SPEED = 20;
+    private final double SPEED = 10;
     private final Color COLOR = Color.GRAY;
     private final double TILE = GameConfig.TILE_SIZE;
 
@@ -25,7 +25,7 @@ public class WindSpell extends Spell {
 
     private boolean expired;
     private int currAgeInTicks = 0;
-    private final int maxAgeInTicks = 15;
+    private final int maxAgeInTicks = 30;
 
     private int incrementX;
     private int incrementY;
@@ -69,21 +69,21 @@ public class WindSpell extends Spell {
         // Adjust to the spell to the right edge
         if (dir == Direction.UP){
             this.x = x + TILE;
-            incrementX = (int) incrementX + (int) TILE;
+            //incrementX = (int) incrementX - (int) TILE;
             this.y = y + TILE * 1.5;
-            incrementY = (int) (incrementY + TILE * 1.5);
+            //incrementY = (int) (incrementY + TILE * 1.5);
         } else if (dir == Direction.DOWN){
             this.x = x + TILE;
-            incrementX = (int) incrementX + (int) TILE;
+            //incrementX = (int) incrementX + (int) TILE;
             this.y = y - TILE * 2.5;
-            incrementY = (int) (incrementY - TILE * 2.5);
+            //incrementY = (int) (incrementY + TILE * 2.5);
         } else if (dir == Direction.LEFT){
             this.x = x + TILE * 2;
-            incrementX = (int) (incrementX + TILE * 2);
+            //incrementX = (int) (incrementX + TILE * 2);
             this.y = y;
         } else if (dir == Direction.RIGHT){
             this.x = x - TILE * 2;
-            incrementX = (int) (incrementX - TILE * 2);
+            //incrementX = (int) (incrementX + TILE * 2);
             this.y = y;
         }
 
@@ -96,13 +96,13 @@ public class WindSpell extends Spell {
     public void update() {
         if (dir == Direction.UP){
             y -= SPEED;
-            incrementY -= SPEED;
+            incrementY += SPEED;
         } else if (dir == Direction.DOWN){
             y += SPEED;
             incrementY += SPEED;
         } else if (dir == Direction.LEFT){
             x -= SPEED;
-            incrementX -= SPEED;
+            incrementX += SPEED;
         } else if (dir == Direction.RIGHT){
             x += SPEED;
             incrementX += SPEED;
@@ -119,6 +119,7 @@ public class WindSpell extends Spell {
 
     @Override
     public String getDataString() {
+        System.out.println(String.format("WIND_SPELL-%f-%f-%s-%d-%d-%d-%d", x, y, dir.toString(), casterId, animationCounter, incrementX, incrementY));
         return String.format("WIND_SPELL-%f-%f-%s-%d-%d-%d-%d", x, y, dir.toString(), casterId, animationCounter, incrementX, incrementY);
     }
 
@@ -134,9 +135,27 @@ public class WindSpell extends Spell {
 
     @Override
     public void drawSprite(Graphics2D g2d) {
-        int currentFrame = (animationCounter / 2) % 9;
-        System.out.println(currentFrame);
-        g2d.drawImage(wind[currentFrame], (int) x - incrementX, (int) y - incrementY, 96, 96, null);
+        int currentFrame = (animationCounter / 4) % 9;
+        
+        int tmp = 0;
+        int tmp2 = 0;
+
+        if (dir == Direction.UP) {
+            tmp2 = -incrementY;
+        } else {
+            tmp2 = incrementY;
+        }
+
+        if (dir == Direction.LEFT) {
+            tmp = -incrementX;
+        } else {
+            tmp = incrementX;
+        }
+        System.out.println(incrementY);
+        System.out.println(incrementX);
+        System.out.println("INCREMENT" + tmp);
+        System.out.println("INCREMENT" + tmp2);
+        g2d.drawImage(wind[currentFrame], (int) x - tmp, (int) y - tmp2, 96, 96, null);
 
         g2d.setColor(COLOR);
         if (dir == Direction.DOWN || dir == Direction.UP){

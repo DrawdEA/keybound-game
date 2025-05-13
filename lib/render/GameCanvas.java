@@ -38,6 +38,7 @@ public class GameCanvas extends JComponent {
         FireSpell.initializeSprites();
         WindSpell.initializeSprites();
         EarthSpell.initializeSprites();
+        WaterSpell.initializeSprites();
         
         // Initialize object to hold all gameObjects.
         gameObjects = new ArrayList<>();
