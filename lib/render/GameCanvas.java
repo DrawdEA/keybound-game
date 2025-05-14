@@ -136,6 +136,9 @@ public class GameCanvas extends JComponent {
         self.drawSprite(g2d);
 
         // Render the GUI.
+        if (self != null) {
+            gui.setupPlayer(self);
+        }
         gui.renderGUI(g2d);
     }
 }

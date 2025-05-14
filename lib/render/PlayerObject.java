@@ -61,7 +61,7 @@ public class PlayerObject extends GameObject {
         hitbox.height = GameConfig.TILE_SIZE;
 
         // Create the player's health.
-        playerHealth = 4;
+        playerHealth = 5;
 
         // Generate the sprites.
         playerSprites = new BufferedImage[53];
@@ -353,8 +353,5 @@ public class PlayerObject extends GameObject {
 
         g2d.drawRect((int) x + hitbox.x, (int) y + hitbox.y, hitbox.width, hitbox.height);
         g2d.drawRect((int) x, (int) y, GameConfig.TILE_SIZE * 4, GameConfig.TILE_SIZE * 2);
-
-        g2d.setColor(Color.BLACK);
-        g2d.fill(this.getRelativeHitbox());
     }
 }

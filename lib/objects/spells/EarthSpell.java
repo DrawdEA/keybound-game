@@ -17,11 +17,11 @@ import lib.render.PlayerObject;
 
 public class EarthSpell extends Spell {
     private final Color COLOR = Color.ORANGE;
-    private final double WALL_OFFSET = 30;
-    private final double TILE = GameConfig.TILE_SIZE;
+    private final int WALL_OFFSET = 30;
+    private final int TILE = GameConfig.TILE_SIZE;
 
-    private double wallXLength;
-    private double wallYLength;
+    private int wallXLength;
+    private int wallYLength;
 
     private double x, y;
     private double width = 25, height = 25;
@@ -46,6 +46,9 @@ public class EarthSpell extends Spell {
         super("EARTH_SPELL", casterId, x, y, 25, 25);
         animationCounter = aC;
 
+        this.x = x;
+        this.y = y;
+
         this.dir = dir;
         wallHp = 1;
         expired = false;
@@ -58,23 +61,15 @@ public class EarthSpell extends Spell {
             wallXLength = 124;
             wallYLength = 62;
         }
-
+        
         if (dir == Direction.LEFT) {
-            this.x = x - WALL_OFFSET - TILE / 2;
-            this.y = y + TILE * 1.5 - wallYLength/2 - 16;
-            hitbox = new Rectangle((int) x, (int) y, (int) wallXLength, (int) wallYLength);
+            hitbox = new Rectangle((int) x - WALL_OFFSET - TILE / 2, (int) (y  + TILE * 1.5 - wallYLength/2 - 16), (int) wallXLength, (int) wallYLength);
         } else if (dir == Direction.RIGHT) {
-            this.x = x + TILE * 2 + WALL_OFFSET;
-            this.y = y + TILE * 1.5 - wallYLength/2 - 16;
-            hitbox = new Rectangle((int) x, (int) y, (int) wallXLength, (int) wallYLength);
+            hitbox = new Rectangle((int) x + TILE * 3 + WALL_OFFSET + 7, (int) (y + TILE * 1.5 - wallYLength/2 - 16), (int) wallXLength, (int) wallYLength);
         } else if (dir == Direction.DOWN) {
-            this.x = x + TILE * 1.75 - wallXLength/2 + 41;
-            this.y = y + TILE * 1.55 + WALL_OFFSET + 16;
-            hitbox = new Rectangle((int) x - 68, (int) y - 84, (int) wallXLength, (int) wallYLength);
+            hitbox = new Rectangle((int) (x - 68 + TILE * 1.75 - wallXLength/2 + 41 + 35), (int) (y - 84 + TILE * 1.55 + WALL_OFFSET + 16 + 64), (int) wallXLength, (int) wallYLength);
         } else if (dir == Direction.UP) {
-            this.x = x + TILE * 1.75 - wallXLength/2 + 41;
-            this.y = y - WALL_OFFSET - 16;
-            hitbox = new Rectangle((int) x - 68, (int) y - 16, (int) wallXLength, (int) wallYLength);
+            hitbox = new Rectangle((int) (x - 68 + TILE * 1.75 - wallXLength/2 + 41 + 35), (int) (y - 16 - WALL_OFFSET - 16 - 8), (int) wallXLength, (int) wallYLength);
         } 
     }
 
@@ -208,35 +203,35 @@ public class EarthSpell extends Spell {
         if (dir == Direction.LEFT) {
             int currentFrame = (animationCounter / 4) % 16;
             if (currentFrame <= 7 || !alive) {
-                g2d.drawImage(wallLeft[currentFrame], (int) x - 50, (int) y - 40, 144, 144, null);
+                g2d.drawImage(wallLeft[currentFrame], (int) this.x - 50 - WALL_OFFSET - TILE / 2, (int) (this.y - 40 + TILE * 1.5 - wallYLength/2 - 16), 144, 144, null);
             } else {
-                g2d.drawImage(wallLeft[7], (int) x - 50, (int) y - 40, 144, 144, null);
+                g2d.drawImage(wallLeft[7], (int) x - 50 - WALL_OFFSET - TILE / 2, (int) (y - 40 + TILE * 1.5 - wallYLength/2 - 16), 144, 144, null);
             }
-            hitbox = new Rectangle((int) x, (int) y, (int) wallXLength, (int) wallYLength);
+            hitbox = new Rectangle((int) x - WALL_OFFSET - TILE / 2, (int) (y + TILE * 1.5 - wallYLength/2 - 16), (int) wallXLength, (int) wallYLength);
         } else if (dir == Direction.RIGHT) {
             int currentFrame = (animationCounter / 4) % 16;
             if (currentFrame <= 7 || !alive) {
-                g2d.drawImage(wall[currentFrame], (int) x - 50, (int) y - 40, 144, 144, null);
+                g2d.drawImage(wall[currentFrame], (int) x - 50 + TILE * 3 + WALL_OFFSET + 7, (int) (y - 40 + TILE * 1.5 - wallYLength/2 - 16), 144, 144, null);
             } else {
-                g2d.drawImage(wall[7], (int) x - 50, (int) y - 40, 144, 144, null);
+                g2d.drawImage(wall[7], (int) x - 50 + TILE * 3 + WALL_OFFSET + 7, (int) (y - 40 + TILE * 1.5 - wallYLength/2 - 16), 144, 144, null);
             }
-            hitbox = new Rectangle((int) x, (int) y, (int) wallXLength, (int) wallYLength);
+            hitbox = new Rectangle((int) (x + TILE * 3 + WALL_OFFSET + 7), (int) (y + TILE * 1.5 - wallYLength/2 - 16), (int) wallXLength, (int) wallYLength);
         } else if (dir == Direction.DOWN) {
             int currentFrame = (animationCounter / 7) % 9;
             if (currentFrame <= 2 || !alive) {
-                g2d.drawImage(wallUpdown[currentFrame], (int) x - 80, (int) y - 164, 144, 144, null);
+                g2d.drawImage(wallUpdown[currentFrame], (int) (x - 80 + TILE * 1.75 - wallXLength/2 + 41 + 35), (int) (y - 164 + TILE * 1.55 + WALL_OFFSET + 16 + 64), 144, 144, null);
             } else {
-                g2d.drawImage(wallUpdown[2], (int) x - 80, (int) y - 164, 144, 144, null);
+                g2d.drawImage(wallUpdown[2], (int) (x - 80 + TILE * 1.75 - wallXLength/2 + 41 + 35), (int) (y - 164 + TILE * 1.55 + WALL_OFFSET + 16 + 64), 144, 144, null);
             }
-            hitbox = new Rectangle((int) x - 68, (int) y - 84, (int) wallXLength, (int) wallYLength);
+            hitbox = new Rectangle((int) (x - 68 + TILE * 1.75 - wallXLength/2 + 41 + 35), (int) (y - 84 + TILE * 1.55 + WALL_OFFSET + 16 + 64), (int) wallXLength, (int) wallYLength);
         } else if (dir == Direction.UP) {
             int currentFrame = (animationCounter / 7) % 9;
             if (currentFrame <= 2 || !alive) {
-                g2d.drawImage(wallUpdown[currentFrame], (int) x - 80, (int) y - 96, 144, 144, null);
+                g2d.drawImage(wallUpdown[currentFrame], (int) (x - 80 + TILE * 1.75 - wallXLength/2 + 41 + 35), (int) y - 96 - WALL_OFFSET - 16 - 8, 144, 144, null);
             } else {
-                g2d.drawImage(wallUpdown[2], (int) x - 80, (int) y - 96, 144, 144, null);
+                g2d.drawImage(wallUpdown[2], (int) (x - 80 + TILE * 1.75 - wallXLength/2 + 41 + 35), (int) y - 96 - WALL_OFFSET - 16 - 8, 144, 144, null);
             }
-            hitbox = new Rectangle((int) x - 68, (int) y - 16, (int) wallXLength, (int) wallYLength);
+            hitbox = new Rectangle((int) (x - 68 + TILE * 1.75 - wallXLength/2 + 41 + 35), (int) y - 16 - WALL_OFFSET - 16 - 8, (int) wallXLength, (int) wallYLength);
         } 
         
         g2d.draw(hitbox);
