@@ -36,6 +36,15 @@ public class FireSpell extends Spell {
     private static BufferedImage[] fireball;
     private static BufferedImage[] impact;
 
+    private static BufferedImage[] fireballLeft;
+    private static BufferedImage[] impactLeft;
+
+    private static BufferedImage[] fireballUp;
+    private static BufferedImage[] impactUp;
+
+    private static BufferedImage[] fireballDown;
+    private static BufferedImage[] impactDown;
+
     public FireSpell(int casterId, double x, double y, Direction dir, int aC, boolean f) {
         super("FIRE_SPELL", casterId, x, y, 50, 25, dir);
         this.dir = dir;
@@ -45,11 +54,15 @@ public class FireSpell extends Spell {
         
         // Adjust to the spell to the right edge
         if (dir == Direction.UP){
-            this.x = x + TILE - 25/2;
+            this.x = x + TILE - 8;
             this.y = y;
+            width = 25;
+            height = 50;
         } else if (dir == Direction.DOWN){
-            this.x = x + TILE - 25/2;
+            this.x = x + TILE - 8;
             this.y = y + TILE;
+            width = 25;
+            height = 50;
         } else if (dir == Direction.LEFT){
             this.x = x;
             this.y = y + TILE * 0.75 - 25/2;
@@ -67,6 +80,15 @@ public class FireSpell extends Spell {
         fireball = new BufferedImage[4];
         impact = new BufferedImage[6];
 
+        fireballLeft = new BufferedImage[4];
+        impactLeft = new BufferedImage[6];
+
+        fireballUp = new BufferedImage[4];
+        impactUp = new BufferedImage[6];
+
+        fireballDown = new BufferedImage[4];
+        impactDown = new BufferedImage[6];
+
         try {
             BufferedImage fireImage = ImageIO.read(FireSpell.class.getResourceAsStream("/resources/spells/fire.png"));
 
@@ -81,6 +103,48 @@ public class FireSpell extends Spell {
             impact[3] = fireImage.getSubimage(384, 0, 48, 48);
             impact[4] = fireImage.getSubimage(432, 0, 48, 48);
             impact[5] = fireImage.getSubimage(480, 0, 48, 48);
+
+            BufferedImage fireImageLeft = ImageIO.read(FireSpell.class.getResourceAsStream("/resources/spells/fire_left.png"));
+
+            fireballLeft[0] = fireImageLeft.getSubimage(0, 0, 48, 48);
+            fireballLeft[1] = fireImageLeft.getSubimage(48, 0, 48, 48);
+            fireballLeft[2] = fireImageLeft.getSubimage(96, 0, 48, 48);
+            fireballLeft[3] = fireImageLeft.getSubimage(144, 0, 48, 48);
+
+            impactLeft[0] = fireImageLeft.getSubimage(240, 0, 48, 48);
+            impactLeft[1] = fireImageLeft.getSubimage(288, 0, 48, 48);
+            impactLeft[2] = fireImageLeft.getSubimage(336, 0, 48, 48);
+            impactLeft[3] = fireImageLeft.getSubimage(384, 0, 48, 48);
+            impactLeft[4] = fireImageLeft.getSubimage(432, 0, 48, 48);
+            impactLeft[5] = fireImageLeft.getSubimage(480, 0, 48, 48);
+
+            BufferedImage fireImageUp = ImageIO.read(FireSpell.class.getResourceAsStream("/resources/spells/fire_up.png"));
+
+            fireballUp[0] = fireImageUp.getSubimage(0, 0, 48, 48);
+            fireballUp[1] = fireImageUp.getSubimage(48, 0, 48, 48);
+            fireballUp[2] = fireImageUp.getSubimage(96, 0, 48, 48);
+            fireballUp[3] = fireImageUp.getSubimage(144, 0, 48, 48);
+
+            impactUp[0] = fireImageUp.getSubimage(240, 0, 48, 48);
+            impactUp[1] = fireImageUp.getSubimage(288, 0, 48, 48);
+            impactUp[2] = fireImageUp.getSubimage(336, 0, 48, 48);
+            impactUp[3] = fireImageUp.getSubimage(384, 0, 48, 48);
+            impactUp[4] = fireImageUp.getSubimage(432, 0, 48, 48);
+            impactUp[5] = fireImageUp.getSubimage(480, 0, 48, 48);
+
+            BufferedImage fireImageDown = ImageIO.read(FireSpell.class.getResourceAsStream("/resources/spells/fire_down.png"));
+
+            fireballDown[0] = fireImageDown.getSubimage(0, 0, 48, 48);
+            fireballDown[1] = fireImageDown.getSubimage(48, 0, 48, 48);
+            fireballDown[2] = fireImageDown.getSubimage(96, 0, 48, 48);
+            fireballDown[3] = fireImageDown.getSubimage(144, 0, 48, 48);
+
+            impactDown[0] = fireImageDown.getSubimage(240, 0, 48, 48);
+            impactDown[1] = fireImageDown.getSubimage(288, 0, 48, 48);
+            impactDown[2] = fireImageDown.getSubimage(336, 0, 48, 48);
+            impactDown[3] = fireImageDown.getSubimage(384, 0, 48, 48);
+            impactDown[4] = fireImageDown.getSubimage(432, 0, 48, 48);
+            impactDown[5] = fireImageDown.getSubimage(480, 0, 48, 48);
   
         } catch (IOException e) { 
             System.out.println("IOException from FireSpell.java");
@@ -126,14 +190,12 @@ public class FireSpell extends Spell {
 
     @Override
     public void handleCollisions(CollisionManager cm) {
-        
-
         PlayerObject playerHit = cm.checkProjectileCollision(hitbox, id);
         if (playerHit != null && !finished) {
             finished = true;
             animationCounter = 0;
 
-            System.out.println("FIRE SPELL HIT!");
+            System.out.println("FIRE HIT!");
             playerHit.damagePlayer(1); // request to server for damage
         }
     }
@@ -141,13 +203,40 @@ public class FireSpell extends Spell {
     
     @Override
     public void drawSprite(Graphics2D g2d) {
-        if (finished) {
-            int currentFrame = (animationCounter / 4) % 6;
-            g2d.drawImage(impact[currentFrame], (int) x - 48, (int) y - 48, 96, 96, null);
+        if (dir == Direction.LEFT) {
+            if (finished) {
+                int currentFrame = (animationCounter / 4) % 6;
+                g2d.drawImage(impactLeft[currentFrame], (int) x - 4, (int) y - 48, 96, 96, null);
+            } else {
+                int currentFrame = (animationCounter / 4) % 4;
+                g2d.drawImage(fireballLeft[currentFrame], (int) x - 4, (int) y - 48, 96, 96, null);
+            }
+        } else if (dir == Direction.UP) {
+            if (finished) {
+                int currentFrame = (animationCounter / 4) % 6;
+                g2d.drawImage(impactUp[currentFrame], (int) x - 48, (int) y, 96, 96, null);
+            } else {
+                int currentFrame = (animationCounter / 4) % 4;
+                g2d.drawImage(fireballUp[currentFrame], (int) x - 48, (int) y, 96, 96, null);
+            }
+        } else if (dir == Direction.DOWN) {
+            if (finished) {
+                int currentFrame = (animationCounter / 4) % 6;
+                g2d.drawImage(impactDown[currentFrame], (int) x - 24, (int) y - 48, 96, 96, null);
+            } else {
+                int currentFrame = (animationCounter / 4) % 4;
+                g2d.drawImage(fireballDown[currentFrame], (int) x - 24, (int) y - 48, 96, 96, null);
+            }
         } else {
-            int currentFrame = (animationCounter / 4) % 4;
-            g2d.drawImage(fireball[currentFrame], (int) x - 48, (int) y - 48, 96, 96, null);
+            if (finished) {
+                int currentFrame = (animationCounter / 4) % 6;
+                g2d.drawImage(impact[currentFrame], (int) x - 48, (int) y - 48, 96, 96, null);
+            } else {
+                int currentFrame = (animationCounter / 4) % 4;
+                g2d.drawImage(fireball[currentFrame], (int) x - 48, (int) y - 48, 96, 96, null);
+            }
         }
+        
 
         // Hitboxing.
         g2d.setColor(COLOR);

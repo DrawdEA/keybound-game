@@ -32,9 +32,15 @@ public class WindSpell extends Spell {
 
     private int animationCounter;
     private static BufferedImage[] wind;
+    private static BufferedImage[] windLeft;
+    private static BufferedImage[] windUp;
+    private static BufferedImage[] windDown;
 
     public static void initializeSprites() {
         wind = new BufferedImage[9];
+        windLeft = new BufferedImage[9];
+        windUp = new BufferedImage[9];
+        windDown = new BufferedImage[9];
 
         try {
             BufferedImage windImage = ImageIO.read(WindSpell.class.getResourceAsStream("/resources/spells/wind.png"));
@@ -49,9 +55,45 @@ public class WindSpell extends Spell {
             wind[7] = windImage.getSubimage(48, 96, 48, 48);
             wind[8] = windImage.getSubimage(96, 96, 48, 48);
 
+            BufferedImage windImageLeft = ImageIO.read(WindSpell.class.getResourceAsStream("/resources/spells/wind_left.png"));
+
+            windLeft[0] = windImageLeft.getSubimage(0, 0, 48, 48);
+            windLeft[1] = windImageLeft.getSubimage(48, 0, 48, 48);
+            windLeft[2] = windImageLeft.getSubimage(96, 0, 48, 48);
+            windLeft[3] = windImageLeft.getSubimage(0, 48, 48, 48);
+            windLeft[4] = windImageLeft.getSubimage(48, 48, 48, 48);
+            windLeft[5] = windImageLeft.getSubimage(96, 48, 48, 48);
+            windLeft[6] = windImageLeft.getSubimage(0, 96, 48, 48);
+            windLeft[7] = windImageLeft.getSubimage(48, 96, 48, 48);
+            windLeft[8] = windImageLeft.getSubimage(96, 96, 48, 48);
+
+            BufferedImage windImageUp = ImageIO.read(WindSpell.class.getResourceAsStream("/resources/spells/wind_up.png"));
+
+            windUp[0] = windImageUp.getSubimage(0, 0, 48, 48);
+            windUp[1] = windImageUp.getSubimage(48, 0, 48, 48);
+            windUp[2] = windImageUp.getSubimage(96, 0, 48, 48);
+            windUp[3] = windImageUp.getSubimage(0, 48, 48, 48);
+            windUp[4] = windImageUp.getSubimage(48, 48, 48, 48);
+            windUp[5] = windImageUp.getSubimage(96, 48, 48, 48);
+            windUp[6] = windImageUp.getSubimage(0, 96, 48, 48);
+            windUp[7] = windImageUp.getSubimage(48, 96, 48, 48);
+            windUp[8] = windImageUp.getSubimage(96, 96, 48, 48);
+
+            BufferedImage windImageDown = ImageIO.read(WindSpell.class.getResourceAsStream("/resources/spells/wind_down.png"));
+
+            windDown[0] = windImageDown.getSubimage(0, 0, 48, 48);
+            windDown[1] = windImageDown.getSubimage(48, 0, 48, 48);
+            windDown[2] = windImageDown.getSubimage(96, 0, 48, 48);
+            windDown[3] = windImageDown.getSubimage(0, 48, 48, 48);
+            windDown[4] = windImageDown.getSubimage(48, 48, 48, 48);
+            windDown[5] = windImageDown.getSubimage(96, 48, 48, 48);
+            windDown[6] = windImageDown.getSubimage(0, 96, 48, 48);
+            windDown[7] = windImageDown.getSubimage(48, 96, 48, 48);
+            windDown[8] = windImageDown.getSubimage(96, 96, 48, 48);
+
   
         } catch (IOException e) { 
-            System.out.println("IOException from FireSpell.java");
+            System.out.println("IOException from WindSpell.java");
         }
     }
 
@@ -68,22 +110,16 @@ public class WindSpell extends Spell {
 
         // Adjust to the spell to the right edge
         if (dir == Direction.UP){
-            this.x = x + TILE;
-            //incrementX = (int) incrementX - (int) TILE;
+            this.x = x + TILE * 0.5;
             this.y = y + TILE * 1.5;
-            //incrementY = (int) (incrementY + TILE * 1.5);
         } else if (dir == Direction.DOWN){
-            this.x = x + TILE;
-            //incrementX = (int) incrementX + (int) TILE;
-            this.y = y - TILE * 2.5;
-            //incrementY = (int) (incrementY + TILE * 2.5);
+            this.x = x + TILE * 0.5;
+            this.y = y - TILE * 1.5;
         } else if (dir == Direction.LEFT){
             this.x = x + TILE * 2;
-            //incrementX = (int) (incrementX + TILE * 2);
             this.y = y;
         } else if (dir == Direction.RIGHT){
             this.x = x - TILE * 2;
-            //incrementX = (int) (incrementX + TILE * 2);
             this.y = y;
         }
 
@@ -150,13 +186,16 @@ public class WindSpell extends Spell {
             tmp = incrementX;
         }
 
-        g2d.drawImage(wind[currentFrame], (int) x - tmp, (int) y - tmp2, 96, 96, null);
-
-        g2d.setColor(COLOR);
-        if (dir == Direction.DOWN || dir == Direction.UP){
-            g2d.fill(new Ellipse2D.Double(incrementX, incrementY, TILE * 2, TILE * 4));
-        } else {
-            g2d.fill(new Ellipse2D.Double(incrementX, incrementY, TILE * 4, TILE * 2));
+        if (dir == Direction.UP){
+            g2d.drawImage(windUp[currentFrame], (int) x - tmp, (int) y - tmp2, 96, 96, null);
+        } else if (dir == Direction.DOWN){
+            g2d.drawImage(windDown[currentFrame], (int) x - tmp, (int) y - tmp2, 96, 96, null);
+        } else if (dir == Direction.LEFT){
+            g2d.drawImage(windLeft[currentFrame], (int) x - tmp, (int) y - tmp2, 96, 96, null);
+        } else if (dir == Direction.RIGHT){
+            g2d.drawImage(wind[currentFrame], (int) x - tmp, (int) y - tmp2, 96, 96, null);
         }
+
+        
     }    
 }

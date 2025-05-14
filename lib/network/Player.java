@@ -82,7 +82,6 @@ public class Player {
                         gameCanvas.clearSpells();
                         for (int i = 2; i < enemyData.length; i++) {
                             String[] spellData = enemyData[i].split("-");
-                            System.out.println(enemyData[i]);
                             double x;
                             double y;
                             Direction dir;
@@ -105,23 +104,10 @@ public class Player {
                                 
                                 // WATER SPELL
                                 } else if (spellData[0].equals("WATER_SPELL")) {
-                                    if (spellData.length > 4) {
-                                        double serverEndingBar = Double.parseDouble(spellData[5]);
-                                        
-                                        // Transform the endingBar to screen coordinates
-                                        double transformedEndingBar = 0;
-                                        if (dir == Direction.LEFT || dir == Direction.RIGHT) {
-                                            transformedEndingBar = serverEndingBar - player.getX() + player.getScreenX();
-                                        } else if (dir == Direction.UP || dir == Direction.DOWN) {
-                                            transformedEndingBar = serverEndingBar - player.getY() + player.getScreenY();
-                                        }
-                                        
-                                        gameCanvas.addSpell(new WaterSpell(playerID, x, y, dir, animationCounter, (int) transformedEndingBar));
-                                    }
+                                    gameCanvas.addSpell(new WaterSpell(playerID, x, y, dir, animationCounter));
                                 
                                 // WIND SPELL
                                 } else if (spellData[0].equals("WIND_SPELL")){
-                                    System.out.println(spellData);
                                     int spellCasterId = Integer.parseInt(spellData[4]);
                                     double originalX = Double.parseDouble(spellData[6]);
                                     double originalY = Double.parseDouble(spellData[7]);

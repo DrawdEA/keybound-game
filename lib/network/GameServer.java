@@ -167,28 +167,14 @@ public class GameServer {
                         // WATER_SPELL
                         } else if (entity.startsWith("WATER_SPELL")) {
                             String[] params = entity.split("-");
-                            // If we only have the basic parameters (without endingBar) meaning first initialization of the spell
-                            if (params.length == 6) {
-                                // Use the first constructor which calculates endingBar internally
-                                activeSpells.add(new WaterSpell(
+                            
+                            activeSpells.add(new WaterSpell(
                                     playerID,
                                     Double.parseDouble(params[1]), 
                                     Double.parseDouble(params[2]), 
                                     Direction.valueOf(params[3]),
-                                    Integer.parseInt(params[5]),
-                                    Integer.parseInt(params[4])
+                                    Integer.parseInt(params[5])
                                 ));
-                            } 
-                            // If we have all parameters including endingBar
-                            else if (params.length >= 5) {
-                                
-                                activeSpells.add(new WaterSpell(
-                                    playerID,
-                                    Double.parseDouble(params[1]), 
-                                    Double.parseDouble(params[2]), 
-                                    Direction.valueOf(params[3]))
-                                );
-                            }
                         
                         // WIND_SPELL
                         } else if (entity.startsWith("WIND_SPELL")) {
@@ -199,7 +185,6 @@ public class GameServer {
                             playerPositions.get(playerID-1)[1] = Double.parseDouble(params[2]);
 
                             if (params.length == 8) {
-                                System.out.println("OLD");
                                 activeSpells.add(new WindSpell(
                                     playerID,
                                     Double.parseDouble(params[1]), 
@@ -211,7 +196,6 @@ public class GameServer {
                                     Double.parseDouble(params[7]))
                                 );
                             } else {
-                                System.out.println("NEW!");
                                 activeSpells.add(new WindSpell(
                                     playerID,
                                     Double.parseDouble(params[1]), 
