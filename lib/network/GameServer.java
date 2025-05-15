@@ -4,9 +4,14 @@ import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
+
+import javax.print.attribute.standard.PagesPerMinute;
+
 import lib.*;
 import lib.objects.spells.*;
+import lib.render.CollisionManager;
 import lib.render.Direction;
+import lib.render.PlayerObject;
 
 public class GameServer {
     private ServerSocket ss;
@@ -20,6 +25,10 @@ public class GameServer {
 
     private CopyOnWriteArrayList<Spell> activeSpells;
 
+    private CollisionManager collisionManager;
+
+    private ArrayList<PlayerObject> playerObjects;
+
     public GameServer() {
         System.out.println("==== GAME SERVER ====");
         players = 0;
@@ -28,6 +37,18 @@ public class GameServer {
         playerPositions = new ArrayList<>();
         playerPositions.add(new double[]{50, 50});
         playerPositions.add(new double[]{50, 500});
+
+        // Initialize sprites.
+        FireSpell.initializeSprites();
+        WindSpell.initializeSprites();
+        EarthSpell.initializeSprites();
+        WaterSpell.initializeSprites(); 
+
+        // Initialize collision manager.
+        collisionManager = new CollisionManager();
+
+        // Initialize the players.
+        playerObjects = new ArrayList<>();
 
         activeSpells = new CopyOnWriteArrayList<>();
 
@@ -49,11 +70,12 @@ public class GameServer {
                 Socket s = ss.accept();
                 DataInputStream in = new DataInputStream(s.getInputStream());
                 DataOutputStream out = new DataOutputStream(s.getOutputStream());
-
                 players++;
+                PlayerObject player = new PlayerObject(GameConfig.TILE_SIZE * 64, GameConfig.TILE_SIZE * 43, GameConfig.TILE_SIZE, false, players);
+                playerObjects.add(player);
+                collisionManager.addPlayer(player);
                 out.writeInt(players);
                 System.out.println("Player #" + players + " has connected.");
-                
                 ReadFromClient rfc = new ReadFromClient(players, in);
                 WriteToClient wtc = new WriteToClient(players, out);
 
@@ -136,44 +158,49 @@ public class GameServer {
                     playerPositions.get(playerID-1)[0] = Double.parseDouble(positionData[1]);
                     playerPositions.get(playerID-1)[1] = Double.parseDouble(positionData[2]);
 
+                    if (playerObjects.get(playerID-1) != null) {
+                        playerObjects.get(playerID-1).setX(playerPositions.get(playerID-1)[0]);
+                        playerObjects.get(playerID-1).setY(playerPositions.get(playerID-1)[1]);
+                    }
+                    
                     // Implement spells
                     for (String entity : data){
                         
                         // FIRE_SPELL 
                         if (entity.startsWith("FIRE_SPELL")) {
                             String[] params = entity.split("-");
-                            activeSpells.add(new FireSpell(
-                                playerID,
-                                Double.parseDouble(params[1]), 
-                                Double.parseDouble(params[2]), 
-                                Direction.valueOf(params[3]))
-                            );
-                        
-                        // WATER_SPELL
-                        } else if (entity.startsWith("WATER_SPELL")) {
-                            String[] params = entity.split("-");
-                            // If we only have the basic parameters (without endingBar) meaning first initialization of the spell
-                            if (params.length == 4) {
-                                // Use the first constructor which calculates endingBar internally
-                                activeSpells.add(new WaterSpell(
-                                    playerID,
-                                    Double.parseDouble(params[1]), 
-                                    Double.parseDouble(params[2]), 
-                                    Direction.valueOf(params[3]))
-                                );
-                            } 
-                            // If we have all parameters including endingBar
-                            else if (params.length >= 5) {
-                                activeSpells.add(new WaterSpell(
+                            if (params.length == 7) {
+                                activeSpells.add(new FireSpell(
                                     playerID,
                                     Double.parseDouble(params[1]), 
                                     Double.parseDouble(params[2]), 
                                     Direction.valueOf(params[3]),
-                                    Double.parseDouble(params[4]),
                                     Integer.parseInt(params[5]),
-                                    Integer.parseInt(params[6])
-                                ));
+                                    Boolean.parseBoolean(params[6]))
+                                );
+                            } else {
+                                activeSpells.add(new FireSpell(
+                                    playerID,
+                                    Double.parseDouble(params[1]), 
+                                    Double.parseDouble(params[2]), 
+                                    Direction.valueOf(params[3]),
+                                    Integer.parseInt(params[5]),
+                                    false)
+                                );
                             }
+                            
+                        
+                        // WATER_SPELL
+                        } else if (entity.startsWith("WATER_SPELL")) {
+                            String[] params = entity.split("-");
+                            
+                            activeSpells.add(new WaterSpell(
+                                    playerID,
+                                    Double.parseDouble(params[1]), 
+                                    Double.parseDouble(params[2]), 
+                                    Direction.valueOf(params[3]),
+                                    Integer.parseInt(params[5])
+                                ));
                         
                         // WIND_SPELL
                         } else if (entity.startsWith("WIND_SPELL")) {
@@ -183,12 +210,30 @@ public class GameServer {
                             playerPositions.get(playerID-1)[0] = Double.parseDouble(params[1]);
                             playerPositions.get(playerID-1)[1] = Double.parseDouble(params[2]);
 
-                            activeSpells.add(new WindSpell(
+                            if (params.length == 8) {
+                                activeSpells.add(new WindSpell(
                                     playerID,
                                     Double.parseDouble(params[1]), 
                                     Double.parseDouble(params[2]), 
-                                    Direction.valueOf(params[3]))
+                                    Direction.valueOf(params[3]),
+                                    Integer.parseInt(params[4]),
+                                    Integer.parseInt(params[5]),
+                                    Double.parseDouble(params[6]), 
+                                    Double.parseDouble(params[7]))
                                 );
+                            } else {
+                                activeSpells.add(new WindSpell(
+                                    playerID,
+                                    Double.parseDouble(params[1]), 
+                                    Double.parseDouble(params[2]), 
+                                    Direction.valueOf(params[3]),
+                                    Integer.parseInt(params[4]),
+                                    Integer.parseInt(params[5]),
+                                    0, 
+                                    0)
+                                );
+                            }
+                            
                         
                         // EARTH SPELL
                         } else if (entity.startsWith("EARTH_SPELL")) {
@@ -198,12 +243,26 @@ public class GameServer {
                             playerPositions.get(playerID-1)[0] = Double.parseDouble(params[1]);
                             playerPositions.get(playerID-1)[1] = Double.parseDouble(params[2]);
 
-                            activeSpells.add(new EarthSpell(
+                            if (params.length == 7) {
+                                activeSpells.add(new EarthSpell(
                                     playerID,
                                     Double.parseDouble(params[1]), 
                                     Double.parseDouble(params[2]), 
-                                    Direction.valueOf(params[3]))
+                                    Direction.valueOf(params[3]),
+                                    Integer.parseInt(params[5]),
+                                    Boolean.parseBoolean(params[6]))
                                 );
+                            } else {
+                                activeSpells.add(new EarthSpell(
+                                    playerID,
+                                    Double.parseDouble(params[1]), 
+                                    Double.parseDouble(params[2]), 
+                                    Direction.valueOf(params[3]),
+                                    Integer.parseInt(params[5]),
+                                    true)
+                                );
+                            }
+                            
                         } 
                     }
                 }
@@ -303,7 +362,7 @@ public class GameServer {
                 // Update all spells
                 for (Spell spell : activeSpells) {
                     spell.update();
-                    spell.handleCollisions(null);
+                    spell.handleCollisions(collisionManager);
                 }
                 
                 // Remove all expired spells

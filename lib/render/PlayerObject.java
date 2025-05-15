@@ -28,6 +28,8 @@ public class PlayerObject extends GameObject {
     private Direction lastHorizontalFacing;
     private Direction facing;
 
+    private int id;
+
     private Rectangle hitbox;
 
     private boolean overridingAnimation;
@@ -39,6 +41,7 @@ public class PlayerObject extends GameObject {
     public PlayerObject(int xPosition, int yPosition, int s, boolean iP, int id) {
         super("PLAYER", xPosition, yPosition, s, s);
         isPlayer = iP;
+        this.id = id;
         
         screenX = (GameConfig.SCREEN_LENGTH / 2) - (GameConfig.TILE_SIZE * 2);
         screenY = (GameConfig.SCREEN_HEIGHT / 2) - (GameConfig.TILE_SIZE);
@@ -58,7 +61,7 @@ public class PlayerObject extends GameObject {
         hitbox.height = GameConfig.TILE_SIZE;
 
         // Create the player's health.
-        playerHealth = 4;
+        playerHealth = 5;
 
         // Generate the sprites.
         playerSprites = new BufferedImage[53];
@@ -220,6 +223,10 @@ public class PlayerObject extends GameObject {
         return hitbox;
     }
 
+    public int getId() {
+        return id;
+    }
+
     // One that is relative.
     public Rectangle getRelativeHitbox() {
         Rectangle relativeHitbox = new Rectangle((int) x + hitbox.x, (int) y + hitbox.y, hitbox.width, hitbox.height);
@@ -244,7 +251,7 @@ public class PlayerObject extends GameObject {
     // Update the current frame and the animation of the player.
     public void updatePlayerAnimation(String animationType, String direction) {
         if (overridingAnimation) {
-            if (animationCounter == GameConfig.ANIMATION_COUNTER) {
+            if (animationCounter == GameConfig.CAST_ANIMATION_COUNTER) {
                 animationIndex = overridingIndex;
                 currentFrame++;
                 animationIndex += currentFrame;
@@ -340,8 +347,11 @@ public class PlayerObject extends GameObject {
         }
 
         // Only uncomment if wanna see the hitbox.
-        //g2d.setColor(Color.CYAN);
-        //g2d.drawRect((int) screenX + hitbox.x, (int) screenY + hitbox.y, hitbox.width, hitbox.height);
-        //g2d.drawRect((int) screenX, (int) screenY, GameConfig.TILE_SIZE * 4, GameConfig.TILE_SIZE * 2);
+        g2d.setColor(Color.CYAN);
+        g2d.drawRect((int) screenX + hitbox.x, (int) screenY + hitbox.y, hitbox.width, hitbox.height);
+        g2d.drawRect((int) screenX, (int) screenY, GameConfig.TILE_SIZE * 4, GameConfig.TILE_SIZE * 2);
+
+        g2d.drawRect((int) x + hitbox.x, (int) y + hitbox.y, hitbox.width, hitbox.height);
+        g2d.drawRect((int) x, (int) y, GameConfig.TILE_SIZE * 4, GameConfig.TILE_SIZE * 2);
     }
 }

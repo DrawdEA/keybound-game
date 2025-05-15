@@ -34,6 +34,12 @@ public class GameCanvas extends JComponent {
     
 
     public GameCanvas() {
+        // Initialize the spells.
+        FireSpell.initializeSprites();
+        WindSpell.initializeSprites();
+        EarthSpell.initializeSprites();
+        WaterSpell.initializeSprites();
+        
         // Initialize object to hold all gameObjects.
         gameObjects = new ArrayList<>();
         spells = new ArrayList<>();
@@ -74,7 +80,8 @@ public class GameCanvas extends JComponent {
 
         System.out.println(enemy);
         gui.setupPlayer(self);
-        collisionManager.setupPlayer(enemy);
+        collisionManager.addPlayer(enemy);
+        collisionManager.addPlayer(self);
         repaint();
     }
 
@@ -117,8 +124,9 @@ public class GameCanvas extends JComponent {
         }
 
         for (Spell spell : spells) {
+            spell.update();
             spell.drawSprite(g2d);
-            spell.handleCollisions(collisionManager);
+            //spell.handleCollisions(collisionManager);
         }
 
         // Draw the players.
@@ -128,6 +136,9 @@ public class GameCanvas extends JComponent {
         self.drawSprite(g2d);
 
         // Render the GUI.
+        if (self != null) {
+            gui.setupPlayer(self);
+        }
         gui.renderGUI(g2d);
     }
 }
