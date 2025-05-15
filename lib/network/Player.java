@@ -81,7 +81,7 @@ public class Player {
                         numOfConnectedPlayers = dataIn.readInt();
 
                     // Game Messages
-                    } else if (messageType == 1){
+                    } else if (messageType == 1) {
                         isInGame = true;
                         PlayerObject enemy = gameCanvas.getEnemy();
                         if (enemy != null) {
@@ -104,76 +104,52 @@ public class Player {
                             gameCanvas.clearSpells();
                             for (int i = 2; i < enemyData.length; i++) {
                                 String[] spellData = enemyData[i].split("-");
-                                
                                 double x;
                                 double y;
                                 Direction dir;
-                    PlayerObject enemy = gameCanvas.getEnemy();
-                    if (enemy != null) {
-                        PlayerObject player = gameCanvas.getOwnPlayer();
-                        
-                        // Enemy position
-                        String enemyDataRaw = dataIn.readUTF();
-                        String[] enemyData = enemyDataRaw.split(" ");
-                        
-                        // enemyData[0] = enemy's ID
-                        // enemyData[1] = enemy's position token
-                        // enemyData[2::] = enemy's objects
-                        
-                        // Set position
-                        String[] enemyPosition = enemyData[1].split("-");
-                        enemy.setX(Double.parseDouble(enemyPosition[1]) - player.getX() + player.getScreenX());
-                        enemy.setY(Double.parseDouble(enemyPosition[2]) - player.getY() + player.getScreenY());
-                        //enemy.updatePlayerAnimation(something, something); // TODO: handle this
-                        
-                        gameCanvas.clearSpells();
-                        for (int i = 2; i < enemyData.length; i++) {
-                            String[] spellData = enemyData[i].split("-");
-                            double x;
-                            double y;
-                            Direction dir;
-                            int animationCounter;
-                            boolean finished;
-                            boolean alive;
+                                int animationCounter;
+                                boolean finished;
+                                boolean alive;
 
-                            if (spellData[0].contains("_SPELL")) {
-                                // Transform the x and the y based on the POV of the player 
-                                x = Double.parseDouble(spellData[1]) - player.getX() + player.getScreenX();
-                                y = Double.parseDouble(spellData[2]) - player.getY() + player.getScreenY();
-                                dir = Direction.valueOf(spellData[3]);
-                                animationCounter = Integer.parseInt(spellData[5]);
-                                
-
-                                // FIRE SPELL
-                                if (spellData[0].equals("FIRE_SPELL")) {
-                                    finished = Boolean.parseBoolean(spellData[6]);
-                                    gameCanvas.addSpell(new FireSpell(playerID, x, y, dir, animationCounter, finished));
-                                
-                                // WATER SPELL
-                                } else if (spellData[0].equals("WATER_SPELL")) {
-                                    gameCanvas.addSpell(new WaterSpell(playerID, x, y, dir, animationCounter));
-                                
-                                // WIND SPELL
-                                } else if (spellData[0].equals("WIND_SPELL")){
-                                    int spellCasterId = Integer.parseInt(spellData[4]);
-                                    double originalX = Double.parseDouble(spellData[6]);
-                                    double originalY = Double.parseDouble(spellData[7]);
-
-                                    if (spellCasterId == playerID) {
-                                        gameCanvas.getOwnPlayer().setNewPosition(
-                                            Double.parseDouble(spellData[1]), 
-                                            Double.parseDouble(spellData[2])
-                                        );
-                                    }
+                                if (spellData[0].contains("_SPELL")) {
+                                    // Transform the x and the y based on the POV of the player 
+                                    x = Double.parseDouble(spellData[1]) - player.getX() + player.getScreenX();
+                                    y = Double.parseDouble(spellData[2]) - player.getY() + player.getScreenY();
+                                    dir = Direction.valueOf(spellData[3]);
+                                    animationCounter = Integer.parseInt(spellData[5]);
                                     
-                                    gameCanvas.addSpell(new WindSpell(playerID, x, y, dir, spellCasterId, animationCounter, originalX, originalY));
-                                // EARTH SPELL
-                                } else if (spellData[0].equals("EARTH_SPELL")){
-                                    alive = Boolean.parseBoolean(spellData[6]);
-                                    gameCanvas.addSpell(new EarthSpell(playerID, x, y, dir, animationCounter, alive));
+
+                                    // FIRE SPELL
+                                    if (spellData[0].equals("FIRE_SPELL")) {
+                                        finished = Boolean.parseBoolean(spellData[6]);
+                                        gameCanvas.addSpell(new FireSpell(playerID, x, y, dir, animationCounter, finished));
+                                    
+                                    // WATER SPELL
+                                    } else if (spellData[0].equals("WATER_SPELL")) {
+                                        gameCanvas.addSpell(new WaterSpell(playerID, x, y, dir, animationCounter));
+                                    
+                                    // WIND SPELL
+                                    } else if (spellData[0].equals("WIND_SPELL")){
+                                        int spellCasterId = Integer.parseInt(spellData[4]);
+                                        double originalX = Double.parseDouble(spellData[6]);
+                                        double originalY = Double.parseDouble(spellData[7]);
+
+                                        if (spellCasterId == playerID) {
+                                            gameCanvas.getOwnPlayer().setNewPosition(
+                                                Double.parseDouble(spellData[1]), 
+                                                Double.parseDouble(spellData[2])
+                                            );
+                                        }
+                                        
+                                        gameCanvas.addSpell(new WindSpell(playerID, x, y, dir, spellCasterId, animationCounter, originalX, originalY));
+                                    // EARTH SPELL
+                                    } else if (spellData[0].equals("EARTH_SPELL")){
+                                        alive = Boolean.parseBoolean(spellData[6]);
+                                        gameCanvas.addSpell(new EarthSpell(playerID, x, y, dir, animationCounter, alive));
+                                    }
                                 }
-                            }
-                        }   
+                            }   
+                        }
                     }
                 }
             } catch(IOException ex) {
