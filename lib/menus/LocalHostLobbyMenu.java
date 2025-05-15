@@ -259,12 +259,15 @@ public class LocalHostLobbyMenu extends JPanel implements ActionListener {
         // Thread to accept connections
         new Thread() {
             public void run() {
+                System.out.println("TEST: ACCEPTING CONNECTIONS..");
                 gs.acceptConnections();
             }
         }.start();
 
         // Join the created host's lobby as a player
+        System.out.println("TEST: CREATING PLAYER..");
         p = new Player();
+        System.out.println("TEST: CONNECT TO SERVER..");
         p.connectToServer(ip);
     }
 

@@ -70,9 +70,9 @@ public class GameCanvas extends JComponent {
         } else {
             self = new PlayerObject(GameConfig.TILE_SIZE * 64, GameConfig.TILE_SIZE * 64, GameConfig.TILE_SIZE + 2, true, id);
             enemy = new PlayerObject(GameConfig.TILE_SIZE * 64, GameConfig.TILE_SIZE * 43, GameConfig.TILE_SIZE, false, 1);
-            
         }
 
+        System.out.println(enemy);
         gui.setupPlayer(self);
         collisionManager.setupPlayer(enemy);
         repaint();
