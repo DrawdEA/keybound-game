@@ -347,11 +347,11 @@ public class PlayerObject extends GameObject {
         }
 
         // Only uncomment if wanna see the hitbox.
-        g2d.setColor(Color.CYAN);
-        g2d.drawRect((int) screenX + hitbox.x, (int) screenY + hitbox.y, hitbox.width, hitbox.height);
-        g2d.drawRect((int) screenX, (int) screenY, GameConfig.TILE_SIZE * 4, GameConfig.TILE_SIZE * 2);
+        // g2d.setColor(Color.CYAN);
+        // g2d.drawRect((int) screenX + hitbox.x, (int) screenY + hitbox.y, hitbox.width, hitbox.height);
+        // g2d.drawRect((int) screenX, (int) screenY, GameConfig.TILE_SIZE * 4, GameConfig.TILE_SIZE * 2);
 
-        g2d.drawRect((int) x + hitbox.x, (int) y + hitbox.y, hitbox.width, hitbox.height);
-        g2d.drawRect((int) x, (int) y, GameConfig.TILE_SIZE * 4, GameConfig.TILE_SIZE * 2);
+        // g2d.drawRect((int) x + hitbox.x, (int) y + hitbox.y, hitbox.width, hitbox.height);
+        // g2d.drawRect((int) x, (int) y, GameConfig.TILE_SIZE * 4, GameConfig.TILE_SIZE * 2);
     }
 }

@@ -10,7 +10,6 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import lib.GameConfig;
 import lib.network.*;
-import org.ietf.jgss.GSSContext;
 
 public class LocalHostLobbyMenu extends JPanel implements ActionListener {
     // Components
@@ -237,7 +236,7 @@ public class LocalHostLobbyMenu extends JPanel implements ActionListener {
                                 players.revalidate();
                                 players.repaint();
 
-                                System.out.printf("Player %d has joined the lobby", i+1);
+                                System.out.printf("Player %d has joined the lobby\n", i+1);
 
                             } catch (Exception ex) {
                                 System.err.println(ex);

@@ -185,7 +185,7 @@ public class LocalJoinLobbyMenu extends JPanel implements ActionListener {
                                     players.revalidate();
                                     players.repaint();
 
-                                    System.out.printf("Player %d has joined the lobby", i+1);
+                                    System.out.printf("Player %d has joined the lobby\n", i+1);
 
                                 } catch (Exception ex) {
                                     System.err.println(ex);
@@ -200,11 +200,11 @@ public class LocalJoinLobbyMenu extends JPanel implements ActionListener {
                         mainFrame.add(p.getCanvas());
                         mainFrame.revalidate();
                         mainFrame.repaint();
+                        break;
                     }
 
-                    // Prevent this loop from consuming 100% CPU
                     try {
-                        Thread.sleep(250); // Check every 500ms
+                        Thread.sleep(250);
                     } catch (InterruptedException ex) {
                         System.err.println(ex);
                     }
