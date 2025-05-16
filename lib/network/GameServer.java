@@ -174,13 +174,14 @@ public class GameServer {
                                     Integer.parseInt(params[5]),
                                     Boolean.parseBoolean(params[6]))
                                 );
+                            // FIRE_SPELL Initialization
                             } else {
                                 activeSpells.add(new FireSpell(
                                     playerID,
                                     Double.parseDouble(params[1]), 
                                     Double.parseDouble(params[2]), 
                                     Direction.valueOf(params[3]),
-                                    Integer.parseInt(params[5]),
+                                    Integer.parseInt(params[4]),
                                     false)
                                 );
                             }
@@ -195,7 +196,7 @@ public class GameServer {
                                     Double.parseDouble(params[1]), 
                                     Double.parseDouble(params[2]), 
                                     Direction.valueOf(params[3]),
-                                    Integer.parseInt(params[5])
+                                    Integer.parseInt(params[4])
                                 ));
                         
 
@@ -214,9 +215,9 @@ public class GameServer {
                                     Double.parseDouble(params[2]), 
                                     Direction.valueOf(params[3]),
                                     Integer.parseInt(params[4]),
-                                    Integer.parseInt(params[5]),
-                                    Double.parseDouble(params[6]), 
-                                    Double.parseDouble(params[7]))
+                                    Double.parseDouble(params[5]),
+                                    Double.parseDouble(params[6])
+                                    )
                                 );
                             } else {
                                 activeSpells.add(new WindSpell(
@@ -224,10 +225,7 @@ public class GameServer {
                                     Double.parseDouble(params[1]), 
                                     Double.parseDouble(params[2]), 
                                     Direction.valueOf(params[3]),
-                                    Integer.parseInt(params[4]),
-                                    Integer.parseInt(params[5]),
-                                    0, 
-                                    0)
+                                    0, 0, 0)
                                 );
                             }
                             
@@ -235,10 +233,6 @@ public class GameServer {
                         // EARTH SPELL
                         } else if (entity.startsWith("EARTH_SPELL")) {
                             String[] params = entity.split("-");
-                            
-                            // Update the player positions
-                            playerPositions.get(playerID-1)[0] = Double.parseDouble(params[1]);
-                            playerPositions.get(playerID-1)[1] = Double.parseDouble(params[2]);
 
                             if (params.length == 7) {
                                 activeSpells.add(new EarthSpell(
@@ -246,8 +240,8 @@ public class GameServer {
                                     Double.parseDouble(params[1]), 
                                     Double.parseDouble(params[2]), 
                                     Direction.valueOf(params[3]),
-                                    Integer.parseInt(params[5]),
-                                    Boolean.parseBoolean(params[6]))
+                                    Integer.parseInt(params[4]),
+                                    Boolean.parseBoolean(params[5]))
                                 );
                             } else {
                                 activeSpells.add(new EarthSpell(
@@ -255,8 +249,7 @@ public class GameServer {
                                     Double.parseDouble(params[1]), 
                                     Double.parseDouble(params[2]), 
                                     Direction.valueOf(params[3]),
-                                    Integer.parseInt(params[5]),
-                                    true)
+                                    0, true)
                                 );
                             }
                         }

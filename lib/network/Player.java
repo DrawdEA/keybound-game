@@ -155,7 +155,7 @@ public class Player {
                                             );
                                         }
                                         
-                                        gameCanvas.addSpell(new WindSpell(playerID, x, y, dir, spellCasterId, animationCounter, originalX, originalY));
+                                        gameCanvas.addSpell(new WindSpell(playerID, x, y, dir, animationCounter, originalX, originalY));
                                     // EARTH SPELL
                                     } else if (spellData[0].equals("EARTH_SPELL")){
                                         alive = Boolean.parseBoolean(spellData[6]);

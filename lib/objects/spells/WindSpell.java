@@ -2,15 +2,11 @@ package lib.objects.spells;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-
-import lib.render.CollisionManager;
-import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-
 import javax.imageio.ImageIO;
-
 import lib.GameConfig;
+import lib.render.CollisionManager;
 import lib.render.Direction;
 
 public class WindSpell extends Spell {
@@ -97,7 +93,7 @@ public class WindSpell extends Spell {
         }
     }
 
-    public WindSpell(int casterId, double x, double y, Direction dir, int cId, int aC, double iX, double iY) {
+    public WindSpell(int casterId, double x, double y, Direction dir, int aC, double iX, double iY) {
         super("WIND_SPELL", casterId, x, y, 25, 25);
 
         this.x = x;
@@ -105,8 +101,6 @@ public class WindSpell extends Spell {
 
         incrementX = (int) iX;
         incrementY = (int) iY;
-
-        casterId = cId;
 
         // Adjust to the spell to the right edge
         if (dir == Direction.UP){
