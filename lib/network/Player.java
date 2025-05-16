@@ -12,8 +12,12 @@ import lib.render.*;
 public class Player {
     private Socket socket;
     private int playerID;
+    
     private ReadFromServer rfsRunnable;
     private WriteToServer wtsRunnable;
+    Thread writeThread;
+    Thread readThread;
+
     private int numOfConnectedPlayers; 
     private boolean isInGame;
 
@@ -47,12 +51,11 @@ public class Player {
 
             // Start the read thread immediately to receive lobby updates
             System.out.println("Starting ReadFromServer thread...");
-            Thread readThread = new Thread(rfsRunnable);
+            readThread = new Thread(rfsRunnable);
             readThread.start();
 
-            // Start the write threads.
-            Thread writeThread = new Thread(wtsRunnable);
-            writeThread.start();
+            // Initialize the write thread
+            writeThread = new Thread(wtsRunnable);
             
             System.out.println("ReadFromServer thread started");
         } catch (IOException ex) {
@@ -78,15 +81,21 @@ public class Player {
 
                     String serverDataRaw = dataIn.readUTF();
                     String[] serverData = serverDataRaw.split(" ");
-                    
+
                     // Process Lobby Data
                     if (serverData[0].equals("0")){
                         isInGame = false;
                         numOfConnectedPlayers = Integer.parseInt(serverData[1]);
 
                     // Process In Game Data
-                    } else if (serverData[0].equals("1")) {
-                        isInGame = true;
+                    } else if (serverData[0].equals("1")) {                        
+                        // Start the write thread if it already isn't alive
+                        if (!isInGame) { // Only set isInGame and start writeThread once
+                            isInGame = true;
+                            System.out.println("Game has started. Starting WriteToServer thread for Player " + playerID);
+                            writeThread.start();
+                        }
+
                         PlayerObject enemy = gameCanvas.getEnemy();
 
                         if (enemy != null) {
@@ -95,7 +104,7 @@ public class Player {
                             // Iterate over the server data and process all player data that isn't your own
                             for (int i = 1; i < numOfConnectedPlayers + 1; i++){
                                 // If the Player ID (the first character of each player data string) is NOT your own player ID then process it to your Game Canvas
-                                if (!serverData[i].substring(0,1).equals(playerID)){
+                                if (Integer.parseInt(serverData[i].substring(0, 1)) != playerID) {
                                     String[] enemyPlayerData = serverData[i].split("-");
                                     
                                     enemy.setX(Double.parseDouble(enemyPlayerData[1]) - player.getX() + player.getScreenX());

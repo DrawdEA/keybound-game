@@ -79,22 +79,21 @@ public class GameServer {
                 if (players == 1) {
                     p1ReadRunnable = rfc;
                     p1WriteRunnable = wtc;
+
+                    Thread readThread1 = new Thread(p1ReadRunnable);
+                    Thread writeThread1 = new Thread(p1WriteRunnable);
+                    readThread1.start();
+                    writeThread1.start();
+
                 } else {
                     p2ReadRunnable = rfc;
                     p2WriteRunnable = wtc;
-                }
-                
-                // Start the read threads
-                Thread readThread1 = new Thread(p1ReadRunnable);
-                Thread readThread2 = new Thread(p2ReadRunnable);
-                readThread1.start();
-                readThread2.start();
 
-                // Start the write threads
-                Thread writeThread1 = new Thread(p1WriteRunnable);
-                Thread writeThread2 = new Thread(p2WriteRunnable);
-                writeThread1.start();
-                writeThread2.start();
+                    Thread readThread2 = new Thread(p2ReadRunnable);
+                    Thread writeThread2 = new Thread(p2WriteRunnable);
+                    readThread2.start();
+                    writeThread2.start();
+                }
             }
 
             System.out.println("No longer accepting connections");
@@ -144,123 +143,121 @@ public class GameServer {
                 while (true) {
                     String dataRaw = dataIn.readUTF();
 
-                    if (dataRaw != null) {
-                        // Split data into their properties
-                        String[] data = dataRaw.split(" ");
+                    // Split data into their properties
+                    String[] data = dataRaw.split(" ");
 
-                        // Update Positions
-                        String[] basicPlayerInfo = data[0].split("-");
-                        int id = Integer.parseInt(basicPlayerInfo[0]);
+                    // Update Positions
+                    String[] basicPlayerInfo = data[0].split("-");
+                    int id = Integer.parseInt(basicPlayerInfo[0]);
 
-                        playerPositions.get(playerID)[0] = Double.parseDouble(basicPlayerInfo[1]);
-                        playerPositions.get(playerID)[1] = Double.parseDouble(basicPlayerInfo[2]);
+                    playerPositions.get(id-1)[0] = Double.parseDouble(basicPlayerInfo[1]);
+                    playerPositions.get(id-1)[1] = Double.parseDouble(basicPlayerInfo[2]);
 
-                        // Update all positions
-                        for (int i = 0; i < 2; i++){
-                            playerObjects.get(i).setX(playerPositions.get(i)[0]);
-                            playerObjects.get(i).setY(playerPositions.get(i)[1]);
-                        }
+                    // Update all positions
+                    for (int i = 0; i < 2; i++){
+                        playerObjects.get(i).setX(playerPositions.get(i)[0]);
+                        playerObjects.get(i).setY(playerPositions.get(i)[1]);
+                    }
+                    
+                    // Implement spells
+                    for (String entity : data){
                         
-                        // Implement spells
-                        for (String entity : data){
+                        // FIRE_SPELL 
+                        if (entity.startsWith("FIRE_SPELL")) {
+                            String[] params = entity.split("-");
+                            if (params.length == 7) {
+                                activeSpells.add(new FireSpell(
+                                    playerID,
+                                    Double.parseDouble(params[1]), 
+                                    Double.parseDouble(params[2]), 
+                                    Direction.valueOf(params[3]),
+                                    Integer.parseInt(params[5]),
+                                    Boolean.parseBoolean(params[6]))
+                                );
+                            } else {
+                                activeSpells.add(new FireSpell(
+                                    playerID,
+                                    Double.parseDouble(params[1]), 
+                                    Double.parseDouble(params[2]), 
+                                    Direction.valueOf(params[3]),
+                                    Integer.parseInt(params[5]),
+                                    false)
+                                );
+                            }
                             
-                            // FIRE_SPELL 
-                            if (entity.startsWith("FIRE_SPELL")) {
-                                String[] params = entity.split("-");
-                                if (params.length == 7) {
-                                    activeSpells.add(new FireSpell(
-                                        playerID,
-                                        Double.parseDouble(params[1]), 
-                                        Double.parseDouble(params[2]), 
-                                        Direction.valueOf(params[3]),
-                                        Integer.parseInt(params[5]),
-                                        Boolean.parseBoolean(params[6]))
-                                    );
-                                } else {
-                                    activeSpells.add(new FireSpell(
-                                        playerID,
-                                        Double.parseDouble(params[1]), 
-                                        Double.parseDouble(params[2]), 
-                                        Direction.valueOf(params[3]),
-                                        Integer.parseInt(params[5]),
-                                        false)
-                                    );
-                                }
-                                
+                        
+                        // WATER_SPELL
+                        } else if (entity.startsWith("WATER_SPELL")) {
+                            String[] params = entity.split("-");
                             
-                            // WATER_SPELL
-                            } else if (entity.startsWith("WATER_SPELL")) {
-                                String[] params = entity.split("-");
-                                
-                                activeSpells.add(new WaterSpell(
-                                        playerID,
-                                        Double.parseDouble(params[1]), 
-                                        Double.parseDouble(params[2]), 
-                                        Direction.valueOf(params[3]),
-                                        Integer.parseInt(params[5])
-                                    ));
-                            
-                            
-                            // WIND_SPELL
-                            } else if (entity.startsWith("WIND_SPELL")) {
-                                String[] params = entity.split("-");
-                                
-                                // Update the player positions
-                                playerPositions.get(playerID-1)[0] = Double.parseDouble(params[1]);
-                                playerPositions.get(playerID-1)[1] = Double.parseDouble(params[2]);
+                            activeSpells.add(new WaterSpell(
+                                    playerID,
+                                    Double.parseDouble(params[1]), 
+                                    Double.parseDouble(params[2]), 
+                                    Direction.valueOf(params[3]),
+                                    Integer.parseInt(params[5])
+                                ));
+                        
 
-                                if (params.length == 8) {
-                                    activeSpells.add(new WindSpell(
-                                        playerID,
-                                        Double.parseDouble(params[1]), 
-                                        Double.parseDouble(params[2]), 
-                                        Direction.valueOf(params[3]),
-                                        Integer.parseInt(params[4]),
-                                        Integer.parseInt(params[5]),
-                                        Double.parseDouble(params[6]), 
-                                        Double.parseDouble(params[7]))
-                                    );
-                                } else {
-                                    activeSpells.add(new WindSpell(
-                                        playerID,
-                                        Double.parseDouble(params[1]), 
-                                        Double.parseDouble(params[2]), 
-                                        Direction.valueOf(params[3]),
-                                        Integer.parseInt(params[4]),
-                                        Integer.parseInt(params[5]),
-                                        0, 
-                                        0)
-                                    );
-                                }
-                                
+                        // WIND_SPELL
+                        } else if (entity.startsWith("WIND_SPELL")) {
+                            String[] params = entity.split("-");
                             
-                            // EARTH SPELL
-                            } else if (entity.startsWith("EARTH_SPELL")) {
-                                String[] params = entity.split("-");
-                                
-                                // Update the player positions
-                                playerPositions.get(playerID-1)[0] = Double.parseDouble(params[1]);
-                                playerPositions.get(playerID-1)[1] = Double.parseDouble(params[2]);
+                            // Update the player positions
+                            playerPositions.get(playerID-1)[0] = Double.parseDouble(params[1]);
+                            playerPositions.get(playerID-1)[1] = Double.parseDouble(params[2]);
 
-                                if (params.length == 7) {
-                                    activeSpells.add(new EarthSpell(
-                                        playerID,
-                                        Double.parseDouble(params[1]), 
-                                        Double.parseDouble(params[2]), 
-                                        Direction.valueOf(params[3]),
-                                        Integer.parseInt(params[5]),
-                                        Boolean.parseBoolean(params[6]))
-                                    );
-                                } else {
-                                    activeSpells.add(new EarthSpell(
-                                        playerID,
-                                        Double.parseDouble(params[1]), 
-                                        Double.parseDouble(params[2]), 
-                                        Direction.valueOf(params[3]),
-                                        Integer.parseInt(params[5]),
-                                        true)
-                                    );
-                                }
+                            if (params.length == 8) {
+                                activeSpells.add(new WindSpell(
+                                    playerID,
+                                    Double.parseDouble(params[1]), 
+                                    Double.parseDouble(params[2]), 
+                                    Direction.valueOf(params[3]),
+                                    Integer.parseInt(params[4]),
+                                    Integer.parseInt(params[5]),
+                                    Double.parseDouble(params[6]), 
+                                    Double.parseDouble(params[7]))
+                                );
+                            } else {
+                                activeSpells.add(new WindSpell(
+                                    playerID,
+                                    Double.parseDouble(params[1]), 
+                                    Double.parseDouble(params[2]), 
+                                    Direction.valueOf(params[3]),
+                                    Integer.parseInt(params[4]),
+                                    Integer.parseInt(params[5]),
+                                    0, 
+                                    0)
+                                );
+                            }
+                            
+                        
+                        // EARTH SPELL
+                        } else if (entity.startsWith("EARTH_SPELL")) {
+                            String[] params = entity.split("-");
+                            
+                            // Update the player positions
+                            playerPositions.get(playerID-1)[0] = Double.parseDouble(params[1]);
+                            playerPositions.get(playerID-1)[1] = Double.parseDouble(params[2]);
+
+                            if (params.length == 7) {
+                                activeSpells.add(new EarthSpell(
+                                    playerID,
+                                    Double.parseDouble(params[1]), 
+                                    Double.parseDouble(params[2]), 
+                                    Direction.valueOf(params[3]),
+                                    Integer.parseInt(params[5]),
+                                    Boolean.parseBoolean(params[6]))
+                                );
+                            } else {
+                                activeSpells.add(new EarthSpell(
+                                    playerID,
+                                    Double.parseDouble(params[1]), 
+                                    Double.parseDouble(params[2]), 
+                                    Direction.valueOf(params[3]),
+                                    Integer.parseInt(params[5]),
+                                    true)
+                                );
                             }
                         }
                     }
