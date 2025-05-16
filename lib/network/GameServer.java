@@ -4,9 +4,6 @@ import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
-
-import javax.print.attribute.standard.PagesPerMinute;
-
 import lib.*;
 import lib.objects.spells.*;
 import lib.render.CollisionManager;
@@ -86,10 +83,18 @@ public class GameServer {
                     p2ReadRunnable = rfc;
                     p2WriteRunnable = wtc;
                 }
+                
+                // Start the read threads
+                Thread readThread1 = new Thread(p1ReadRunnable);
+                Thread readThread2 = new Thread(p2ReadRunnable);
+                readThread1.start();
+                readThread2.start();
 
-                // Start write thread to send lobby data
-                Thread writeThread = new Thread(wtc);
-                writeThread.start();
+                // Start the write threads
+                Thread writeThread1 = new Thread(p1WriteRunnable);
+                Thread writeThread2 = new Thread(p2WriteRunnable);
+                writeThread1.start();
+                writeThread2.start();
             }
 
             System.out.println("No longer accepting connections");
@@ -105,17 +110,7 @@ public class GameServer {
         p1WriteRunnable.sendStartMsg();
         p2WriteRunnable.sendStartMsg();
 
-        // Start the read threads first.
-        Thread readThread1 = new Thread(p1ReadRunnable);
-        Thread readThread2 = new Thread(p2ReadRunnable);
-        readThread1.start();
-        readThread2.start();
-
-        // Start the write threads first.
-        Thread writeThread1 = new Thread(p1WriteRunnable);
-        Thread writeThread2 = new Thread(p2WriteRunnable);
-        writeThread1.start();
-        writeThread2.start();
+        System.out.println("Started the Game Successfully");
     }
 
     public void closeConnections() {
@@ -149,18 +144,20 @@ public class GameServer {
                 while (true) {
                     String dataRaw = dataIn.readUTF();
 
-                    // Catch all spells
+                    // Split data into their properties
                     String[] data = dataRaw.split(" ");
 
                     // Update Positions
-                    String[] positionData = data[1].split("-");
+                    String[] basicPlayerInfo = data[0].split("-");
+                    int id = Integer.parseInt(basicPlayerInfo[0]);
 
-                    playerPositions.get(playerID-1)[0] = Double.parseDouble(positionData[1]);
-                    playerPositions.get(playerID-1)[1] = Double.parseDouble(positionData[2]);
+                    playerPositions.get(playerID)[0] = Double.parseDouble(basicPlayerInfo[1]);
+                    playerPositions.get(playerID)[1] = Double.parseDouble(basicPlayerInfo[2]);
 
-                    if (playerObjects.get(playerID-1) != null) {
-                        playerObjects.get(playerID-1).setX(playerPositions.get(playerID-1)[0]);
-                        playerObjects.get(playerID-1).setY(playerPositions.get(playerID-1)[1]);
+                    // Update all positions
+                    for (int i = 0; i < 2; i++){
+                        playerObjects.get(i).setX(playerPositions.get(i)[0]);
+                        playerObjects.get(i).setY(playerPositions.get(i)[1]);
                     }
                     
                     // Implement spells
@@ -285,50 +282,59 @@ public class GameServer {
         public void run() {
             try {
                 while (true) {
+                    /*
+                        Data formatting:
+                        All first level properties of data is separated by a space " "
+                        All second level (nested) properties of the data is separated by a dash "-"
+                        This allows us to treat the data like 2D Array by splitting it into levels  
+                        It follows the following format:
+                            [MESSAGE_TYPE] [DATA_NAME]-[VALUE_1]-[VALUE_2]
+
+                        [MESSAGE_TYPE]
+                        0 -> Lobby Data 
+                        1 -> In Game Data
+
+                        LOBBY DATA
+                        0 [NUMBER_OF_PLAYERS_CONNECTED] [PLAYER_NAMES...]
+
+                        IN GAME DATA
+                        1 [PLAYER_ID]-[X]-[Y]-[FRAME]-[HP]-[KILLS] [SPELL_CASTER'S_ID]-[SPELL_NAME]-[X]-[Y]-[Other Spell Parameters...] ...Other Spells...
+                    */
+
                     // Sending Lobby Data
                     if (!isGameStarted) {
-                        dataOut.writeInt(0);
-                        dataOut.writeInt(players);
+                        dataOut.writeUTF(String.format("0 %d", players));
                         dataOut.flush();
 
                         // Add a sleep to avoid overwhelming the connection
                         try {
-                            Thread.sleep(500);
+                            Thread.sleep(100);
                         } catch (InterruptedException ex) {
                             System.out.println("InterruptedException from WTC run()");
                         }
 
-                    // Sending Game Data
+                    // Sending In Game Data
                     } else {
-                        dataOut.writeInt(1);
-                        
-                        String spellString = "";
-                        for (Spell spell : activeSpells) {
-                            spellString += spell.getDataString();
-                            spellString += " ";
+                        String gameStateData = "1 ";
+
+                        // Add all player data in order
+                        for (int i = 0; i < players; i++) {
+                            gameStateData += String.format("%d-%f-%f ", 
+                                i+1, // Player's ID
+                                playerPositions.get(i)[0], // Player's X Coordinate stored in the server
+                                playerPositions.get(i)[1] // Player's Y Coordinate stored in the server
+                                //playerPositions.get(i)[2] // Player's current sprite's frame stored in the server
+                            );
                         }
                         
-                        // Send the enemy positions
-                        if (playerID == 1) {
-                            dataOut.writeUTF(
-                                String.format("%d POSITION-%f-%f %s", 
-                                    playerID, 
-                                    playerPositions.get(1)[0], 
-                                    playerPositions.get(1)[1], 
-                                    spellString
-                                )
-                            );
-                        } else if (playerID == 2) {
-                            dataOut.writeUTF(
-                                String.format("%d POSITION-%f-%f %s", 
-                                    playerID, 
-                                    playerPositions.get(0)[0], 
-                                    playerPositions.get(0)[1], 
-                                    spellString
-                                )
-                            );
+                        // Add all spells 
+                        for (Spell spell : activeSpells) {
+                            gameStateData += spell.getDataString();
+                            gameStateData += " ";
                         }
 
+                        // Send data to client
+                        dataOut.writeUTF(gameStateData);
                         dataOut.flush();
                         try {
                             Thread.sleep(25);

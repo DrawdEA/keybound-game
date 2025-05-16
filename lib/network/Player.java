@@ -49,6 +49,10 @@ public class Player {
             System.out.println("Starting ReadFromServer thread...");
             Thread readThread = new Thread(rfsRunnable);
             readThread.start();
+
+            // Start the write threads.
+            Thread writeThread = new Thread(wtsRunnable);
+            writeThread.start();
             
             System.out.println("ReadFromServer thread started");
         } catch (IOException ex) {
@@ -71,39 +75,40 @@ public class Player {
         public void run() {
             try {
                 while (true) { 
+
+                    String serverDataRaw = dataIn.readUTF();
+                    String[] serverData = serverDataRaw.split(" ");
                     
-                    // message type tells us if it is lobby data or game data
-                    int messageType = dataIn.readInt();
-
-                    // Lobby Messages
-                    if (messageType == 0) {
+                    // Process Lobby Data
+                    if (serverData[0].equals("0")){
                         isInGame = false;
-                        numOfConnectedPlayers = dataIn.readInt();
+                        numOfConnectedPlayers = Integer.parseInt(serverData[1]);
 
-                    // Game Messages
-                    } else if (messageType == 1) {
+                    // Process In Game Data
+                    } else if (serverData[0].equals("1")) {
                         isInGame = true;
                         PlayerObject enemy = gameCanvas.getEnemy();
+
                         if (enemy != null) {
                             PlayerObject player = gameCanvas.getOwnPlayer();
-                            
-                            // Enemy position
-                            String enemyDataRaw = dataIn.readUTF();
-                            String[] enemyData = enemyDataRaw.split(" ");
-                            
-                            // enemyData[0] = enemy's ID
-                            // enemyData[1] = enemy's position token
-                            // enemyData[2::] = enemy's objects
-                            
-                            // Set position
-                            String[] enemyPosition = enemyData[1].split("-");
-                            enemy.setX(Double.parseDouble(enemyPosition[1]) - player.getX() + player.getScreenX());
-                            enemy.setY(Double.parseDouble(enemyPosition[2]) - player.getY() + player.getScreenY());
-                            //enemy.updatePlayerAnimation(something, something); // TODO: handle this
-                            
+
+                            // Iterate over the server data and process all player data that isn't your own
+                            for (int i = 1; i < numOfConnectedPlayers + 1; i++){
+                                // If the Player ID (the first character of each player data string) is NOT your own player ID then process it to your Game Canvas
+                                if (!serverData[i].substring(0,1).equals(playerID)){
+                                    String[] enemyPlayerData = serverData[i].split("-");
+                                    
+                                    enemy.setX(Double.parseDouble(enemyPlayerData[1]) - player.getX() + player.getScreenX());
+                                    enemy.setY(Double.parseDouble(enemyPlayerData[2]) - player.getY() + player.getScreenY());
+                                    //enemy.updatePlayerAnimation(something, something); // TODO: handle this
+                                }
+                            }
+
+                            // Iterate over the spells after the player positions
                             gameCanvas.clearSpells();
-                            for (int i = 2; i < enemyData.length; i++) {
-                                String[] spellData = enemyData[i].split("-");
+                            
+                            for (int i = numOfConnectedPlayers + 1; i < serverData.length; i++) {
+                                String[] spellData = serverData[i].split("-");
                                 double x;
                                 double y;
                                 Direction dir;
@@ -156,21 +161,6 @@ public class Player {
                 System.out.println("IOException from RFS run()");
             }
         }
-
-        public void waitForStartMsg() {
-            try {
-                String startMsg = dataIn.readUTF();
-                System.out.println("Message from server: " + startMsg);
-
-                // Start the threads.
-                Thread readThread = new Thread(rfsRunnable);
-                readThread.start();
-                Thread writeThread = new Thread(wtsRunnable);
-                writeThread.start();
-            } catch (IOException ex) {
-                System.out.println("IOException from waitForStartMsg()");
-            }
-        }
     }
 
     private class WriteToServer implements Runnable {
@@ -185,20 +175,22 @@ public class Player {
             try {
                 while (true) {
                     if (gameCanvas.getOwnPlayer() != null) {
-                        // Written data will be in the form of "Player_ID OBJECT/PROPERTY_OF_PLAYER-X-Y OBJECT/PROPERTY_OF_PLAYER-X-Y ..."
                         
-                        // Add Player ID
-                        String dataString = String.format("%d ", playerID);
+                        // Basic Player info id-x-y-facing-animationIndex
+                        String dataString = String.format("%s ", gameCanvas.getOwnPlayer().getPlayerDataString());
                         
-                        // Add Player Position
-                        dataString += String.format("POSITION-%f-%f ", gameCanvas.getOwnPlayer().getX(), gameCanvas.getOwnPlayer().getY());
-
+                        // TODO: Remove the redundant code
                         // Add spell request by the Player
                         if (!wantsToCast.equals("")) {
-                            dataString += String.format(wantsToCast + "-" + gameCanvas.getOwnPlayer().getPositionDataString() + "-" + gameCanvas.getOwnPlayer().getId() +"-0 ");
+                            dataString += String.format("%s-%f-%f-%s-0", 
+                                wantsToCast,
+                                gameCanvas.getOwnPlayer().getX(), 
+                                gameCanvas.getOwnPlayer().getY(),
+                                gameCanvas.getOwnPlayer().getDirection().toString()
+                            );
                             wantsToCast = "";
                         }
-
+                        
                         dataOut.writeUTF(dataString);
                         dataOut.flush();
                     }

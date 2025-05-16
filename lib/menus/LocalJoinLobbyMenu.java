@@ -4,8 +4,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import lib.GameConfig;
@@ -206,7 +204,7 @@ public class LocalJoinLobbyMenu extends JPanel implements ActionListener {
 
                     // Prevent this loop from consuming 100% CPU
                     try {
-                        Thread.sleep(500); // Check every 500ms
+                        Thread.sleep(250); // Check every 500ms
                     } catch (InterruptedException ex) {
                         System.err.println(ex);
                     }

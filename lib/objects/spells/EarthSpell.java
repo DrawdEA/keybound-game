@@ -3,15 +3,11 @@ package lib.objects.spells;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-
-import lib.render.CollisionManager;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-
 import javax.imageio.ImageIO;
-
 import lib.GameConfig;
+import lib.render.CollisionManager;
 import lib.render.Direction;
 import lib.render.PlayerObject;
 
@@ -234,6 +230,6 @@ public class EarthSpell extends Spell {
             hitbox = new Rectangle((int) (x - 68 + TILE * 1.75 - wallXLength/2 + 41 + 35), (int) y - 16 - WALL_OFFSET - 16 - 8, (int) wallXLength, (int) wallYLength);
         } 
         
-        g2d.draw(hitbox);
+        // g2d.draw(hitbox);
     }    
 }

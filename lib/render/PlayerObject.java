@@ -302,8 +302,8 @@ public class PlayerObject extends GameObject {
         }
     }
 
-    public String getPositionDataString(){
-        return String.format("%f-%f-%s", x, y, facing.toString());
+    public String getPlayerDataString(){
+        return String.format("%d-%f-%f-%s-%d", id, x, y, facing.toString(), animationIndex);
     }
 
     public int getPlayerHealth() {

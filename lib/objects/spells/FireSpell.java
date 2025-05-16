@@ -3,9 +3,7 @@ package lib.objects.spells;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-
 import javax.imageio.ImageIO;
-
 import lib.GameConfig;
 import lib.render.CollisionManager;
 import lib.render.Direction;
@@ -255,7 +253,7 @@ public class FireSpell extends Spell {
         
 
         // Hitboxing.
-        g2d.setColor(COLOR);
-        g2d.draw(hitbox);
+        // g2d.setColor(COLOR);
+        // g2d.draw(hitbox);
     }
 }

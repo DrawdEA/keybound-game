@@ -2,13 +2,10 @@ package lib.objects.spells;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-
 import javax.imageio.ImageIO;
-
 import lib.GameConfig;
 import lib.render.CollisionManager;
 import lib.render.Direction;
@@ -188,9 +185,9 @@ public class WaterSpell extends Spell {
             hitbox = new Rectangle((int) x + GameConfig.TILE_SIZE * 3 + GameConfig.TILE_SIZE / 2, (int) y - GameConfig.TILE_SIZE + 10, width, height);
         }
 
-        if (currentFrame >= 3 && currentFrame <= 9) {
-            g2d.draw(hitbox);
-        }
+        // if (currentFrame >= 3 && currentFrame <= 9) {
+        //     g2d.draw(hitbox);
+        // }
     }
 
 }
