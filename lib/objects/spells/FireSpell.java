@@ -203,14 +203,16 @@ public class FireSpell extends Spell {
     }
 
     @Override
-    public void handleCollisions(CollisionManager cm) {
+    public int handleCollisions(CollisionManager cm) {
         PlayerObject playerHit = cm.checkProjectileCollision(hitbox, id);
-        if (playerHit != null && !finished) {
+        if (playerHit != null && !finished && playerHit.isDamageable()) {
             finished = true;
             animationCounter = 0;
 
             // System.out.println("FIRE HIT!");
-            playerHit.damagePlayer(1); // request to server for damage
+            return playerHit.getId();
+        } else {
+            return 0;
         }
     }
 

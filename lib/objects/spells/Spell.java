@@ -44,8 +44,7 @@ public abstract class Spell extends GameObject {
     // A method to get spell data for networking
     public abstract String getDataString();
 
-    // TODO: Collisions
-    public abstract void handleCollisions(CollisionManager cm);
+    public abstract int handleCollisions(CollisionManager cm);
 
     public abstract void drawSprite(Graphics2D g2d);
 }

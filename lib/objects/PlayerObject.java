@@ -322,17 +322,23 @@ public class PlayerObject extends GameObject {
         return playerHealth;
     }
 
-    public void damagePlayer(int damage) {
+    public boolean  isDamageable() {
         long elapsedTimeSinceLastDamage = (System.currentTimeMillis() - lastDamagedTime) / 1000;
         if (elapsedTimeSinceLastDamage >= 2) {
             lastDamagedTime = System.currentTimeMillis();
-            playerHealth = playerHealth - damage;            
+            return true;          
+        } else {
+            return false;
         }
     }
 
     public void setNewPosition(double x, double y){
         this.x = x;
         this.y = y;
+    }
+
+    public void setHP(int newhp){
+        playerHealth = newhp;
     }
 
     public void setSprite(int animationIndex, int horizontalFacing){

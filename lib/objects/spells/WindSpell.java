@@ -152,8 +152,9 @@ public class WindSpell extends Spell {
     }
 
     @Override
-    public void handleCollisions(CollisionManager cm) {
-        
+    public int handleCollisions(CollisionManager cm) {
+        // Wind Spell will never deal damage
+        return 0;
     }
 
     @Override

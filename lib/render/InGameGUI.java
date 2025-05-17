@@ -41,7 +41,6 @@ public class InGameGUI {
     // Sets up the player.
     public void updatePlayerObject(PlayerObject p) {
         player = p;
-        System.out.println(player.getPlayerHealth());
     }
     
     // Renders the GUI for the player.

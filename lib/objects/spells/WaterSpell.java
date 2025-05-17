@@ -157,11 +157,13 @@ public class WaterSpell extends Spell {
     }
 
     @Override
-    public void handleCollisions(CollisionManager cm) {
+    public int handleCollisions(CollisionManager cm) {
         PlayerObject playerHit = cm.checkProjectileCollision(hitbox, casterId);
-        if (playerHit != null) {
+        if (playerHit != null && playerHit.isDamageable()) {
             // System.out.println("WATER HIT!");
-            playerHit.damagePlayer(1); // request to server for damage
+            return playerHit.getId();
+        } else {
+            return 0;
         }
     }
 

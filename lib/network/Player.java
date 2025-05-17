@@ -104,6 +104,7 @@ public class Player {
 
                             // Iterate over the server data and process all player data that isn't your own
                             for (int i = 1; i < numOfConnectedPlayers + 1; i++){
+                                
                                 // If the Player ID (the first character of each player data string) is NOT your own player ID then process it to your Game Canvas
                                 if (Integer.parseInt(serverData[i].substring(0, 1)) != playerID) {
                                     String[] enemyPlayerData = serverData[i].split("-");
@@ -114,7 +115,13 @@ public class Player {
                                         Integer.parseInt(enemyPlayerData[3]), // Animation Index
                                         Integer.parseInt(enemyPlayerData[4]) // Last horizontally faced direction (0:LEFT; 1:RIGHT)
                                     );
+                                
+                                // if it is your Player ID then follow the hp given by the server
+                                } else {
+                                    String[] selfPlayerData = serverData[i].split("-");
+                                    gameCanvas.getOwnPlayer().setHP(Integer.parseInt(selfPlayerData[5])); 
                                 }
+
                             }
 
                             // Iterate over the spells after the player positions

@@ -34,8 +34,8 @@ public class GameServer {
         playerData = new ArrayList<>();
         // new double[] { x, y, animationIndex, lastHorizontalFacing, HP }
         // lastHorizontalFacing -> 0 = Direction.LEFT ; 1 = Direction.RIGHT
-        playerData.add(new double[]{0, 0, 0, 0, 0});
-        playerData.add(new double[]{0, 0, 0, 0, 0});
+        playerData.add(new double[]{0, 0, 0, 0, 5});
+        playerData.add(new double[]{0, 0, 0, 0, 5});
 
         // Initialize sprites.
         FireSpell.initializeSprites();
@@ -325,12 +325,13 @@ public class GameServer {
 
                         // Add all player data in order
                         for (int i = 0; i < players; i++) {
-                            gameStateData += String.format("%d-%f-%f-%d-%d ", 
+                            gameStateData += String.format("%d-%f-%f-%d-%d-%d ", 
                                 i+1, // Player's ID
                                 playerData.get(i)[0], // Player's X Coordinate stored in the server
                                 playerData.get(i)[1], // Player's Y Coordinate stored in the server
                                 (int) playerData.get(i)[2], // Player's animation index stored in the server
-                                (int) playerData.get(i)[3] // Player's last horizontally faced direction (0:left ; 1:Right)
+                                (int) playerData.get(i)[3], // Player's last horizontally faced direction (0:left ; 1:Right)
+                                (int) playerData.get(i)[4] // Player's HP
                             );
                         }
                         
@@ -375,7 +376,11 @@ public class GameServer {
                 // Update all spells
                 for (Spell spell : activeSpells) {
                     spell.update();
-                    spell.handleCollisions(collisionManager);
+                    
+                    int resultOfCollisionCheck = spell.handleCollisions(collisionManager);
+                    if (resultOfCollisionCheck != 0){
+                        playerData.get(resultOfCollisionCheck-1)[4] -= 1;
+                    }
                 }
                 
                 // Remove all expired spells
