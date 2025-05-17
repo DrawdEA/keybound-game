@@ -5,9 +5,9 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import lib.GameConfig;
+import lib.objects.PlayerObject;
 import lib.render.CollisionManager;
 import lib.render.Direction;
-import lib.objects.PlayerObject;
 
 public class FireSpell extends Spell {
     // Notice that SPEED * maxAgeInTicks is the distance the fireball can travel
@@ -209,7 +209,7 @@ public class FireSpell extends Spell {
             finished = true;
             animationCounter = 0;
 
-            System.out.println("FIRE HIT!");
+            // System.out.println("FIRE HIT!");
             playerHit.damagePlayer(1); // request to server for damage
         }
     }

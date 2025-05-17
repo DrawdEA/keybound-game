@@ -7,9 +7,9 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import lib.GameConfig;
+import lib.objects.PlayerObject;
 import lib.render.CollisionManager;
 import lib.render.Direction;
-import lib.objects.PlayerObject;
 
 public class EarthSpell extends Spell {
     private final Color COLOR = Color.ORANGE;
@@ -181,7 +181,7 @@ public class EarthSpell extends Spell {
     public void handleCollisions(CollisionManager cm) {
         PlayerObject playerHit = cm.checkProjectileCollision(hitbox, casterId);
         if (playerHit != null) {
-            System.out.println("EARTH HIT!");
+            // System.out.println("EARTH HIT!");
             playerHit.damagePlayer(1); // request to server for damage
         }
     }

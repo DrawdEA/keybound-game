@@ -9,7 +9,6 @@ import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.Timer;
-
 import lib.*;
 import lib.input.*;
 import lib.network.Player;
@@ -79,7 +78,7 @@ public class GameCanvas extends JComponent {
         }
 
         System.out.println(enemy);
-        gui.setupPlayer(self);
+        gui.updatePlayerObject(self);
         collisionManager.addPlayer(enemy);
         collisionManager.addPlayer(self);
         repaint();
@@ -95,10 +94,6 @@ public class GameCanvas extends JComponent {
 
     public void clearSpells() {
         spells.clear();
-    }
-
-    public void setOwnPlayerPosition(double x, double y){
-        self.setNewPosition(x, y);
     }
 
     public void addSpell(Spell spell) {
@@ -135,9 +130,7 @@ public class GameCanvas extends JComponent {
         self.drawSprite(g2d);
 
         // Render the GUI.
-        if (self != null) {
-            gui.setupPlayer(self);
-        }
+        gui.updatePlayerObject(self);
         gui.renderGUI(g2d);
     }
 }

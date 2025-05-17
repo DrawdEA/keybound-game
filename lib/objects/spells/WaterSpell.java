@@ -7,9 +7,9 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import lib.GameConfig;
+import lib.objects.PlayerObject;
 import lib.render.CollisionManager;
 import lib.render.Direction;
-import lib.objects.PlayerObject;
 
 public class WaterSpell extends Spell {
     private final Color COLOR = Color.BLUE;
@@ -160,7 +160,7 @@ public class WaterSpell extends Spell {
     public void handleCollisions(CollisionManager cm) {
         PlayerObject playerHit = cm.checkProjectileCollision(hitbox, casterId);
         if (playerHit != null) {
-            System.out.println("WATER HIT!");
+            // System.out.println("WATER HIT!");
             playerHit.damagePlayer(1); // request to server for damage
         }
     }

@@ -15,12 +15,15 @@ import lib.render.*;
 public class PlayerObject extends GameObject {
     public static String[] colorPaths = {"purple", "red", "green", "gray", "yellow", "blue", "orange"};
 
+    // Basic Position and Sprites
+    private int id;
     public final double screenX, screenY;
     private boolean isPlayer;
     private BufferedImage[] playerSprites;
     private BufferedImage[] playerSpritesLeft;
     private BufferedImage shadow;
 
+    // Animation 
     private String currentAnimation;
     private int currentFrame;
     private int animationCounter;
@@ -29,13 +32,12 @@ public class PlayerObject extends GameObject {
     private Direction lastHorizontalFacing;
     private Direction facing;
 
-    private int id;
-
-    private Rectangle hitbox;
-
     private boolean overridingAnimation;
     private int overridingIndex;
 
+    // Collisions
+    private Rectangle hitbox;
+    private long lastDamagedTime;
     private int playerHealth;
 
 
@@ -63,6 +65,7 @@ public class PlayerObject extends GameObject {
 
         // Create the player's health.
         playerHealth = 5;
+        lastDamagedTime = System.currentTimeMillis();
 
         // Generate the sprites.
         playerSprites = new BufferedImage[53];
@@ -304,7 +307,15 @@ public class PlayerObject extends GameObject {
     }
 
     public String getPlayerDataString(){
-        return String.format("%d-%f-%f-%s-%d-%s", id, x, y, facing.toString(), animationIndex, lastHorizontalFacing.toString());
+        return String.format("%d-%f-%f-%s-%d-%s", 
+            id, 
+            x, 
+            y, 
+            facing.toString(), 
+            animationIndex, 
+            lastHorizontalFacing.toString(),
+            playerHealth
+        );
     }
 
     public int getPlayerHealth() {
@@ -312,7 +323,11 @@ public class PlayerObject extends GameObject {
     }
 
     public void damagePlayer(int damage) {
-        playerHealth = playerHealth - damage;
+        long elapsedTimeSinceLastDamage = (System.currentTimeMillis() - lastDamagedTime) / 1000;
+        if (elapsedTimeSinceLastDamage >= 2) {
+            lastDamagedTime = System.currentTimeMillis();
+            playerHealth = playerHealth - damage;            
+        }
     }
 
     public void setNewPosition(double x, double y){

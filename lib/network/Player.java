@@ -189,7 +189,7 @@ public class Player {
                 while (true) {
                     if (gameCanvas.getOwnPlayer() != null) {
                         
-                        // Basic Player info id-x-y-facing-animationIndex
+                        // Basic Player info id-x-y-facing-animationIndex-lastHorizontalFacing-playerHealth
                         String dataString = String.format("%s ", gameCanvas.getOwnPlayer().getPlayerDataString());
                     
                         // Add spell request by the Player with base parameters

@@ -18,7 +18,7 @@ public class GameServer {
     private ReadFromClient p1ReadRunnable, p2ReadRunnable;
     private WriteToClient p1WriteRunnable, p2WriteRunnable;
 
-    private ArrayList<double[]> playerPositions;
+    private ArrayList<double[]> playerData;
 
     private CopyOnWriteArrayList<Spell> activeSpells;
 
@@ -31,11 +31,11 @@ public class GameServer {
         players = 0;
         isGameStarted = false;
 
-        playerPositions = new ArrayList<>();
-        // new double[] { x, y, animationIndex, lastHorizontalFacing }
+        playerData = new ArrayList<>();
+        // new double[] { x, y, animationIndex, lastHorizontalFacing, HP }
         // lastHorizontalFacing -> 0 = Direction.LEFT ; 1 = Direction.RIGHT
-        playerPositions.add(new double[]{0, 0, 0, 0});
-        playerPositions.add(new double[]{0, 0, 0, 0});
+        playerData.add(new double[]{0, 0, 0, 0, 0});
+        playerData.add(new double[]{0, 0, 0, 0, 0});
 
         // Initialize sprites.
         FireSpell.initializeSprites();
@@ -153,23 +153,23 @@ public class GameServer {
                     int id = Integer.parseInt(basicPlayerInfo[0]);
 
                     // Update the server's records on player positions
-                    playerPositions.get(id-1)[0] = Double.parseDouble(basicPlayerInfo[1]); // X
-                    playerPositions.get(id-1)[1] = Double.parseDouble(basicPlayerInfo[2]); // Y
+                    playerData.get(id-1)[0] = Double.parseDouble(basicPlayerInfo[1]); // X
+                    playerData.get(id-1)[1] = Double.parseDouble(basicPlayerInfo[2]); // Y
                         // basicPlayerInfo[3] is current direction Facing                  // Current facing direction
-                    playerPositions.get(id-1)[2] = Double.parseDouble(basicPlayerInfo[4]); // Animation index
+                    playerData.get(id-1)[2] = Double.parseDouble(basicPlayerInfo[4]); // Animation index
                     if (basicPlayerInfo[5].equals("LEFT")) {                               // Last faced horizontal direction
-                        playerPositions.get(id-1)[3] = 0;
+                        playerData.get(id-1)[3] = 0;
                     } else if (basicPlayerInfo[5].equals("RIGHT")) {
-                        playerPositions.get(id-1)[3] = 1;
+                        playerData.get(id-1)[3] = 1;
                     }
 
                     // Update all player objects to the updates positions
                     for (int i = 0; i < 2; i++){
-                        playerObjects.get(i).setX(playerPositions.get(i)[0]);
-                        playerObjects.get(i).setY(playerPositions.get(i)[1]);
+                        playerObjects.get(i).setX(playerData.get(i)[0]);
+                        playerObjects.get(i).setY(playerData.get(i)[1]);
                         playerObjects.get(i).setSprite(
-                            (int) playerPositions.get(i)[2], 
-                            (int) playerPositions.get(i)[3]
+                            (int) playerData.get(i)[2], 
+                            (int) playerData.get(i)[3]
                         );
                     }
                     
@@ -219,8 +219,8 @@ public class GameServer {
                             String[] params = entity.split("-");
                             
                             // Update the player positions
-                            playerPositions.get(playerID-1)[0] = Double.parseDouble(params[1]);
-                            playerPositions.get(playerID-1)[1] = Double.parseDouble(params[2]);
+                            playerData.get(playerID-1)[0] = Double.parseDouble(params[1]);
+                            playerData.get(playerID-1)[1] = Double.parseDouble(params[2]);
 
                             if (params.length == 8) {
                                 activeSpells.add(new WindSpell(
@@ -327,10 +327,10 @@ public class GameServer {
                         for (int i = 0; i < players; i++) {
                             gameStateData += String.format("%d-%f-%f-%d-%d ", 
                                 i+1, // Player's ID
-                                playerPositions.get(i)[0], // Player's X Coordinate stored in the server
-                                playerPositions.get(i)[1], // Player's Y Coordinate stored in the server
-                                (int) playerPositions.get(i)[2], // Player's animation index stored in the server
-                                (int) playerPositions.get(i)[3] // Player's last horizontally faced direction (0:left ; 1:Right)
+                                playerData.get(i)[0], // Player's X Coordinate stored in the server
+                                playerData.get(i)[1], // Player's Y Coordinate stored in the server
+                                (int) playerData.get(i)[2], // Player's animation index stored in the server
+                                (int) playerData.get(i)[3] // Player's last horizontally faced direction (0:left ; 1:Right)
                             );
                         }
                         
