@@ -3,6 +3,7 @@ package lib.objects.spells;
 import java.awt.Graphics2D;
 import lib.GameConfig;
 import lib.objects.*;
+import lib.render.CollisionManager;
 import lib.render.Direction;
 
 public abstract class Spell extends GameObject {
@@ -30,6 +31,10 @@ public abstract class Spell extends GameObject {
         this.direction = null;
     }
 
+    public int getCasterId() {
+        return casterId;
+    }
+
     // Abstract update method: must be implemented by subclasses
     public abstract void update();
 
@@ -39,8 +44,7 @@ public abstract class Spell extends GameObject {
     // A method to get spell data for networking
     public abstract String getDataString();
 
-    // TODO: Collisions
-    public abstract void onHit();
+    public abstract int handleCollisions(CollisionManager cm);
 
     public abstract void drawSprite(Graphics2D g2d);
 }

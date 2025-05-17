@@ -2,6 +2,8 @@ package lib.objects;
 
 import java.awt.*;
 
+import lib.render.CollisionManager;
+
 public abstract class GameObject {
     // Shared properties for all game objects. The protected accessor is used so that the subclasses can access it.
     protected double x, y;

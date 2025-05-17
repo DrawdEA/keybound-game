@@ -3,6 +3,7 @@ package lib.menus;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import lib.GameConfig;
 
 public class ServerMenu extends JPanel implements ActionListener {
     JLabel title;
@@ -26,7 +27,7 @@ public class ServerMenu extends JPanel implements ActionListener {
         
         // ---- Set up frame ----- // 
         this.setFocusable(true);
-        this.setPreferredSize(new Dimension(800, 600));
+        this.setPreferredSize(new Dimension(GameConfig.SCREEN_LENGTH, GameConfig.SCREEN_HEIGHT));
         this.requestFocusInWindow();
         this.setLayout(new BorderLayout());
 
@@ -44,13 +45,6 @@ public class ServerMenu extends JPanel implements ActionListener {
             mainFrame.repaint();
         } else if (e.getSource() == start) {
             mainFrame.remove(this);
-
-            // Player stuff
-            //GameCanvas gc = new GameCanvas();
-            //mainFrame.add(gc);
-            //gc.connectToServer();
-            //gc.addPlayers();
-            
             mainFrame.revalidate();
             mainFrame.repaint();
         }

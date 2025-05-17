@@ -9,7 +9,6 @@ import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.Timer;
-
 import lib.*;
 import lib.input.*;
 import lib.network.Player;
@@ -24,24 +23,65 @@ public class GameCanvas extends JComponent {
     private Environment environment;
     private Player selfPlayerClient;
 
+    // The Game GUI.
+    private InGameGUI gui;
+
     // Miscellaneous.
     private Timer animationTimer;
     private KeyBindings keyBindings;
     private CollisionManager collisionManager;
-    
+
+    private ActionListener al;
 
     public GameCanvas() {
+        // Initialize the spells.
+        FireSpell.initializeSprites();
+        WindSpell.initializeSprites();
+        EarthSpell.initializeSprites();
+        WaterSpell.initializeSprites();
+        
         // Initialize object to hold all gameObjects.
         gameObjects = new ArrayList<>();
         spells = new ArrayList<>();
+    }
 
-        // Initialize the environment.
+    public void setPlayerClient(Player player) {
+        selfPlayerClient = player;
+    }
+
+    public void addPlayers(int ownPlayerId, String[] serverData) {
+        for (int i = 1; i < serverData.length; i++){
+            String[] params = serverData[i].split("-");
+            int id = Integer.parseInt(params[0]);
+            if (ownPlayerId == id) {
+                self = new PlayerObject(
+                    Double.parseDouble(params[1]), 
+                    Double.parseDouble(params[2]), 
+                    GameConfig.TILE_SIZE, 
+                    true,
+                    id
+                );
+            } else {
+                enemy = new PlayerObject(                    
+                    Double.parseDouble(params[1]), 
+                    Double.parseDouble(params[2]), 
+                    GameConfig.TILE_SIZE, 
+                    false,
+                    id
+                );
+            }
+        }
+
+        // Initialize the environment (it's here cause it needs the player coords)
         environment = new Environment(0, 0, this);
-        
+
         // Set the game timer, key bindings, and collisions.
         keyBindings = new KeyBindings(this);
-        collisionManager = new CollisionManager(environment, keyBindings);
-        ActionListener al;
+        collisionManager = new CollisionManager(environment);
+
+        // Render the GUI.
+        gui = new InGameGUI(keyBindings);
+
         al = new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 keyBindings.movePlayer(collisionManager, self);
@@ -51,22 +91,10 @@ public class GameCanvas extends JComponent {
         };
         animationTimer = new Timer(10, al);
         animationTimer.start();
-    }
 
-    public void setPlayerClient(Player player) {
-        selfPlayerClient = player;
-    }
-
-    public void addPlayers(int id) {
-        if (id == 1) {
-            self = new PlayerObject(GameConfig.TILE_SIZE * 64, GameConfig.TILE_SIZE * 43, GameConfig.TILE_SIZE, true);
-            enemy = new PlayerObject(GameConfig.TILE_SIZE * 64, GameConfig.TILE_SIZE * 64, GameConfig.TILE_SIZE + 2, false);
-        } else {
-            self = new PlayerObject(GameConfig.TILE_SIZE * 64, GameConfig.TILE_SIZE * 64, GameConfig.TILE_SIZE + 2, true);
-            enemy = new PlayerObject(GameConfig.TILE_SIZE * 64, GameConfig.TILE_SIZE * 43, GameConfig.TILE_SIZE, false);
-            
-        }
-
+        gui.updatePlayerObject(self);
+        collisionManager.addPlayer(enemy);
+        collisionManager.addPlayer(self);
         repaint();
     }
 
@@ -80,10 +108,6 @@ public class GameCanvas extends JComponent {
 
     public void clearSpells() {
         spells.clear();
-    }
-
-    public void setOwnPlayerPosition(double x, double y){
-        self.setNewPosition(x, y);
     }
 
     public void addSpell(Spell spell) {
@@ -101,21 +125,32 @@ public class GameCanvas extends JComponent {
         g2d.setRenderingHints(rh);
 
         // Draw the environment.
-        environment.drawSprite(g2d);
+        if (environment != null) {
+            environment.drawSprite(g2d);
+        }
 
         // Draw every object.
         for (GameObject object : gameObjects) {
             object.drawSprite(g2d);
         }
 
-        for (GameObject spell : spells) {
+        for (Spell spell : spells) {
+            spell.update();
             spell.drawSprite(g2d);
+            //spell.handleCollisions(collisionManager);
         }
 
-        // Draw the players.
-        enemy.updatePlayerAnimation("Idle", "Right"); // update a way to get the player's animation
-        self.updatePlayerAnimation(keyBindings.getPlayerAction(), keyBindings.getPlayerDirection());
-        enemy.drawSprite(g2d);
-        self.drawSprite(g2d);
+        if (self != null && enemy != null) {
+            // Draw the players.
+            self.updatePlayerAnimation(keyBindings.getPlayerAction(), keyBindings.getPlayerDirection());
+            enemy.drawSprite(g2d);
+            self.drawSprite(g2d);
+
+            // Render the GUI.
+            gui.updatePlayerObject(self);
+            gui.renderGUI(g2d);
+        }
+
+
     }
 }

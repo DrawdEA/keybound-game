@@ -1,18 +1,25 @@
 package lib.render;
 
 import java.awt.Rectangle;
-
+import java.util.ArrayList;
 import lib.GameConfig;
-import lib.input.KeyBindings;
-import lib.objects.Environment;
+import lib.objects.*;
 
 public class CollisionManager {
     private Environment environment;
-    private KeyBindings keyBindings;
+    private ArrayList<PlayerObject> players;
     
-    public CollisionManager(Environment e, KeyBindings kB) {
+    public CollisionManager(Environment e) {
+        players = new ArrayList<>();
         environment = e;
-        keyBindings = kB;
+    }
+
+    public CollisionManager() {
+        players = new ArrayList<>();
+    }
+
+    public void addPlayer(PlayerObject p) {
+        players.add(p);
     }
 
     public boolean checkWorldCollision(PlayerObject playerObject, String direction) {
@@ -32,7 +39,7 @@ public class CollisionManager {
         boolean collided = false;
 
         if (direction == "Left") {
-            playerLeftColumn = (int) Math.floor(((double) playerLeftWorldX - GameConfig.PLAYER_SPEED) / GameConfig.TILE_SIZE);;
+            playerLeftColumn = (int) Math.floor(((double) playerLeftWorldX - GameConfig.PLAYER_SPEED) / GameConfig.TILE_SIZE);
             tileNum1 = environment.getMapNumbers()[playerLeftColumn][playerTopRow];
             tileNum2 = environment.getMapNumbers()[playerLeftColumn][playerBottomRow];
             if (environment.getTiles()[tileNum1].canCollide || environment.getTiles()[tileNum2].canCollide) {
@@ -64,7 +71,33 @@ public class CollisionManager {
         return collided;
     }
 
-    public boolean checkProjectileCollision() {
-        return false;
+    /**
+     * Checks if the projectile sent is intersecting with another player that isn't themselves.
+     * 
+     * @param projectileHitbox is the hitbox sent by the player
+     * @param playerId the id of the player that owns the projectile
+     * 
+     * @return the player hit
+     */
+    public PlayerObject checkProjectileCollision(Rectangle projectileHitbox, int playerId) {
+        for (PlayerObject player : players) {
+            Rectangle playerHitbox = player.getRelativeHitbox();
+                
+            if (player.getId() != playerId) {
+                // Manual intersection check using direct field access
+                if (projectileHitbox.x < playerHitbox.x + playerHitbox.width &&
+                    projectileHitbox.x + projectileHitbox.width > playerHitbox.x &&
+                    projectileHitbox.y < playerHitbox.y + playerHitbox.height &&
+                    projectileHitbox.y + projectileHitbox.height > playerHitbox.y) { 
+                    /* System.out.println("PLAYER: " + player.getId());
+                    System.out.println(player.getRelativeHitbox().x + player.getRelativeHitbox().width);
+                    System.out.println("PROJECTILE: " + player.getId());
+                    System.out.println(projectileHitbox.x); */
+                    return player;
+                }
+            }
+        }
+        
+        return null;
     }
 }
