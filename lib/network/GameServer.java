@@ -5,10 +5,10 @@ import java.net.*;
 import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
 import lib.*;
+import lib.objects.*;
 import lib.objects.spells.*;
 import lib.render.CollisionManager;
 import lib.render.Direction;
-import lib.render.PlayerObject;
 
 public class GameServer {
     private ServerSocket ss;

@@ -9,7 +9,7 @@ import javax.imageio.ImageIO;
 import lib.GameConfig;
 import lib.render.CollisionManager;
 import lib.render.Direction;
-import lib.render.PlayerObject;
+import lib.objects.PlayerObject;
 
 public class WaterSpell extends Spell {
     private final Color COLOR = Color.BLUE;

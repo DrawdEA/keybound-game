@@ -7,7 +7,7 @@ import javax.imageio.ImageIO;
 import lib.GameConfig;
 import lib.render.CollisionManager;
 import lib.render.Direction;
-import lib.render.PlayerObject;
+import lib.objects.PlayerObject;
 
 public class FireSpell extends Spell {
     // Notice that SPEED * maxAgeInTicks is the distance the fireball can travel

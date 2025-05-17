@@ -9,7 +9,7 @@ import javax.imageio.ImageIO;
 import lib.GameConfig;
 import lib.render.CollisionManager;
 import lib.render.Direction;
-import lib.render.PlayerObject;
+import lib.objects.PlayerObject;
 
 public class EarthSpell extends Spell {
     private final Color COLOR = Color.ORANGE;

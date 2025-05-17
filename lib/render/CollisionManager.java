@@ -2,10 +2,8 @@ package lib.render;
 
 import java.awt.Rectangle;
 import java.util.ArrayList;
-
 import lib.GameConfig;
-import lib.network.Player;
-import lib.objects.Environment;
+import lib.objects.*;
 
 public class CollisionManager {
     private Environment environment;

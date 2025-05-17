@@ -9,6 +9,7 @@ import java.util.stream.IntStream;
 import javax.swing.*;
 import lib.GameConfig;
 import lib.network.Player;
+import lib.objects.PlayerObject;
 import lib.render.*;
 
 public class KeyBindings {

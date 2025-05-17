@@ -6,6 +6,7 @@ import java.io.InputStream;
 import javax.imageio.ImageIO;
 import lib.GameConfig;
 import lib.input.KeyBindings;
+import lib.objects.PlayerObject;
 
 public class InGameGUI {
     private BufferedImage fullHeart, emptyHeart;

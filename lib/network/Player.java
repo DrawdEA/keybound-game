@@ -6,6 +6,7 @@ package lib.network;
 
 import java.io.*;
 import java.net.*;
+import lib.objects.PlayerObject;
 import lib.objects.spells.*;
 import lib.render.*;
 

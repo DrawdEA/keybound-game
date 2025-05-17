@@ -1,15 +1,16 @@
 /**
- * The PlayerVisuals class is responsible for controlling the sprite of the player.
- * This includes the player's idle, charging, running, and dying animation.
+ * The PLayerObject class is responsible for controlling the sprite of the player.
+ * This includes the player's idle, charging, running, and dying animation as the 
+ * actual object found in their own game canvas.
  */
-package lib.render;
+package lib.objects;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import lib.*;
-import lib.objects.*;
+import lib.render.*;
 
 public class PlayerObject extends GameObject {
     public static String[] colorPaths = {"purple", "red", "green", "gray", "yellow", "blue", "orange"};
