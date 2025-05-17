@@ -3,6 +3,7 @@ package lib.network;
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 import lib.*;
 import lib.objects.*;
@@ -14,6 +15,7 @@ public class GameServer {
     private ServerSocket ss;
     private int players;
     private boolean isGameStarted;
+    private Random random;
 
     private ReadFromClient p1ReadRunnable, p2ReadRunnable;
     private WriteToClient p1WriteRunnable, p2WriteRunnable;
@@ -30,12 +32,13 @@ public class GameServer {
         System.out.println("==== GAME SERVER ====");
         players = 0;
         isGameStarted = false;
+        random = new Random();
 
         playerData = new ArrayList<>();
         // new double[] { x, y, animationIndex, lastHorizontalFacing, HP }
         // lastHorizontalFacing -> 0 = Direction.LEFT ; 1 = Direction.RIGHT
-        playerData.add(new double[]{0, 0, 0, 0, 5});
-        playerData.add(new double[]{0, 0, 0, 0, 5});
+        playerData.add(new double[]{GameConfig.TILE_SIZE * 64, GameConfig.TILE_SIZE * 43, 0, 0, 5});
+        playerData.add(new double[]{GameConfig.TILE_SIZE * 64, GameConfig.TILE_SIZE * 64, 0, 0, 5});
 
         // Initialize sprites.
         FireSpell.initializeSprites();
@@ -48,7 +51,6 @@ public class GameServer {
 
         // Initialize the players.
         playerObjects = new ArrayList<>();
-
         activeSpells = new CopyOnWriteArrayList<>();
 
         try {
@@ -155,22 +157,12 @@ public class GameServer {
                     // Update the server's records on player positions
                     playerData.get(id-1)[0] = Double.parseDouble(basicPlayerInfo[1]); // X
                     playerData.get(id-1)[1] = Double.parseDouble(basicPlayerInfo[2]); // Y
-                        // basicPlayerInfo[3] is current direction Facing                  // Current facing direction
+                        // basicPlayerInfo[3] is current direction Facing             // Current facing direction
                     playerData.get(id-1)[2] = Double.parseDouble(basicPlayerInfo[4]); // Animation index
-                    if (basicPlayerInfo[5].equals("LEFT")) {                               // Last faced horizontal direction
+                    if (basicPlayerInfo[5].equals("LEFT")) {                          // Last faced horizontal direction
                         playerData.get(id-1)[3] = 0;
                     } else if (basicPlayerInfo[5].equals("RIGHT")) {
                         playerData.get(id-1)[3] = 1;
-                    }
-
-                    // Update all player objects to the updates positions
-                    for (int i = 0; i < 2; i++){
-                        playerObjects.get(i).setX(playerData.get(i)[0]);
-                        playerObjects.get(i).setY(playerData.get(i)[1]);
-                        playerObjects.get(i).setSprite(
-                            (int) playerData.get(i)[2], 
-                            (int) playerData.get(i)[3]
-                        );
                     }
                     
                     // Implement spells
@@ -266,7 +258,23 @@ public class GameServer {
                                     0, true)
                                 );
                             }
+                        
+                        // RESPAWN if dead
+                        } else if (entity.startsWith("RESPAWN")){
+                            playerData.get(playerID-1)[0] = GameConfig.TILE_SIZE * 40 + (GameConfig.TILE_SIZE * (70-40)) * random.nextDouble();
+                            playerData.get(playerID-1)[1] = GameConfig.TILE_SIZE * 40 + (GameConfig.TILE_SIZE * (100-40)) * random.nextDouble();
+                            playerData.get(playerID-1)[4] = 5; // Reset HP 
                         }
+                    }
+
+                    // Update all player objects to the updates positions
+                    for (int i = 0; i < 2; i++){
+                        playerObjects.get(i).setX(playerData.get(i)[0]);
+                        playerObjects.get(i).setY(playerData.get(i)[1]);
+                        playerObjects.get(i).setSprite(
+                            (int) playerData.get(i)[2], 
+                            (int) playerData.get(i)[3]
+                        );
                     }
                 }
             } catch(IOException ex) {

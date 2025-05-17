@@ -41,7 +41,7 @@ public class PlayerObject extends GameObject {
     private int playerHealth;
 
 
-    public PlayerObject(int xPosition, int yPosition, int s, boolean iP, int id) {
+    public PlayerObject(double xPosition, double yPosition, int s, boolean iP, int id) {
         super("PLAYER", xPosition, yPosition, s, s);
         isPlayer = iP;
         this.id = id;
@@ -256,20 +256,48 @@ public class PlayerObject extends GameObject {
         }
     }
 
+    public boolean isOverridingAnimationOfType(String animationType) {
+        if (!overridingAnimation) {
+            return false;
+        }
+        int targetIndex = -1;
+        if (animationType.equals("Attacking1")) targetIndex = 16;
+        else if (animationType.equals("Attacking2")) targetIndex = 32;
+        else if (animationType.equals("Damaged")) targetIndex = 40;
+        else if (animationType.equals("Dying")) targetIndex = 45;
+        // Add other animation types if needed for this check
+        return overridingIndex == targetIndex;
+    }
+
+    public void clearOverrideAnimation() {
+        overridingAnimation = false;
+    }
+
+    public boolean isOverridingAnimation() {
+        return overridingAnimation;
+    }
+
     // Update the current frame and the animation of the player.
     public void updatePlayerAnimation(String animationType, String direction) {
         if (overridingAnimation) {
-            if (animationCounter == GameConfig.CAST_ANIMATION_COUNTER) {
-                animationIndex = overridingIndex;
+            animationCounter++;
+            if (animationCounter >= GameConfig.CAST_ANIMATION_COUNTER) {
+                animationIndex = overridingIndex + currentFrame;
                 currentFrame++;
-                animationIndex += currentFrame;
                 animationCounter = 0;
 
-                if (currentFrame >= 7) {
+                int totalFramesInThisOverride = 0;
+
+                if (overridingIndex == 40) { // Damaged animation only has 5 frames
+                    totalFramesInThisOverride = 5;
+                } else { // All other animations have 8
+                    totalFramesInThisOverride = 8;
+                }
+
+                if (totalFramesInThisOverride > 0 && currentFrame >= totalFramesInThisOverride) {
                     overridingAnimation = false;
                 }
             }
-            animationCounter++;
         } else {
             if (direction.contains("Right")) {
                 facing = Direction.RIGHT;
@@ -300,15 +328,9 @@ public class PlayerObject extends GameObject {
                 } else if (animationType.equals("Casting")) {
                     animationIndex = 24;
                     totalAnimationFrames = 8;
-                } else if (animationType.equals("Damaged")){
-                    animationIndex = 40;
-                    totalAnimationFrames = 5;
-                } else if (animationType.equals("Dying")) {
-                    animationIndex = 45;
-                    totalAnimationFrames = 8;
                 }
     
-                if (currentFrame >= totalAnimationFrames - 1) {
+                if (currentFrame >= totalAnimationFrames) {
                     currentFrame = 0;
                 }
     

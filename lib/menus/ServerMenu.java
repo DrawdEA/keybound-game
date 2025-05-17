@@ -3,7 +3,6 @@ package lib.menus;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-
 import lib.GameConfig;
 
 public class ServerMenu extends JPanel implements ActionListener {
@@ -46,13 +45,6 @@ public class ServerMenu extends JPanel implements ActionListener {
             mainFrame.repaint();
         } else if (e.getSource() == start) {
             mainFrame.remove(this);
-
-            // Player stuff
-            //GameCanvas gc = new GameCanvas();
-            //mainFrame.add(gc);
-            //gc.connectToServer();
-            //gc.addPlayers();
-            
             mainFrame.revalidate();
             mainFrame.repaint();
         }

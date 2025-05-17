@@ -23,13 +23,21 @@ public class Player {
     private boolean isInGame;
 
     private GameCanvas gameCanvas;
+    private PlayerObject selfPlayer;
     
-    private String wantsToCast = "";
+    private String wantsToCast;
+    private boolean selfPlayerIsDead;
+    private boolean respawnRequestSent;
     
     public Player() {
         isInGame = false;
+        
         gameCanvas = new GameCanvas();
         gameCanvas.setPlayerClient(this);
+
+        wantsToCast = "";
+        selfPlayerIsDead = false;
+        respawnRequestSent = false;
     }
 
     public void connectToServer(String ip) {
@@ -43,9 +51,6 @@ public class Player {
             if (playerID == 1) {
                 System.out.println("Waiting for Player #2 to connect...");
             }
-
-            // Set up the canvas.
-            gameCanvas.addPlayers(playerID);
 
             rfsRunnable = new ReadFromServer(in);
             wtsRunnable = new WriteToServer(out);
@@ -89,46 +94,78 @@ public class Player {
                         numOfConnectedPlayers = Integer.parseInt(serverData[1]);
 
                     // Process In Game Data
-                    } else if (serverData[0].equals("1")) {                        
-                        // Start the write thread if it already isn't alive
-                        if (!isInGame) { // Only set isInGame and start writeThread once
+                    } else if (serverData[0].equals("1")) {
+
+                        // ----- Game Proper Initializations -----
+                        if (!isInGame) {
                             isInGame = true;
                             System.out.println("Game has started. Starting WriteToServer thread for Player " + playerID);
                             writeThread.start();
+
+                            // Set up the canvas.
+                            gameCanvas.addPlayers(playerID, serverData);
+                           
+                            // Initialize selfPlayer to the main player in the gameCanvas
+                            selfPlayer = gameCanvas.getOwnPlayer();
                         }
 
                         PlayerObject enemy = gameCanvas.getEnemy();
 
-                        if (enemy != null) {
-                            PlayerObject player = gameCanvas.getOwnPlayer();
-
-                            // Iterate over the server data and process all player data that isn't your own
+                        if (enemy != null && selfPlayer != null) { // Ensure selfPlayer is also not null
+                            // Iterate over the server data and process all player data
                             for (int i = 1; i < numOfConnectedPlayers + 1; i++){
                                 
-                                // If the Player ID (the first character of each player data string) is NOT your own player ID then process it to your Game Canvas
-                                if (Integer.parseInt(serverData[i].substring(0, 1)) != playerID) {
-                                    String[] enemyPlayerData = serverData[i].split("-");
-                                    
-                                    enemy.setX(Double.parseDouble(enemyPlayerData[1]) - player.getX() + player.getScreenX()); // X
-                                    enemy.setY(Double.parseDouble(enemyPlayerData[2]) - player.getY() + player.getScreenY()); // Y
+                                String[] playerDataParts = serverData[i].split("-");
+                                int currentPlayerDataID = Integer.parseInt(playerDataParts[0]);
+
+                                // If the Player ID is NOT your own player ID then process it for the enemy
+                                if (currentPlayerDataID != playerID) {
+                                    enemy.setX(Double.parseDouble(playerDataParts[1]) - selfPlayer.getX() + selfPlayer.getScreenX()); // X
+                                    enemy.setY(Double.parseDouble(playerDataParts[2]) - selfPlayer.getY() + selfPlayer.getScreenY()); // Y
                                     enemy.setSprite(
-                                        Integer.parseInt(enemyPlayerData[3]), // Animation Index
-                                        Integer.parseInt(enemyPlayerData[4]) // Last horizontally faced direction (0:LEFT; 1:RIGHT)
+                                        Integer.parseInt(playerDataParts[3]), // Animation Index
+                                        Integer.parseInt(playerDataParts[4]) // Last horizontally faced direction (0:LEFT; 1:RIGHT)
                                     );
                                 
-                                // if it is your Player ID then follow the hp given by the server
+                                // if it is your Player ID then process its data
                                 } else {
-                                    String[] selfPlayerData = serverData[i].split("-");
-                                    
-                                    // Check if player was damaged
-                                    if (Integer.parseInt(selfPlayerData[5]) != gameCanvas.getOwnPlayer().getPlayerHealth()){
-                                        gameCanvas.getOwnPlayer().overrideAnimation("Damaged");
-                                        gameCanvas.getOwnPlayer().setHP(Integer.parseInt(selfPlayerData[5])); 
+                                    double serverReportedX = Double.parseDouble(playerDataParts[1]);
+                                    double serverReportedY = Double.parseDouble(playerDataParts[2]);
+                                    int serverReportedHP = Integer.parseInt(playerDataParts[5]);
 
-                                        // Check if player has died
-                                        if (gameCanvas.getOwnPlayer().getPlayerHealth() <= 0) {
-                                            gameCanvas.getOwnPlayer().overrideAnimation("Dying");
-                                        } 
+                                    int oldClientHP = selfPlayer.getPlayerHealth();
+
+                                    // --- Position Update Logic ---
+                                    // Only update client's position from server if:
+                                    // 1. Client thought it was dead, but server says it's alive (respawn confirmed).
+                                    // This ensures the teleport happens.
+                                    if (selfPlayerIsDead && serverReportedHP > 0) {
+                                        selfPlayer.setX(serverReportedX);
+                                        selfPlayer.setY(serverReportedY);
+                                    }
+
+                                    // HP and Death Update Logic
+                                    selfPlayer.setHP(serverReportedHP); // Always trust server HP
+
+                                    if (serverReportedHP > 0) { // Player is alive according to server
+                                        if (selfPlayerIsDead) { // Client thought it was dead, but now it's alive
+                                            selfPlayerIsDead = false;
+                                            respawnRequestSent = false; // Reset flag as respawn is complete
+                                        }
+                                    } else { // Player is dead or still dead according to server
+                                        if (!selfPlayerIsDead) { // Client thought it was alive, but server says it's dead
+                                            selfPlayerIsDead = true;
+                                            if (!selfPlayer.isOverridingAnimationOfType("Dying")) {
+                                                selfPlayer.overrideAnimation("Dying");
+                                            }
+                                        }
+                                    }
+
+                                    // Trigger "Damaged" animation if HP decreased AND player is not dead 
+                                    if (serverReportedHP < oldClientHP && serverReportedHP > 0) {
+                                        if (!selfPlayer.isOverridingAnimation() || selfPlayer.isOverridingAnimationOfType("Damaged")) {
+                                             selfPlayer.overrideAnimation("Damaged");
+                                        }
                                     }
                                 }
                             }
@@ -147,8 +184,8 @@ public class Player {
 
                                 if (spellData[0].contains("_SPELL")) {
                                     // Transform the x and the y based on the POV of the player 
-                                    x = Double.parseDouble(spellData[1]) - player.getX() + player.getScreenX();
-                                    y = Double.parseDouble(spellData[2]) - player.getY() + player.getScreenY();
+                                    x = Double.parseDouble(spellData[1]) - selfPlayer.getX() + selfPlayer.getScreenX();
+                                    y = Double.parseDouble(spellData[2]) - selfPlayer.getY() + selfPlayer.getScreenY();
                                     dir = Direction.valueOf(spellData[3]);
                                     animationCounter = Integer.parseInt(spellData[5]);
                                     
@@ -176,6 +213,7 @@ public class Player {
                                         }
                                         
                                         gameCanvas.addSpell(new WindSpell(playerID, x, y, dir, animationCounter, originalX, originalY));
+                                    
                                     // EARTH SPELL
                                     } else if (spellData[0].equals("EARTH_SPELL")){
                                         alive = Boolean.parseBoolean(spellData[6]);
@@ -203,20 +241,26 @@ public class Player {
         public void run() {
             try {
                 while (true) {
-                    if (gameCanvas.getOwnPlayer() != null) {
+                    if (selfPlayer != null) {
                         
                         // Basic Player info id-x-y-facing-animationIndex-lastHorizontalFacing-playerHealth
-                        String dataString = String.format("%s ", gameCanvas.getOwnPlayer().getPlayerDataString());
+                        String dataString = String.format("%s ", selfPlayer.getPlayerDataString());
                     
                         // Add spell request by the Player with base parameters
                         if (!wantsToCast.equals("")) {
-                            dataString += String.format("%s-%f-%f-%s-0", 
+                            dataString += String.format("%s-%f-%f-%s-0 ", 
                                 wantsToCast,
-                                gameCanvas.getOwnPlayer().getX(), 
-                                gameCanvas.getOwnPlayer().getY(),
-                                gameCanvas.getOwnPlayer().getDirection().toString()
+                                selfPlayer.getX(), 
+                                selfPlayer.getY(),
+                                selfPlayer.getDirection().toString()
                             );
                             wantsToCast = "";
+                        }
+
+                        // Send a respawn request to the server
+                        if (selfPlayerIsDead && !respawnRequestSent) {
+                            dataString += String.format("RESPAWN "); 
+                            respawnRequestSent = true;
                         }
                         
                         dataOut.writeUTF(dataString);
@@ -235,7 +279,7 @@ public class Player {
     }
 
     public void requestToCast(String spellName) {
-        gameCanvas.getOwnPlayer().overrideAnimation("Attacking1");
+        selfPlayer.overrideAnimation("Attacking1");
         wantsToCast = spellName;
     }
 
