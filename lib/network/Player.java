@@ -108,9 +108,12 @@ public class Player {
                                 if (Integer.parseInt(serverData[i].substring(0, 1)) != playerID) {
                                     String[] enemyPlayerData = serverData[i].split("-");
                                     
-                                    enemy.setX(Double.parseDouble(enemyPlayerData[1]) - player.getX() + player.getScreenX());
-                                    enemy.setY(Double.parseDouble(enemyPlayerData[2]) - player.getY() + player.getScreenY());
-                                    //enemy.updatePlayerAnimation(something, something); // TODO: handle this
+                                    enemy.setX(Double.parseDouble(enemyPlayerData[1]) - player.getX() + player.getScreenX()); // X
+                                    enemy.setY(Double.parseDouble(enemyPlayerData[2]) - player.getY() + player.getScreenY()); // Y
+                                    enemy.setSprite(
+                                        Integer.parseInt(enemyPlayerData[3]), // Animation Index
+                                        Integer.parseInt(enemyPlayerData[4]) // Last horizontally faced direction (0:LEFT; 1:RIGHT)
+                                    );
                                 }
                             }
 
@@ -188,9 +191,8 @@ public class Player {
                         
                         // Basic Player info id-x-y-facing-animationIndex
                         String dataString = String.format("%s ", gameCanvas.getOwnPlayer().getPlayerDataString());
-                        
-                        // TODO: Remove the redundant code
-                        // Add spell request by the Player
+                    
+                        // Add spell request by the Player with base parameters
                         if (!wantsToCast.equals("")) {
                             dataString += String.format("%s-%f-%f-%s-0", 
                                 wantsToCast,

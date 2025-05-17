@@ -130,7 +130,6 @@ public class GameCanvas extends JComponent {
         }
 
         // Draw the players.
-        enemy.updatePlayerAnimation("Idle", "Right"); // update a way to get the player's animation
         self.updatePlayerAnimation(keyBindings.getPlayerAction(), keyBindings.getPlayerDirection());
         enemy.drawSprite(g2d);
         self.drawSprite(g2d);

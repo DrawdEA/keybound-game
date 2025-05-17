@@ -242,9 +242,9 @@ public class PlayerObject extends GameObject {
         overridingAnimation = true;
         currentFrame = 0;
         animationCounter = 0;
-        if (animationType == "Attacking1") {
+        if (animationType.equals("Attacking1")) {
             overridingIndex = 16;
-        } else if (animationType == "Attacking2") {
+        } else if (animationType.equals("Attacking2")) {
             overridingIndex = 32;
         }         
     }
@@ -304,7 +304,7 @@ public class PlayerObject extends GameObject {
     }
 
     public String getPlayerDataString(){
-        return String.format("%d-%f-%f-%s-%d", id, x, y, facing.toString(), animationIndex);
+        return String.format("%d-%f-%f-%s-%d-%s", id, x, y, facing.toString(), animationIndex, lastHorizontalFacing.toString());
     }
 
     public int getPlayerHealth() {
@@ -318,6 +318,15 @@ public class PlayerObject extends GameObject {
     public void setNewPosition(double x, double y){
         this.x = x;
         this.y = y;
+    }
+
+    public void setSprite(int animationIndex, int horizontalFacing){
+        if (horizontalFacing == 0){
+            lastHorizontalFacing = Direction.LEFT;
+        } else if (horizontalFacing == 1) {
+            lastHorizontalFacing = Direction.RIGHT;
+        }
+        this.animationIndex = animationIndex; 
     }
 
     @Override

@@ -32,8 +32,10 @@ public class GameServer {
         isGameStarted = false;
 
         playerPositions = new ArrayList<>();
-        playerPositions.add(new double[]{50, 50});
-        playerPositions.add(new double[]{50, 500});
+        // new double[] { x, y, animationIndex, lastHorizontalFacing }
+        // lastHorizontalFacing -> 0 = Direction.LEFT ; 1 = Direction.RIGHT
+        playerPositions.add(new double[]{0, 0, 0, 0});
+        playerPositions.add(new double[]{0, 0, 0, 0});
 
         // Initialize sprites.
         FireSpell.initializeSprites();
@@ -150,13 +152,25 @@ public class GameServer {
                     String[] basicPlayerInfo = data[0].split("-");
                     int id = Integer.parseInt(basicPlayerInfo[0]);
 
-                    playerPositions.get(id-1)[0] = Double.parseDouble(basicPlayerInfo[1]);
-                    playerPositions.get(id-1)[1] = Double.parseDouble(basicPlayerInfo[2]);
+                    // Update the server's records on player positions
+                    playerPositions.get(id-1)[0] = Double.parseDouble(basicPlayerInfo[1]); // X
+                    playerPositions.get(id-1)[1] = Double.parseDouble(basicPlayerInfo[2]); // Y
+                        // basicPlayerInfo[3] is current direction Facing                  // Current facing direction
+                    playerPositions.get(id-1)[2] = Double.parseDouble(basicPlayerInfo[4]); // Animation index
+                    if (basicPlayerInfo[5].equals("LEFT")) {                               // Last faced horizontal direction
+                        playerPositions.get(id-1)[3] = 0;
+                    } else if (basicPlayerInfo[5].equals("RIGHT")) {
+                        playerPositions.get(id-1)[3] = 1;
+                    }
 
-                    // Update all positions
+                    // Update all player objects to the updates positions
                     for (int i = 0; i < 2; i++){
                         playerObjects.get(i).setX(playerPositions.get(i)[0]);
                         playerObjects.get(i).setY(playerPositions.get(i)[1]);
+                        playerObjects.get(i).setSprite(
+                            (int) playerPositions.get(i)[2], 
+                            (int) playerPositions.get(i)[3]
+                        );
                     }
                     
                     // Implement spells
@@ -311,11 +325,12 @@ public class GameServer {
 
                         // Add all player data in order
                         for (int i = 0; i < players; i++) {
-                            gameStateData += String.format("%d-%f-%f ", 
+                            gameStateData += String.format("%d-%f-%f-%d-%d ", 
                                 i+1, // Player's ID
                                 playerPositions.get(i)[0], // Player's X Coordinate stored in the server
-                                playerPositions.get(i)[1] // Player's Y Coordinate stored in the server
-                                //playerPositions.get(i)[2] // Player's current sprite's frame stored in the server
+                                playerPositions.get(i)[1], // Player's Y Coordinate stored in the server
+                                (int) playerPositions.get(i)[2], // Player's animation index stored in the server
+                                (int) playerPositions.get(i)[3] // Player's last horizontally faced direction (0:left ; 1:Right)
                             );
                         }
                         
