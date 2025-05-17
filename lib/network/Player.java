@@ -119,9 +119,18 @@ public class Player {
                                 // if it is your Player ID then follow the hp given by the server
                                 } else {
                                     String[] selfPlayerData = serverData[i].split("-");
-                                    gameCanvas.getOwnPlayer().setHP(Integer.parseInt(selfPlayerData[5])); 
-                                }
+                                    
+                                    // Check if player was damaged
+                                    if (Integer.parseInt(selfPlayerData[5]) != gameCanvas.getOwnPlayer().getPlayerHealth()){
+                                        gameCanvas.getOwnPlayer().overrideAnimation("Damaged");
+                                        gameCanvas.getOwnPlayer().setHP(Integer.parseInt(selfPlayerData[5])); 
 
+                                        // Check if player has died
+                                        if (gameCanvas.getOwnPlayer().getPlayerHealth() <= 0) {
+                                            gameCanvas.getOwnPlayer().overrideAnimation("Dying");
+                                        } 
+                                    }
+                                }
                             }
 
                             // Iterate over the spells after the player positions

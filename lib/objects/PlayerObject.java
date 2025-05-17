@@ -74,7 +74,7 @@ public class PlayerObject extends GameObject {
         try {
             BufferedImage playerMovements = ImageIO.read(getClass().getResourceAsStream(String.format("/resources/player/%s.png", colorPaths[id - 1])));
 
-            // Idle movements.
+            // Idle movements (8)
             playerSprites[0] = playerMovements.getSubimage(0, 0, 64, 32);
             playerSprites[1] = playerMovements.getSubimage(64, 0, 64, 32);
             playerSprites[2] = playerMovements.getSubimage(128, 0, 64, 32);
@@ -84,7 +84,7 @@ public class PlayerObject extends GameObject {
             playerSprites[6] = playerMovements.getSubimage(384, 0, 64, 32);
             playerSprites[7] = playerMovements.getSubimage(448, 0, 64, 32);
 
-            // Running movements.
+            // Running movements (7) 
             playerSprites[8] = playerMovements.getSubimage(64, 32, 64, 32);
             playerSprites[9] = playerMovements.getSubimage(128, 32, 64, 32);
             playerSprites[10] = playerMovements.getSubimage(192, 32, 64, 32);
@@ -93,7 +93,7 @@ public class PlayerObject extends GameObject {
             playerSprites[13] = playerMovements.getSubimage(384, 32, 64, 32);
             playerSprites[14] = playerMovements.getSubimage(448, 32, 64, 32);
 
-            // Attacking movements.
+            // Attacking movements (8)
             playerSprites[16] = playerMovements.getSubimage(0, 96, 64, 32);
             playerSprites[17] = playerMovements.getSubimage(64, 96, 64, 32);
             playerSprites[18] = playerMovements.getSubimage(128, 96, 64, 32);
@@ -103,7 +103,7 @@ public class PlayerObject extends GameObject {
             playerSprites[22] = playerMovements.getSubimage(384, 96, 64, 32);
             playerSprites[23] = playerMovements.getSubimage(448, 96, 64, 32);
 
-            // Charging movements.
+            // Charging movements (8)
             playerSprites[24] = playerMovements.getSubimage(0, 160, 64, 32);
             playerSprites[25] = playerMovements.getSubimage(64, 160, 64, 32);
             playerSprites[26] = playerMovements.getSubimage(128, 160, 64, 32);
@@ -113,7 +113,7 @@ public class PlayerObject extends GameObject {
             playerSprites[30] = playerMovements.getSubimage(384, 160, 64, 32);
             playerSprites[31] = playerMovements.getSubimage(448, 160, 64, 32);
 
-            // More attacking movements.
+            // More attacking movements (8)
             playerSprites[32] = playerMovements.getSubimage(0, 224, 64, 32);
             playerSprites[33] = playerMovements.getSubimage(64, 224, 64, 32);
             playerSprites[34] = playerMovements.getSubimage(128, 224, 64, 32);
@@ -123,14 +123,14 @@ public class PlayerObject extends GameObject {
             playerSprites[38] = playerMovements.getSubimage(384, 224, 64, 32);
             playerSprites[39] = playerMovements.getSubimage(448, 224, 64, 32);
 
-            // Damaged movements.
+            // Damaged movements (5)
             playerSprites[40] = playerMovements.getSubimage(0, 256, 64, 32);
             playerSprites[41] = playerMovements.getSubimage(64, 256, 64, 32);
             playerSprites[42] = playerMovements.getSubimage(128, 256, 64, 32);
             playerSprites[43] = playerMovements.getSubimage(192, 256, 64, 32);
             playerSprites[44] = playerMovements.getSubimage(256, 256, 64, 32);
 
-            // Death movements.
+            // Death movements (8)
             playerSprites[45] = playerMovements.getSubimage(0, 288, 64, 32);
             playerSprites[46] = playerMovements.getSubimage(64, 288, 64, 32);
             playerSprites[47] = playerMovements.getSubimage(128, 288, 64, 32);
@@ -249,7 +249,11 @@ public class PlayerObject extends GameObject {
             overridingIndex = 16;
         } else if (animationType.equals("Attacking2")) {
             overridingIndex = 32;
-        }         
+        } else if (animationType.equals("Damaged")) {
+            overridingIndex = 40;
+        } else if (animationType.equals("Dying")) {
+            overridingIndex = 45;
+        }
     }
 
     // Update the current frame and the animation of the player.
@@ -285,16 +289,26 @@ public class PlayerObject extends GameObject {
                 } else {
                     currentFrame++;
                 }
-    
-                if (animationType == "Idle") {
+
+                int totalAnimationFrames = 0;
+                if (animationType.equals("Idle")) {
                     animationIndex = 0;
-                } else if (animationType == "Running") {
+                    totalAnimationFrames = 8;
+                } else if (animationType.equals("Running")) {
                     animationIndex = 8;
-                } else if (animationType == "Casting") {
+                    totalAnimationFrames = 7;
+                } else if (animationType.equals("Casting")) {
                     animationIndex = 24;
+                    totalAnimationFrames = 8;
+                } else if (animationType.equals("Damaged")){
+                    animationIndex = 40;
+                    totalAnimationFrames = 5;
+                } else if (animationType.equals("Dying")) {
+                    animationIndex = 45;
+                    totalAnimationFrames = 8;
                 }
     
-                if (currentFrame >= 7) {
+                if (currentFrame >= totalAnimationFrames - 1) {
                     currentFrame = 0;
                 }
     
@@ -322,9 +336,10 @@ public class PlayerObject extends GameObject {
         return playerHealth;
     }
 
-    public boolean  isDamageable() {
+    // Make the player invulnerable for 1 second after getting damaged
+    public boolean isDamageable() {
         long elapsedTimeSinceLastDamage = (System.currentTimeMillis() - lastDamagedTime) / 1000;
-        if (elapsedTimeSinceLastDamage >= 2) {
+        if (elapsedTimeSinceLastDamage >= 1) {
             lastDamagedTime = System.currentTimeMillis();
             return true;          
         } else {
