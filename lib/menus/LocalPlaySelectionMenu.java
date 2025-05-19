@@ -31,7 +31,7 @@ import lib.Sound;
 public class LocalPlaySelectionMenu extends JPanel implements ActionListener {
     // Components.
     private JLabel title, subtitle;
-    private JButton hostBtn, joinBtn, practiceBtn, backBtn;
+    private JButton hostBtn, joinBtn, backBtn;
     private JPanel content;
 
     private BufferedImage bgImage;
@@ -49,7 +49,6 @@ public class LocalPlaySelectionMenu extends JPanel implements ActionListener {
         backBtn = new JButton("< Back");
         hostBtn = new JButton("Host Lobby");
         joinBtn = new JButton("Join Lobby");
-        practiceBtn = new JButton("Practice Solo");
 
         // Load Fonts and background image.
         try {
@@ -126,23 +125,10 @@ public class LocalPlaySelectionMenu extends JPanel implements ActionListener {
         joinBtn.setBackground(buttonBg1);
         joinBtn.setFocusable(false);
 
-        // Practice Button.
-        practiceBtn.setBounds(            
-            (int) (GameConfig.SCREEN_LENGTH * 0.35), 
-            (int) (GameConfig.SCREEN_HEIGHT * 0.65), 
-            (int) (GameConfig.SCREEN_LENGTH * 0.3), 
-            (int) (GameConfig.SCREEN_HEIGHT * 0.1)
-        );
-        practiceBtn.setFont(Pixelify);
-        practiceBtn.setForeground(buttonTextColor);
-        practiceBtn.setBackground(buttonBg1);
-        practiceBtn.setFocusable(false);
-
         // Add Event Listeners.
         backBtn.addActionListener(this);
         hostBtn.addActionListener(this);
         joinBtn.addActionListener(this);
-        practiceBtn.addActionListener(this);
 
         JPanel menuBackground = new JPanel();
         menuBackground.setBackground(new Color(234, 212, 170, 225));
@@ -158,7 +144,6 @@ public class LocalPlaySelectionMenu extends JPanel implements ActionListener {
         content.add(backBtn);
         content.add(hostBtn);
         content.add(joinBtn);
-        content.add(practiceBtn);
         content.add(menuBackground);
 
         // Set up frame.
