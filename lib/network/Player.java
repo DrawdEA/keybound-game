@@ -86,6 +86,7 @@ public class Player {
                 while (true) { 
 
                     String serverDataRaw = dataIn.readUTF();
+                    System.out.println(serverDataRaw);
                     String[] serverData = serverDataRaw.split(" ");
 
                     // Process Lobby Data

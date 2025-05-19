@@ -12,7 +12,7 @@ import lib.render.Direction;
 
 public class GameServer {
     private ServerSocket ss;
-    private int players;
+    private int numOfPlayers;
     private boolean isGameStarted;
     private Random random;
 
@@ -20,20 +20,17 @@ public class GameServer {
     private WriteToClient p1WriteRunnable, p2WriteRunnable;
 
     private CopyOnWriteArrayList<double[]> playerData;
-
-    private CopyOnWriteArrayList<Spell> activeSpells;
-
-    private CollisionManager collisionManager;
-
     private CopyOnWriteArrayList<PlayerObject> playerObjects;
+    private CopyOnWriteArrayList<Spell> activeSpells;
+    private CollisionManager collisionManager;
 
     public GameServer() {
         System.out.println("==== GAME SERVER ====");
-        players = 0;
+        numOfPlayers = 0;
         isGameStarted = false;
         random = new Random();
 
-        // Player Data is composed of new double[] { x, y, animationIndex, lastHorizontalFacing, HP }
+        // Player Data is composed of new double[] { x, y, animationIndex, lastHorizontalFacing, HP, Kills }
         // lastHorizontalFacing -> 0 = Direction.LEFT ; 1 = Direction.RIGHT
         playerData = new CopyOnWriteArrayList<>();
 
@@ -46,7 +43,7 @@ public class GameServer {
         // Initialize collision manager.
         collisionManager = new CollisionManager();
 
-        // Initialize the players.
+        // Initialize the numOfPlayers.
         playerObjects = new CopyOnWriteArrayList<>();
         activeSpells = new CopyOnWriteArrayList<>();
 
@@ -64,14 +61,14 @@ public class GameServer {
         try {
             System.out.println("Waiting for connections...");
 
-            while (players < GameConfig.MAX_PLAYERS) {
+            while (numOfPlayers < GameConfig.MAX_PLAYERS) {
                 Socket s = ss.accept();
 
                 DataInputStream in = new DataInputStream(s.getInputStream());
                 DataOutputStream out = new DataOutputStream(s.getOutputStream());
                 
-                players++;
-                System.out.println("Player #" + players + " has connected.");
+                numOfPlayers++;
+                System.out.println("Player #" + numOfPlayers + " has connected.");
                 
                 double[] spawnLocation = getRandomSpawnLocation();
                 playerData.add(new double[]{
@@ -79,18 +76,20 @@ public class GameServer {
                     spawnLocation[1], // y
                     0, // animation index
                     0, // lastHorizontalFacing -> 0 = Direction.LEFT ; 1 = Direction.RIGHT
-                    5 // hp
+                    5, // hp
+                    0, // kills
+                    0, // deaths
                 });
                 
-                PlayerObject player = new PlayerObject(spawnLocation[0], spawnLocation[1], GameConfig.TILE_SIZE, false, players);
+                PlayerObject player = new PlayerObject(spawnLocation[0], spawnLocation[1], GameConfig.TILE_SIZE, false, numOfPlayers);
                 playerObjects.add(player);
                 collisionManager.addPlayer(player);
-                out.writeInt(players);
+                out.writeInt(numOfPlayers);
 
-                ReadFromClient rfc = new ReadFromClient(players, in);
-                WriteToClient wtc = new WriteToClient(players, out);
+                ReadFromClient rfc = new ReadFromClient(numOfPlayers, in);
+                WriteToClient wtc = new WriteToClient(numOfPlayers, out);
 
-                if (players == 1) {
+                if (numOfPlayers == 1) {
                     p1ReadRunnable = rfc;
                     p1WriteRunnable = wtc;
 
@@ -139,7 +138,7 @@ public class GameServer {
     }
 
     public int getNumPlayersInLobby() {
-        return players;
+        return numOfPlayers;
     }
 
     private class ReadFromClient implements Runnable {
@@ -271,6 +270,7 @@ public class GameServer {
                         
                         // RESPAWN if dead
                         } else if (entity.startsWith("RESPAWN")){
+                            // Respwan in a new location
                             double[] newSpawnLocation = getRandomSpawnLocation();
                             playerData.get(playerID-1)[0] = newSpawnLocation[0]; // Set X coordinate
                             playerData.get(playerID-1)[1] = newSpawnLocation[1]; // Set Y coordinate
@@ -323,12 +323,12 @@ public class GameServer {
                         0 [NUMBER_OF_PLAYERS_CONNECTED] [PLAYER_NAMES...]
 
                         IN GAME DATA
-                        1 [PLAYER_ID]-[X]-[Y]-[FRAME]-[HP]-[KILLS] [SPELL_CASTER'S_ID]-[SPELL_NAME]-[X]-[Y]-[Other Spell Parameters...] ...Other Spells...
+                        1 [PLAYER_ID]-[X]-[Y]-[FRAME]-[HP]-[KILLS]-[DEATHS] [SPELL_CASTER'S_ID]-[SPELL_NAME]-[X]-[Y]-[Other Spell Parameters...] ...Other Spells...
                     */
 
                     // Sending Lobby Data
                     if (!isGameStarted) {
-                        dataOut.writeUTF(String.format("0 %d", players));
+                        dataOut.writeUTF(String.format("0 %d", numOfPlayers));
                         dataOut.flush();
 
                         // Add a sleep to avoid overwhelming the connection
@@ -343,14 +343,16 @@ public class GameServer {
                         String gameStateData = "1 ";
 
                         // Add all player data in order
-                        for (int i = 0; i < players; i++) {
-                            gameStateData += String.format("%d-%f-%f-%d-%d-%d ", 
+                        for (int i = 0; i < numOfPlayers; i++) {
+                            gameStateData += String.format("%d-%f-%f-%d-%d-%d-%d-%d ", 
                                 i+1, // Player's ID
                                 playerData.get(i)[0], // Player's X Coordinate stored in the server
                                 playerData.get(i)[1], // Player's Y Coordinate stored in the server
                                 (int) playerData.get(i)[2], // Player's animation index stored in the server
                                 (int) playerData.get(i)[3], // Player's last horizontally faced direction (0:left ; 1:Right)
-                                (int) playerData.get(i)[4] // Player's HP
+                                (int) playerData.get(i)[4], // Player's HP
+                                (int) playerData.get(i)[5], // Player's Kills
+                                (int) playerData.get(i)[6] // Player's Deaths
                             );
                         }
                         
@@ -380,7 +382,7 @@ public class GameServer {
 
         public void sendStartMsg() {
             try {
-                dataOut.writeUTF("We now have 2 players. Go!");
+                dataOut.writeUTF("We now have 2 numOfPlayers. Go!");
                 startGameLoop();
             } catch (IOException ex) {
                 System.out.println("IOException from sendStartMsg()");
@@ -431,7 +433,13 @@ public class GameServer {
                     
                     int resultOfCollisionCheck = spell.handleCollisions(collisionManager);
                     if (resultOfCollisionCheck != 0){
-                        playerData.get(resultOfCollisionCheck-1)[4] -= 1;
+                        playerData.get(resultOfCollisionCheck-1)[4] -= 1; // Decrease player hit hp
+                        
+                        // If Player died (hp = 0)
+                        if (playerData.get(resultOfCollisionCheck-1)[4] <= 0) { 
+                            playerData.get(spell.getCasterId()-1)[5] += 1; // Increase kill count of caster
+                            playerData.get(resultOfCollisionCheck-1)[6] += 1; // Increment death count of dying player
+                        }
                     }
                 }
                 
