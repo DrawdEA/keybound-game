@@ -1,6 +1,5 @@
 /**
- * The LocalJoinMenu is responsible for handling the GUI for setting up which host a player will join.
- * These include being able to type what ip he will join in.
+ * The TutorialMenu is responsible for showcasing the about and how to play the the game
  * 
  * @author Edward Joshua M. Diesta (241571), Charles Joshua T. Uy (244644)
  * @version May 20, 2025
@@ -23,11 +22,14 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import lib.GameConfig;
+import lib.network.*;
 
-public class LocalJoinMenu extends JPanel implements ActionListener {
+public class TutorialMenu extends JPanel implements ActionListener {
     // Components
     private JLabel title, subtitle;
     private JButton joinBtn, backBtn;
@@ -40,18 +42,14 @@ public class LocalJoinMenu extends JPanel implements ActionListener {
     private final Color buttonBg1 = new Color(58,68,102);
     private final Color titleTextColor = new Color(38,43,68);
     private final Color buttonTextColor = Color.WHITE;
-
+    
     // Fonts.
     private Font Jacquard, Pixelify;
 
-    public LocalJoinMenu() {
-        title = new JLabel("Keybound", SwingConstants.CENTER);
-        subtitle = new JLabel("Local Join", SwingConstants.CENTER);
+    public TutorialMenu() {
+        title = new JLabel("About", SwingConstants.CENTER);
         backBtn = new JButton("< Back");
-        ipLabel = new JLabel("Local Host's IP:");
-        ipInput = new JTextField("localhost");
-        joinBtn = new JButton("Join Lobby");
-
+        
         // Load Fonts and background image.
         try {
             InputStream stream = ClassLoader.getSystemClassLoader().getResourceAsStream("resources/fonts/Jacquard12-Regular.ttf");
@@ -60,7 +58,7 @@ public class LocalJoinMenu extends JPanel implements ActionListener {
             stream = ClassLoader.getSystemClassLoader().getResourceAsStream("resources/fonts/Pixelify/PixelifySans-Regular.ttf");
             Pixelify = Font.createFont(Font.TRUETYPE_FONT, stream).deriveFont(30f);
 
-            InputStream imgStream = ClassLoader.getSystemClassLoader().getResourceAsStream("resources/images/LocalJoinMenuBg.png");
+            InputStream imgStream = ClassLoader.getSystemClassLoader().getResourceAsStream("resources/images/TutorialBg.png");
             bgImage = ImageIO.read(imgStream);
         } catch (Exception ex) {
             System.out.println(ex);
@@ -93,54 +91,9 @@ public class LocalJoinMenu extends JPanel implements ActionListener {
         title.setFont(Jacquard);
         title.setForeground(titleTextColor);
 
-        // Subtitle.
-        subtitle.setBounds(            
-            (int) (GameConfig.SCREEN_LENGTH * 0.275), 
-            (int) (GameConfig.SCREEN_HEIGHT * 0.325), 
-            (int) (GameConfig.SCREEN_LENGTH * 0.45), 
-            (int) (GameConfig.SCREEN_HEIGHT * 0.05)
-        );
-        subtitle.setFont(Pixelify);
-        subtitle.setForeground(titleTextColor);
-
-        // IP Label.
-        ipLabel.setBounds(
-            (int) (GameConfig.SCREEN_LENGTH * 0.39), 
-            (int) (GameConfig.SCREEN_HEIGHT * 0.4), 
-            (int) (GameConfig.SCREEN_LENGTH * 0.3), 
-            (int) (GameConfig.SCREEN_HEIGHT * 0.05)
-        );
-        ipLabel.setFont(Pixelify.deriveFont(30f));
-        ipLabel.setForeground(titleTextColor);
-
-        // IP Input.
-        ipInput.setBounds(
-            (int) (GameConfig.SCREEN_LENGTH * 0.25), 
-            (int) (GameConfig.SCREEN_HEIGHT * 0.475), 
-            (int) (GameConfig.SCREEN_LENGTH * 0.5), 
-            (int) (GameConfig.SCREEN_HEIGHT * 0.15)
-        );
-        ipInput.setFont(Pixelify.deriveFont(45f));
-        ipInput.setBackground(new Color(139, 155, 180));
-        ipInput.setForeground(titleTextColor);
-        ipInput.setMargin(new Insets(5,10,5,10));
-
-        // Join Button.
-        joinBtn.setBounds(            
-            (int) (GameConfig.SCREEN_LENGTH * 0.4), 
-            (int) (GameConfig.SCREEN_HEIGHT * 0.675), 
-            (int) (GameConfig.SCREEN_LENGTH * 0.2), 
-            (int) (GameConfig.SCREEN_HEIGHT * 0.1)
-        );
-        joinBtn.setFont(Pixelify);
-        joinBtn.setForeground(buttonTextColor);
-        joinBtn.setBackground(buttonBg1);
-        joinBtn.setFocusable(false);
-
         // Add Event Listeners.
         backBtn.addActionListener(this);
-        joinBtn.addActionListener(this);
-
+        
         JPanel menuBackground = new JPanel();
         menuBackground.setBackground(new Color(234, 212, 170, 225));
         menuBackground.setBounds(
@@ -151,11 +104,7 @@ public class LocalJoinMenu extends JPanel implements ActionListener {
         );
 
         content.add(title);
-        content.add(subtitle);
         content.add(backBtn);
-        content.add(ipLabel);
-        content.add(ipInput);
-        content.add(joinBtn);
         content.add(menuBackground);
 
         // Set up frame.
@@ -178,7 +127,7 @@ public class LocalJoinMenu extends JPanel implements ActionListener {
             g.fillRect(0, 0, this.getWidth(), this.getHeight());
         }
     }
-
+    
     @Override
     public void actionPerformed(ActionEvent e) {
         JPanel mainFrame = (JPanel) this.getParent();
@@ -186,16 +135,11 @@ public class LocalJoinMenu extends JPanel implements ActionListener {
         if (e.getSource() == backBtn) {
             mainFrame.remove(this);
             mainFrame.repaint();
-            mainFrame.add(new LocalPlaySelectionMenu(), BorderLayout.CENTER);
+            mainFrame.add(new MainMenu(), BorderLayout.CENTER);
             mainFrame.revalidate();
             mainFrame.repaint();
 
-        } else if (e.getSource() == joinBtn) {
-            mainFrame.remove(this);
-            mainFrame.repaint();
-            mainFrame.add(new LocalJoinLobbyMenu(ipInput.getText()));
-            mainFrame.revalidate();
-            mainFrame.repaint();
         }
     }
+
 }
