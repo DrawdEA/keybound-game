@@ -122,6 +122,7 @@ public class MainMenu extends JPanel implements ActionListener {
         // Button listeners added.
         onlinePlayBtn.addActionListener(this);
         localPlayBtn.addActionListener(this);
+        tutorialBtn.addActionListener(this);
         
         // Set up frame.
         this.setFocusable(true);
@@ -171,22 +172,29 @@ public class MainMenu extends JPanel implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         JPanel mainFrame = (JPanel) this.getParent();
         if (e.getSource() == onlinePlayBtn) {
-            Sound openSound = new Sound(0);
+             Sound openSound = new Sound(0);
             openSound.play();
+          
+            mainFrame.remove(this);
+            mainFrame.add(new OnlinePlayMenu());
+            mainFrame.revalidate();
+            mainFrame.repaint();
+          
         } else if (e.getSource() == localPlayBtn) {
             Sound openSound = new Sound(0);
             openSound.play();
 
             mainFrame.remove(this);
             mainFrame.add(new LocalPlaySelectionMenu());
-
             mainFrame.revalidate();
             mainFrame.repaint();
+
         } else if (e.getSource() == tutorialBtn) {
             Sound openSound = new Sound(0);
             openSound.play();
 
             mainFrame.remove(this);
+            mainFrame.add(new TutorialMenu());
             mainFrame.revalidate();
             mainFrame.repaint();
         } 
