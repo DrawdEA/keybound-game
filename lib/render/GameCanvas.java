@@ -22,9 +22,12 @@ package lib.render;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 import javax.imageio.ImageIO;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.*;
 import javax.swing.Timer;
 import lib.*;
@@ -66,8 +69,7 @@ public class GameCanvas extends JComponent {
         
         // Initialize object to hold all gameObjects.
         gameObjects = new ArrayList<>();
-        spells = new ArrayList<>();
-
+        spells = new ArrayList<>();       
         
         // Load Fonts and Bg image
         try {

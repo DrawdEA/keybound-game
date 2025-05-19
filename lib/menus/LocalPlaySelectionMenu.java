@@ -26,6 +26,7 @@ import java.io.InputStream;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import lib.GameConfig;
+import lib.Sound;
 
 public class LocalPlaySelectionMenu extends JPanel implements ActionListener {
     // Components.
@@ -168,6 +169,22 @@ public class LocalPlaySelectionMenu extends JPanel implements ActionListener {
 
         // Add components.
         this.add(content, BorderLayout.CENTER);
+
+        // Add hover handling.
+        hostBtn.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                Sound hoverSound = new Sound(1);
+                hoverSound.play();
+            }
+        });
+        joinBtn.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                Sound hoverSound = new Sound(1);
+                hoverSound.play();
+            }
+        });
     }
 
     @Override
@@ -186,6 +203,9 @@ public class LocalPlaySelectionMenu extends JPanel implements ActionListener {
         JPanel mainFrame = (JPanel) this.getParent();
 
         if (e.getSource() == backBtn) {
+            Sound openSound = new Sound(2);
+            openSound.play();
+
             mainFrame.remove(this);
             mainFrame.repaint();
             mainFrame.add(new MainMenu(), BorderLayout.CENTER);
@@ -193,6 +213,9 @@ public class LocalPlaySelectionMenu extends JPanel implements ActionListener {
             mainFrame.repaint();
 
         } else if (e.getSource() == hostBtn) {
+            Sound openSound = new Sound(0);
+            openSound.play();
+
             mainFrame.remove(this);
             mainFrame.repaint();
             mainFrame.add(new LocalHostLobbyMenu(), BorderLayout.CENTER);
@@ -200,6 +223,9 @@ public class LocalPlaySelectionMenu extends JPanel implements ActionListener {
             mainFrame.repaint();
 
         } else if (e.getSource() == joinBtn) {
+            Sound openSound = new Sound(0);
+            openSound.play();
+
             mainFrame.remove(this);
             mainFrame.repaint();
             mainFrame.add(new LocalJoinMenu(), BorderLayout.CENTER);

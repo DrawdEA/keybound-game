@@ -133,7 +133,9 @@ public class Player {
                         numOfConnectedPlayers = Integer.parseInt(serverData[1]);
 
                     // Process In Game Data.
-                    } else if (serverData[0].equals("1")) {
+                    } else if (serverData[0].startsWith("1-")) {
+                        int gameTime = Integer.parseInt(serverData[0].split("-")[1]);
+                        //gameCanvas.setTimer(gameTime);
 
                         // Game Proper Initializations.
                         if (!isInGame) {
@@ -177,8 +179,6 @@ public class Player {
 
                                     int oldClientHP = selfPlayer.getPlayerHealth();
 
-
-                                    // --- Position Update Logic ---
                                     // Only updates position from the server if player has died and server gave it a new position to respawn
                                     if (selfPlayerIsDead && serverReportedHP > 0) {
                                         selfPlayer.setX(serverReportedX);
@@ -234,16 +234,16 @@ public class Player {
                                     animationCounter = Integer.parseInt(spellData[5]);
                                     
 
-                                    // FIRE SPELL
+                                    // Fire spell.
                                     if (spellData[0].equals("FIRE_SPELL")) {
                                         finished = Boolean.parseBoolean(spellData[6]);
                                         gameCanvas.addSpell(new FireSpell(playerID, x, y, dir, animationCounter, finished));
                                     
-                                    // WATER SPELL
+                                    // Water spell.
                                     } else if (spellData[0].equals("WATER_SPELL")) {
                                         gameCanvas.addSpell(new WaterSpell(playerID, x, y, dir, animationCounter));
                                     
-                                    // WIND SPELL
+                                    // Wind spell.
                                     } else if (spellData[0].equals("WIND_SPELL")){
                                         int spellCasterId = Integer.parseInt(spellData[4]);
                                         double originalX = Double.parseDouble(spellData[6]);
@@ -258,7 +258,7 @@ public class Player {
                                         
                                         gameCanvas.addSpell(new WindSpell(playerID, x, y, dir, animationCounter, originalX, originalY));
                                     
-                                    // EARTH SPELL
+                                    // Earth spell.
                                     } else if (spellData[0].equals("EARTH_SPELL")){
                                         alive = Boolean.parseBoolean(spellData[6]);
                                         gameCanvas.addSpell(new EarthSpell(playerID, x, y, dir, animationCounter, alive));

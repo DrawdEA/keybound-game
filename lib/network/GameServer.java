@@ -398,7 +398,7 @@ public class GameServer {
 
                     // Sending In Game Data.
                     } else {
-                        String gameStateData = "1 ";
+                        String gameStateData = String.format("1-10 ");
 
                         // Add all player data in order.
                         for (int i = 0; i < numOfPlayers; i++) {
@@ -482,6 +482,13 @@ public class GameServer {
     }
 
     /**
+     * Handles ending the game and showing the final stats to the player.
+     */
+    private void endGame() {
+
+    }
+
+    /**
      * Creates the game loop.
      */
     public void startGameLoop() {
@@ -516,5 +523,24 @@ public class GameServer {
 
         gameLoop.setDaemon(true);
         gameLoop.start();
+
+        Thread gameTimer = new Thread(() -> {
+            int time = 0;
+
+            while (time <= GameConfig.GAME_DURATION) {
+                try {
+                    Thread.sleep(1000);
+                    time++;
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            // End the game after the timer is done.
+            endGame();
+        });
+        gameTimer.setDaemon(true);
+        gameTimer.start();
+
     }
 }

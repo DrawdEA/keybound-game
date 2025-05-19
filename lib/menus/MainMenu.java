@@ -26,6 +26,7 @@ import java.io.InputStream;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import lib.GameConfig;
+import lib.Sound;
 
 public class MainMenu extends JPanel implements ActionListener {
     // Components.
@@ -48,6 +49,9 @@ public class MainMenu extends JPanel implements ActionListener {
         localPlayBtn = new JButton("Local");
         tutorialBtn = new JButton("Tutorial");
         names = new JLabel("By: Diesta, Edward & Uy, Charles Joshua");
+
+        // Initialize the sounds.
+        Sound.initializeSounds();
 
         // Load Fonts and background image.
         try {
@@ -127,6 +131,29 @@ public class MainMenu extends JPanel implements ActionListener {
 
         // Add components.
         this.add(content, BorderLayout.CENTER);
+
+        // Add mouse listeners for hover.
+        localPlayBtn.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                Sound hoverSound = new Sound(1);
+                hoverSound.play();
+            }
+        });
+        tutorialBtn.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                Sound hoverSound = new Sound(1);
+                hoverSound.play();
+            }
+        });
+        onlinePlayBtn.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                Sound hoverSound = new Sound(1);
+                hoverSound.play();
+            }
+        });
     }
 
     @Override
@@ -144,14 +171,21 @@ public class MainMenu extends JPanel implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         JPanel mainFrame = (JPanel) this.getParent();
         if (e.getSource() == onlinePlayBtn) {
-            
+            Sound openSound = new Sound(0);
+            openSound.play();
         } else if (e.getSource() == localPlayBtn) {
+            Sound openSound = new Sound(0);
+            openSound.play();
+
             mainFrame.remove(this);
             mainFrame.add(new LocalPlaySelectionMenu());
 
             mainFrame.revalidate();
             mainFrame.repaint();
         } else if (e.getSource() == tutorialBtn) {
+            Sound openSound = new Sound(0);
+            openSound.play();
+
             mainFrame.remove(this);
             mainFrame.revalidate();
             mainFrame.repaint();

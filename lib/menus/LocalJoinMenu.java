@@ -26,6 +26,7 @@ import java.io.InputStream;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import lib.GameConfig;
+import lib.Sound;
 import lib.network.*;
 
 public class LocalJoinMenu extends JPanel implements ActionListener {
@@ -167,6 +168,22 @@ public class LocalJoinMenu extends JPanel implements ActionListener {
 
         // Add components.
         this.add(content, BorderLayout.CENTER);
+
+        // Add hover feedback.
+        backBtn.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                Sound hoverSound = new Sound(1);
+                hoverSound.play();
+            }
+        });
+        joinBtn.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                Sound hoverSound = new Sound(1);
+                hoverSound.play();
+            }
+        });
     }
 
     @Override
@@ -185,6 +202,9 @@ public class LocalJoinMenu extends JPanel implements ActionListener {
         JPanel mainFrame = (JPanel) this.getParent();
 
         if (e.getSource() == backBtn) {
+            Sound openSound = new Sound(2);
+            openSound.play();
+            
             mainFrame.remove(this);
             mainFrame.repaint();
             mainFrame.add(new LocalPlaySelectionMenu(), BorderLayout.CENTER);
@@ -192,6 +212,9 @@ public class LocalJoinMenu extends JPanel implements ActionListener {
             mainFrame.repaint();
 
         } else if (e.getSource() == joinBtn) {
+            Sound openSound = new Sound(0);
+            openSound.play();
+
             mainFrame.remove(this);
             mainFrame.repaint();
             mainFrame.add(new LocalJoinLobbyMenu(ipInput.getText()));
