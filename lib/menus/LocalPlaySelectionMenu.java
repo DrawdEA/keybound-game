@@ -170,13 +170,6 @@ public class LocalPlaySelectionMenu extends JPanel implements ActionListener {
                 hoverSound.play();
             }
         });
-        practiceBtn.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                Sound hoverSound = new Sound(1);
-                hoverSound.play();
-            }
-        });
     }
 
     @Override
