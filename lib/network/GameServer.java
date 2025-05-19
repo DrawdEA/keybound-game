@@ -538,6 +538,5 @@ public class GameServer {
             endGame();
         });
         gameTimer.start();
-
     }
 }
