@@ -1,6 +1,24 @@
+ /**
+ * The EarthSpell class is a spell in the game.
+ * It spawns a stationary rock that deals damage when touched.
+ * 
+ * @author Edward Joshua M. Diesta (241571), Charles Joshua T. Uy (244644)
+ * @version May 20, 2025
+ * 
+ * We have not discussed the Java language code in our program 
+ * with anyone other than our instructor or the teaching assistants 
+ * assigned to this course.
+ * 
+ * We have not used Java language code obtained from another student, 
+ * or any other unauthorized source, either modified or unmodified.
+ * 
+ * If any Java language code or documentation used in our program 
+ * was obtained from another source, such as a textbook or website, 
+ * that has been clearly noted with a proper citation in the comments 
+ * of our program.
+ */
 package lib.objects.spells;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
@@ -12,7 +30,6 @@ import lib.render.CollisionManager;
 import lib.render.Direction;
 
 public class EarthSpell extends Spell {
-    private final Color COLOR = Color.ORANGE;
     private final int WALL_OFFSET = 30;
     private final int TILE = GameConfig.TILE_SIZE;
 
@@ -20,7 +37,6 @@ public class EarthSpell extends Spell {
     private int wallYLength;
 
     private double x, y;
-    private double width = 25, height = 25;
     private Direction dir;
 
     private int wallHp;
@@ -38,37 +54,9 @@ public class EarthSpell extends Spell {
     private static BufferedImage[] wallLeft;
     private static BufferedImage[] wallUpdown;
 
-    public EarthSpell(int casterId, double x, double y, Direction dir, int aC, boolean a) {
-        super("EARTH_SPELL", casterId, x, y, 25, 25);
-        animationCounter = aC;
-
-        this.x = x;
-        this.y = y;
-
-        this.dir = dir;
-        wallHp = 1;
-        expired = false;
-        alive = a;
-
-        if (dir == Direction.LEFT || dir == Direction.RIGHT){
-            wallXLength = 40;
-            wallYLength = 75;
-        } else {
-            wallXLength = 124;
-            wallYLength = 62;
-        }
-        
-        if (dir == Direction.LEFT) {
-            hitbox = new Rectangle((int) x - WALL_OFFSET - TILE / 2, (int) (y  + TILE * 1.5 - wallYLength/2 - 16), (int) wallXLength, (int) wallYLength);
-        } else if (dir == Direction.RIGHT) {
-            hitbox = new Rectangle((int) x + TILE * 3 + WALL_OFFSET + 7, (int) (y + TILE * 1.5 - wallYLength/2 - 16), (int) wallXLength, (int) wallYLength);
-        } else if (dir == Direction.DOWN) {
-            hitbox = new Rectangle((int) (x - 68 + TILE * 1.75 - wallXLength/2 + 41 + 35), (int) (y - 84 + TILE * 1.55 + WALL_OFFSET + 16 + 64), (int) wallXLength, (int) wallYLength);
-        } else if (dir == Direction.UP) {
-            hitbox = new Rectangle((int) (x - 68 + TILE * 1.75 - wallXLength/2 + 41 + 35), (int) (y - 16 - WALL_OFFSET - 16 - 8), (int) wallXLength, (int) wallYLength);
-        } 
-    }
-
+    /**
+     * Initializes the sprites of the class for faster loading.
+     */
     public static void initializeSprites() {
         wall = new BufferedImage[16];
         wallLeft = new BufferedImage[16];
@@ -130,16 +118,58 @@ public class EarthSpell extends Spell {
         }
     }
 
+    /**
+     * Instantiates the earth spell.
+     * 
+     * @param casterId the id of the caster
+     * @param x the x-value position of the spell
+     * @param y the y-value position of the spell
+     * @param dir the direction of the spell
+     * @param aC the animationCounter of the spell
+     * @param a a boolean whether the wall is still alive or not
+     */
+    public EarthSpell(int casterId, double x, double y, Direction dir, int aC, boolean a) {
+        super("EARTH_SPELL", casterId, x, y, 25, 25);
+        animationCounter = aC;
+
+        this.x = x;
+        this.y = y;
+
+        this.dir = dir;
+        wallHp = 1;
+        expired = false;
+        alive = a;
+
+        // Initialize the wall's size and hitbox depending on the direction.
+        if (dir == Direction.LEFT || dir == Direction.RIGHT) {
+            wallXLength = 40;
+            wallYLength = 75;
+        } else {
+            wallXLength = 124;
+            wallYLength = 62;
+        }
+        
+        if (dir == Direction.LEFT) {
+            hitbox = new Rectangle((int) x - WALL_OFFSET - TILE / 2, (int) (y  + TILE * 1.5 - wallYLength/2 - 16), (int) wallXLength, (int) wallYLength);
+        } else if (dir == Direction.RIGHT) {
+            hitbox = new Rectangle((int) x + TILE * 3 + WALL_OFFSET + 7, (int) (y + TILE * 1.5 - wallYLength/2 - 16), (int) wallXLength, (int) wallYLength);
+        } else if (dir == Direction.DOWN) {
+            hitbox = new Rectangle((int) (x - 68 + TILE * 1.75 - wallXLength/2 + 41 + 35), (int) (y - 84 + TILE * 1.55 + WALL_OFFSET + 16 + 64), (int) wallXLength, (int) wallYLength);
+        } else if (dir == Direction.UP) {
+            hitbox = new Rectangle((int) (x - 68 + TILE * 1.75 - wallXLength/2 + 41 + 35), (int) (y - 16 - WALL_OFFSET - 16 - 8), (int) wallXLength, (int) wallYLength);
+        } 
+    }
+
     @Override
     public void update() {
         if (wallHp <= 0) {
             expired = true;
         }
 
+        // Make the animationCounter stay at 32 or 21 depending on the direction to make it stay at the state where it is standing.
         if (dir == Direction.LEFT || dir == Direction.RIGHT) {
             currAgeInTicks++;
             if(currAgeInTicks >= maxAgeInTicks && alive) {
-                
                 alive = false;
                 animationCounter = 32;
             }
@@ -154,7 +184,6 @@ public class EarthSpell extends Spell {
         } else {
             currAgeInTicks++;
             if(currAgeInTicks >= maxAgeInTicks && alive) {
-                
                 alive = false;
                 animationCounter = 32;
             }
@@ -168,7 +197,6 @@ public class EarthSpell extends Spell {
             }
         }
         
-
         animationCounter++;
     }
 
@@ -181,7 +209,6 @@ public class EarthSpell extends Spell {
     public int handleCollisions(CollisionManager cm) {
         PlayerObject playerHit = cm.checkProjectileCollision(hitbox, casterId);
         if (playerHit != null && playerHit.isDamageable()) {
-            // System.out.println("EARTH HIT!");
             return playerHit.getId();
         } else {
             return 0;
@@ -195,9 +222,6 @@ public class EarthSpell extends Spell {
 
     @Override
     public void drawSprite(Graphics2D g2d) {
-        g2d.setColor(COLOR);
-        
-
         if (dir == Direction.LEFT) {
             int currentFrame = (animationCounter / 4) % 16;
             if (currentFrame <= 7 || !alive) {
@@ -230,8 +254,6 @@ public class EarthSpell extends Spell {
                 g2d.drawImage(wallUpdown[2], (int) (x - 80 + TILE * 1.75 - wallXLength/2 + 41 + 35), (int) y - 96 - WALL_OFFSET - 16 - 8, 144, 144, null);
             }
             hitbox = new Rectangle((int) (x - 68 + TILE * 1.75 - wallXLength/2 + 41 + 35), (int) y - 16 - WALL_OFFSET - 16 - 8, (int) wallXLength, (int) wallYLength);
-        } 
-        
-        // g2d.draw(hitbox);
+        }
     }    
 }

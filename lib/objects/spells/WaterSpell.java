@@ -1,6 +1,24 @@
+/**
+ * The WaterSpell class is a spell in the game.
+ * It spawns a water explosion at the player's wand.
+ * 
+ * @author Edward Joshua M. Diesta (241571), Charles Joshua T. Uy (244644)
+ * @version May 20, 2025
+ * 
+ * We have not discussed the Java language code in our program 
+ * with anyone other than our instructor or the teaching assistants 
+ * assigned to this course.
+ * 
+ * We have not used Java language code obtained from another student, 
+ * or any other unauthorized source, either modified or unmodified.
+ * 
+ * If any Java language code or documentation used in our program 
+ * was obtained from another source, such as a textbook or website, 
+ * that has been clearly noted with a proper citation in the comments 
+ * of our program.
+ */
 package lib.objects.spells;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
@@ -12,8 +30,6 @@ import lib.render.CollisionManager;
 import lib.render.Direction;
 
 public class WaterSpell extends Spell {
-    private final Color COLOR = Color.BLUE;
-
     private double x, y;
     private int width = 120, height = 140;
     private Direction dir;
@@ -30,6 +46,9 @@ public class WaterSpell extends Spell {
     private static BufferedImage waterSpritesUp[] = new BufferedImage[16];
     private static BufferedImage waterSpritesDown[] = new BufferedImage[16];
 
+    /**
+     * Initializes the sprites of the class for faster loading.
+     */
     public static void initializeSprites() {
         try {
             BufferedImage waterImage = ImageIO.read(WaterSpell.class.getResourceAsStream("/resources/spells/water.png"));
@@ -112,16 +131,21 @@ public class WaterSpell extends Spell {
         }
     }
 
-    // Static Rendering
+    /**
+     * Instantiates the water spell.
+     * 
+     * @param casterId the id of the caster
+     * @param x the x-value position of the spell
+     * @param y the y-value position of the spell
+     * @param dir the direction of the spell
+     * @param aC the animationCounter of the spell
+     */
     public WaterSpell(int casterId, double x, double y, Direction dir, int aC) {
         super("WATER_SPELL", casterId, x, y, 25, 25, dir);
-
         this.x = x;
         this.y = y;
         this.dir = dir;
-
         this.animationCounter = aC;
-
         expired = false;
 
         if (dir == Direction.UP){
@@ -160,7 +184,6 @@ public class WaterSpell extends Spell {
     public int handleCollisions(CollisionManager cm) {
         PlayerObject playerHit = cm.checkProjectileCollision(hitbox, casterId);
         if (playerHit != null && playerHit.isDamageable()) {
-            // System.out.println("WATER HIT!");
             return playerHit.getId();
         } else {
             return 0;
@@ -170,9 +193,6 @@ public class WaterSpell extends Spell {
     @Override
     public void drawSprite(Graphics2D g2d) {
         int currentFrame = (animationCounter / 4) % 16;
-        
-        g2d.setColor(COLOR);
-        // Adjust to the spell to the right edge
         if (dir == Direction.UP){
             g2d.drawImage(waterSpritesUp[currentFrame], (int) x - 28, (int) y - GameConfig.TILE_SIZE - GameConfig.TILE_SIZE / 2 - 64, 192, 192, null);
             hitbox = new Rectangle((int) x + GameConfig.TILE_SIZE / 2 - 23, (int) y - GameConfig.TILE_SIZE + 10 - 90, height, width);
@@ -186,10 +206,6 @@ public class WaterSpell extends Spell {
             g2d.drawImage(waterSprites[currentFrame], (int) x + GameConfig.TILE_SIZE, (int) y - GameConfig.TILE_SIZE - GameConfig.TILE_SIZE / 2, 192, 192, null);
             hitbox = new Rectangle((int) x + GameConfig.TILE_SIZE * 3 + GameConfig.TILE_SIZE / 2, (int) y - GameConfig.TILE_SIZE + 10, width, height);
         }
-
-        // if (currentFrame >= 3 && currentFrame <= 9) {
-        //     g2d.draw(hitbox);
-        // }
     }
 
 }

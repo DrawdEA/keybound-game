@@ -1,6 +1,24 @@
+/**
+ * The WindSpell class is a spell in the game.
+ * It dashes the player in a specific direction.
+ * 
+ * @author Edward Joshua M. Diesta (241571), Charles Joshua T. Uy (244644)
+ * @version May 20, 2025
+ * 
+ * We have not discussed the Java language code in our program 
+ * with anyone other than our instructor or the teaching assistants 
+ * assigned to this course.
+ * 
+ * We have not used Java language code obtained from another student, 
+ * or any other unauthorized source, either modified or unmodified.
+ * 
+ * If any Java language code or documentation used in our program 
+ * was obtained from another source, such as a textbook or website, 
+ * that has been clearly noted with a proper citation in the comments 
+ * of our program.
+ */
 package lib.objects.spells;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -10,13 +28,10 @@ import lib.render.CollisionManager;
 import lib.render.Direction;
 
 public class WindSpell extends Spell {
-    // Notice though that the final size of the spell is SPEED * maxAgeInTicks 
     private final double SPEED = 10;
-    private final Color COLOR = Color.GRAY;
     private final double TILE = GameConfig.TILE_SIZE;
 
     private double x, y;
-    private double width = 25, height = 25;
     private Direction dir;
 
     private boolean expired;
@@ -32,6 +47,9 @@ public class WindSpell extends Spell {
     private static BufferedImage[] windUp;
     private static BufferedImage[] windDown;
 
+    /**
+     * Initializes the sprites of the class for faster loading.
+     */
     public static void initializeSprites() {
         wind = new BufferedImage[9];
         windLeft = new BufferedImage[9];
@@ -93,6 +111,17 @@ public class WindSpell extends Spell {
         }
     }
 
+    /**
+     * Instantiates the wind spell.
+     * 
+     * @param casterId the id of the caster
+     * @param x the x-value position of the spell
+     * @param y the y-value position of the spell
+     * @param dir the direction of the spell
+     * @param aC the animationCounter of the spell
+     * @param iX the x-value amount that the player has moved in total
+     * @param iY the y-value amount that the player has moved in total
+     */
     public WindSpell(int casterId, double x, double y, Direction dir, int aC, double iX, double iY) {
         super("WIND_SPELL", casterId, x, y, 25, 25);
 
@@ -153,8 +182,7 @@ public class WindSpell extends Spell {
 
     @Override
     public int handleCollisions(CollisionManager cm) {
-        // Wind Spell will never deal damage
-        return 0;
+        return 0; // Wind Spell does not deal damage.
     }
 
     @Override
@@ -166,15 +194,14 @@ public class WindSpell extends Spell {
     public void drawSprite(Graphics2D g2d) {
         int currentFrame = (animationCounter / 4) % 9;
         
+        // Set up the location where the sprite will be drawn.
         int tmp = 0;
         int tmp2 = 0;
-
         if (dir == Direction.UP) {
             tmp2 = -incrementY;
         } else {
             tmp2 = incrementY;
         }
-
         if (dir == Direction.LEFT) {
             tmp = -incrementX;
         } else {
