@@ -1,6 +1,21 @@
 /**
- * The Player class is responsible for generating the player's canvas and appearance.
- * It also handles the client-side of the game.
+ * The Player class is responsible for handling the client side of the game. 
+ * It is also responsible for generating the player's canvas and appearance.
+ * 
+ * @author Edward Joshua M. Diesta (241571), Charles Joshua T. Uy (244644)
+ * @version May 20, 2025
+ * 
+ * We have not discussed the Java language code in our program 
+ * with anyone other than our instructor or the teaching assistants 
+ * assigned to this course.
+ * 
+ * We have not used Java language code obtained from another student, 
+ * or any other unauthorized source, either modified or unmodified.
+ * 
+ * If any Java language code or documentation used in our program 
+ * was obtained from another source, such as a textbook or website, 
+ * that has been clearly noted with a proper citation in the comments 
+ * of our program.
  */
 package lib.network;
 
@@ -30,6 +45,9 @@ public class Player {
     private boolean selfPlayerIsDead;
     private boolean respawnRequestSent;
     
+    /**
+     * Instantiates the client, a "player".
+     */
     public Player() {
         isInGame = false;
         
@@ -41,6 +59,11 @@ public class Player {
         respawnRequestSent = false;
     }
 
+    /**
+     * Attempts to connect to the server given the ip.
+     * 
+     * @param ip the ip that the player will connect to
+     */
     public void connectToServer(String ip) {
         try {
             socket = new Socket("localhost", 10000);
@@ -70,18 +93,33 @@ public class Player {
         }
     }
 
+    /**
+     * Gets the GameCanvas of the client.
+     * 
+     * @return the GameCanvas of the client
+     */
     public GameCanvas getCanvas() {
         return gameCanvas;
     }
 
+    /**
+     * The ReadFromServer class constantly receives data from the client.
+     * This updates data accordingly.
+     */
     private class ReadFromServer implements Runnable {
         private DataInputStream dataIn;
 
+        /**
+         * Instantiates the class given a DataInputStream.
+         * 
+         * @param in the DataInputStream
+         */
         public ReadFromServer(DataInputStream in) {
             dataIn = in;
             System.out.println("RFS Runnable created");
         }
 
+        @Override
         public void run() {
             try {
                 while (true) { 
@@ -94,10 +132,10 @@ public class Player {
                         isInGame = false;
                         numOfConnectedPlayers = Integer.parseInt(serverData[1]);
 
-                    // Process In Game Data
+                    // Process In Game Data.
                     } else if (serverData[0].equals("1")) {
 
-                        // ----- Game Proper Initializations -----
+                        // Game Proper Initializations.
                         if (!isInGame) {
                             isInGame = true;
                             System.out.println("Game has started. Starting WriteToServer thread for Player " + playerID);
@@ -118,14 +156,15 @@ public class Player {
                                 String[] playerDataParts = serverData[i].split("-");
                                 int currentPlayerDataID = Integer.parseInt(playerDataParts[0]);
 
-                                // If the Player ID is NOT your own player ID then process it for the enemy
+                                // If the Player ID is NOT your own player ID then process it for the enemy.
                                 if (currentPlayerDataID != playerID) {
                                     enemy.setX(Double.parseDouble(playerDataParts[1]) - selfPlayer.getX() + selfPlayer.getScreenX()); // X
                                     enemy.setY(Double.parseDouble(playerDataParts[2]) - selfPlayer.getY() + selfPlayer.getScreenY()); // Y
                                     enemy.setSprite(
-                                        Integer.parseInt(playerDataParts[3]), // Animation Index
-                                        Integer.parseInt(playerDataParts[4]) // Last horizontally faced direction (0:LEFT; 1:RIGHT)
+                                        Integer.parseInt(playerDataParts[3]), // The animationIndex.
+                                        Integer.parseInt(playerDataParts[4]) // Last horizontally faced direction. (0:LEFT; 1:RIGHT)
                                     );
+                                  
                                     enemy.setHP(Integer.parseInt(playerDataParts[5]));
                                     enemy.setKills(Integer.parseInt(playerDataParts[6]));
                                     enemy.setDeaths(Integer.parseInt(playerDataParts[7]));
@@ -137,6 +176,7 @@ public class Player {
                                     int serverReportedHP = Integer.parseInt(playerDataParts[5]);
 
                                     int oldClientHP = selfPlayer.getPlayerHealth();
+
 
                                     // --- Position Update Logic ---
                                     // Only updates position from the server if player has died and server gave it a new position to respawn
@@ -151,13 +191,13 @@ public class Player {
                                     selfPlayer.setKills(Integer.parseInt(playerDataParts[6]));
                                     selfPlayer.setDeaths(Integer.parseInt(playerDataParts[7]));
 
-                                    if (serverReportedHP > 0) { // Player is alive according to server
-                                        if (selfPlayerIsDead) { // Client thought it was dead, but now it's alive
+                                    if (serverReportedHP > 0) { // Player is alive according to server.
+                                        if (selfPlayerIsDead) { // Client thought it was dead, but now it's alive.
                                             selfPlayerIsDead = false;
-                                            respawnRequestSent = false; // Reset flag as respawn is complete
+                                            respawnRequestSent = false; // Reset flag as respawn is complete.
                                         }
-                                    } else { // Player is dead or still dead according to server
-                                        if (!selfPlayerIsDead) { // Client thought it was alive, but server says it's dead
+                                    } else { // Player is dead or still dead according to server.
+                                        if (!selfPlayerIsDead) { // Client thought it was alive, but server says it's dead.
                                             selfPlayerIsDead = true;
                                             if (!selfPlayer.isOverridingAnimationOfType("Dying")) {
                                                 selfPlayer.overrideAnimation("Dying");
@@ -165,7 +205,7 @@ public class Player {
                                         }
                                     }
 
-                                    // Trigger "Damaged" animation if HP decreased AND player is not dead 
+                                    // Trigger "Damaged" animation if HP decreased AND player is not dead .
                                     if (serverReportedHP < oldClientHP && serverReportedHP > 0) {
                                         if (!selfPlayer.isOverridingAnimation() || selfPlayer.isOverridingAnimationOfType("Damaged")) {
                                              selfPlayer.overrideAnimation("Damaged");
@@ -174,7 +214,7 @@ public class Player {
                                 }
                             }
 
-                            // Iterate over the spells after the player positions
+                            // Iterate over the spells after the player positions.
                             gameCanvas.clearSpells();
                             
                             for (int i = numOfConnectedPlayers + 1; i < serverData.length; i++) {
@@ -187,7 +227,7 @@ public class Player {
                                 boolean alive;
 
                                 if (spellData[0].contains("_SPELL")) {
-                                    // Transform the x and the y based on the POV of the player 
+                                    // Transform the x and the y based on the POV of the player.
                                     x = Double.parseDouble(spellData[1]) - selfPlayer.getX() + selfPlayer.getScreenX();
                                     y = Double.parseDouble(spellData[2]) - selfPlayer.getY() + selfPlayer.getScreenY();
                                     dir = Direction.valueOf(spellData[3]);
@@ -234,23 +274,33 @@ public class Player {
         }
     }
 
+    /**
+     * The WriteToServer class constantly writes data from the client.
+     * This sends data constantly.
+     */
     private class WriteToServer implements Runnable {
         private DataOutputStream dataOut;
 
+        /**
+         * Instantiates the class given a DataOutputStream.
+         * 
+         * @param out the DataOutputStream
+         */
         public WriteToServer(DataOutputStream out) {
             dataOut = out;
             System.out.println("RFS Runnable created");
         }
 
+        @Override
         public void run() {
             try {
                 while (true) {
                     if (selfPlayer != null) {
                         
-                        // Basic Player info id-x-y-facing-animationIndex-lastHorizontalFacing-playerHealth
+                        // Basic Player info. Format: id-x-y-facing-animationIndex-lastHorizontalFacing-playerHealth
                         String dataString = String.format("%s ", selfPlayer.getPlayerDataString());
                     
-                        // Add spell request by the Player with base parameters
+                        // Add spell request by the Player with base parameters.
                         if (!wantsToCast.equals("")) {
                             dataString += String.format("%s-%f-%f-%s-0 ", 
                                 wantsToCast,
@@ -261,17 +311,11 @@ public class Player {
                             wantsToCast = "";
                         }
 
-                        // Send a respawn request to the server
+                        // Send a respawn request to the server.
                         if (selfPlayerIsDead && !respawnRequestSent) {
                             dataString += String.format("RESPAWN "); 
                             respawnRequestSent = true;
                         }
-                        
-                        // Position relative to game tiles as coordinates
-                        // System.out.printf("x: %f ; y: %f\n", 
-                        //     selfPlayer.getX()/GameConfig.TILE_SIZE,
-                        //     selfPlayer.getY()/GameConfig.TILE_SIZE
-                        // );
 
                         dataOut.writeUTF(dataString);
                         dataOut.flush();
@@ -288,15 +332,29 @@ public class Player {
         }
     }
 
+    /**
+     * Asks for a spell to be casts, immediately being put in the queue.
+     * 
+     * @param spellName the name of the spell to be casted
+     */
     public void requestToCast(String spellName) {
         selfPlayer.overrideAnimation("Attacking1");
         wantsToCast = spellName;
     }
 
+    /**
+     * Returns the number of connected players in the server.
+     * 
+     * @return the number of connected players in the server
+     */
     public int getNumOfConnectedPlayers() {
         return numOfConnectedPlayers;
     }
 
+    /**
+     * Returns whether or not the player is in game.
+     * @return boolean whether or not the player is in game.
+     */
     public boolean getIsInGame() {
         return isInGame;
     }

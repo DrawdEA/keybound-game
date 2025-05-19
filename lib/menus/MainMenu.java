@@ -1,3 +1,22 @@
+/**
+ * The MainMenu class is responsible for showing the main visuals of the game.
+ * It is also responsible for showing the options the player has for the game.
+ * 
+ * @author Edward Joshua M. Diesta (241571), Charles Joshua T. Uy (244644)
+ * @version May 20, 2025
+ * 
+ * We have not discussed the Java language code in our program 
+ * with anyone other than our instructor or the teaching assistants 
+ * assigned to this course.
+ * 
+ * We have not used Java language code obtained from another student, 
+ * or any other unauthorized source, either modified or unmodified.
+ * 
+ * If any Java language code or documentation used in our program 
+ * was obtained from another source, such as a textbook or website, 
+ * that has been clearly noted with a proper citation in the comments 
+ * of our program.
+ */
 package lib.menus;
 
 import java.awt.*;
@@ -9,7 +28,7 @@ import javax.swing.*;
 import lib.GameConfig;
 
 public class MainMenu extends JPanel implements ActionListener {
-    // Components
+    // Components.
     private JLabel title, names;
     private JButton onlinePlayBtn, localPlayBtn, tutorialBtn;
     private JPanel content;
@@ -20,7 +39,7 @@ public class MainMenu extends JPanel implements ActionListener {
     private final Color titleTextColor = new Color(38,43,68);
     private final Color buttonTextColor = Color.WHITE;
 
-    // Fonts
+    // Fonts.
     private Font Jacquard, Pixelify;
 
     public MainMenu() {
@@ -30,7 +49,7 @@ public class MainMenu extends JPanel implements ActionListener {
         tutorialBtn = new JButton("Tutorial");
         names = new JLabel("By: Diesta, Edward & Uy, Charles Joshua");
 
-        // Load Fonts and Bg image
+        // Load Fonts and background image.
         try {
             InputStream stream = ClassLoader.getSystemClassLoader().getResourceAsStream("resources/fonts/Jacquard12-Regular.ttf");
             Jacquard = Font.createFont(Font.TRUETYPE_FONT, stream).deriveFont(110f);
@@ -44,7 +63,7 @@ public class MainMenu extends JPanel implements ActionListener {
             System.out.println(ex);
         }
 
-        // Style components
+        // Style components.
         onlinePlayBtn.setFont(Pixelify);
         onlinePlayBtn.setBackground(buttonBg1);
         onlinePlayBtn.setForeground(buttonTextColor);
@@ -69,7 +88,7 @@ public class MainMenu extends JPanel implements ActionListener {
         buttonsPanel.setLayout(new GridLayout(4,1,0,35));
         buttonsPanel.setOpaque(false);
 
-        // ----- Styling Components ----- //
+        // Styling Components.
         title.setFont(Jacquard);
         title.setForeground(titleTextColor);
         gbc.gridx = 1;
@@ -96,17 +115,17 @@ public class MainMenu extends JPanel implements ActionListener {
         gbc.insets = new Insets(100, 0, 0, 0);
         content.add(names, gbc);
 
-        // ----- Button listeners added ---- //
+        // Button listeners added.
         onlinePlayBtn.addActionListener(this);
         localPlayBtn.addActionListener(this);
         
-        // ---- Set up frame ----- // 
+        // Set up frame.
         this.setFocusable(true);
         this.setPreferredSize(new Dimension(GameConfig.SCREEN_LENGTH, GameConfig.SCREEN_HEIGHT));
         this.requestFocusInWindow();
         this.setLayout(new BorderLayout());
 
-        // ----- Add components ----- //
+        // Add components.
         this.add(content, BorderLayout.CENTER);
     }
 
@@ -134,8 +153,6 @@ public class MainMenu extends JPanel implements ActionListener {
             mainFrame.repaint();
         } else if (e.getSource() == tutorialBtn) {
             mainFrame.remove(this);
-            //  mainFrame.add(new TutorialScreen());
-
             mainFrame.revalidate();
             mainFrame.repaint();
         } 

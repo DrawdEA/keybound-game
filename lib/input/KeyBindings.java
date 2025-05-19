@@ -1,6 +1,21 @@
 /**
  * The KeyBindings class deals with the player key bindings, as well as the consequences of doing such bindings. 
  * This class and its functionality is separated from the GameCanvas class to remove code bloat.
+ * 
+ * @author Edward Joshua M. Diesta (241571), Charles Joshua T. Uy (244644)
+ * @version May 20, 2025
+ * 
+ * We have not discussed the Java language code in our program 
+ * with anyone other than our instructor or the teaching assistants 
+ * assigned to this course.
+ * 
+ * We have not used Java language code obtained from another student, 
+ * or any other unauthorized source, either modified or unmodified.
+ * 
+ * If any Java language code or documentation used in our program 
+ * was obtained from another source, such as a textbook or website, 
+ * that has been clearly noted with a proper citation in the comments 
+ * of our program.
  */
 package lib.input;
 
@@ -37,7 +52,7 @@ public class KeyBindings {
         InputMap inputMap = gc.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
         ActionMap actionMap = gc.getActionMap();
 
-        // Bind movement keys
+        // Bind movement keys.
         inputMap.put(KeyStroke.getKeyStroke("UP"), "moveUp");
         inputMap.put(KeyStroke.getKeyStroke("DOWN"), "moveDown");
         inputMap.put(KeyStroke.getKeyStroke("LEFT"), "moveLeft");
@@ -47,12 +62,12 @@ public class KeyBindings {
         inputMap.put(KeyStroke.getKeyStroke("released LEFT"), "stopLeft");
         inputMap.put(KeyStroke.getKeyStroke("released RIGHT"), "stopRight");
 
-        // Bind letter keys
+        // Bind letter keys.
         for (int keyCode = KeyEvent.VK_A; keyCode <= KeyEvent.VK_Z; keyCode++){
             inputMap.put(KeyStroke.getKeyStroke(keyCode, 0, false), "press" + (char) keyCode);
             inputMap.put(KeyStroke.getKeyStroke(keyCode, 0, true), "release" + (char) keyCode);
 
-            final int temp = keyCode - 65; // ASCII value of VK_A = 65
+            final int temp = keyCode - 65; // ASCII value of VK_A = 65.
             actionMap.put("press" + (char) keyCode, new AbstractAction() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -66,7 +81,7 @@ public class KeyBindings {
                 }
             });
         }
-
+      
         // Bind tab as scoreboard
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_TAB, 0, false), "showScoreboard");
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_TAB, 0, true), "hideScoreboard");
@@ -82,7 +97,7 @@ public class KeyBindings {
                 showScoreboard = false;
             }
         });
-
+        
         // Define movement actions
         actionMap.put("moveUp", new AbstractAction() {
             @Override
@@ -152,6 +167,11 @@ public class KeyBindings {
         }
     }
 
+    /**
+     * Gets the current action of the player depending on their current keybinds.
+     * 
+     * @return the current action of the player
+     */
     public String getPlayerAction() {
         if (getPlayerDirection() != "None") {
             return "Running";
@@ -166,16 +186,18 @@ public class KeyBindings {
         }
     }
 
+    /**
+     * Gets the direction of the player depending on what they are pressing for movement.
+     * 
+     * @return a string of the one or two directions they are moving in
+     */
     public String getPlayerDirection() {
         // Calculate the total number of active directions
         int activeCount = (up ? 1 : 0) + (down ? 1 : 0) + (left ? 1 : 0) + (right ? 1 : 0);
 
-        // Rule 5 & 4: If three or more directions are active, or opposites are active, cancel
-        if (activeCount >= 3 || (up && down) || (left && right)) {
+        if (activeCount >= 3 || (up && down) || (left && right)) { // If three or more directions are active, or opposites are active, cancel.
             return "None";
-        }
-        // Rule 3: Check for adjacent two-direction combinations (Vertical then Horizontal)
-        else if (up && left) {
+        } else if (up && left) {
             return "Up Left";
         } else if (up && right) {
             return "Up Right";
@@ -183,9 +205,7 @@ public class KeyBindings {
             return "Down Left";
         } else if (down && right) {
             return "Down Right";
-        }
-        // Rule 2: Check for single directions
-        else if (left) {
+        } else if (left) {
             return "Left";
         } else if (right) {
             return "Right";
@@ -193,13 +213,18 @@ public class KeyBindings {
             return "Up";
         } else if (down) {
             return "Down";
-        }
-        // Rule 1: If none of the above, no directions are active
-        else {
+        } else {
             return "None";
         }
     }
 
+    /**
+     * Moves the player depending on their direction and of there is no collisions happening.
+     * These feature balanced diagonal movement as well.
+     * 
+     * @param cm the CollisionManager of the client
+     * @param player the PlayerObject of the client
+     */
     public void movePlayer(CollisionManager cm, PlayerObject player) {
         String direction = getPlayerDirection();
 
@@ -211,7 +236,7 @@ public class KeyBindings {
                 updatePlayerPosition(player, GameConfig.PLAYER_SPEED * 0.7, "Right");
             }
         } else if (direction == "Up Left") {
-            // Handle Up Left diagonal movement
+            // Handle Up Left diagonal movement.
             if (!cm.checkWorldCollision(player, "Up")) {
                 updatePlayerPosition(player, GameConfig.PLAYER_SPEED * 0.7, "Up");
             }
@@ -219,7 +244,7 @@ public class KeyBindings {
                 updatePlayerPosition(player, GameConfig.PLAYER_SPEED * 0.7, "Left");
             }
         } else if (direction == "Down Right") {
-            // Handle Down Right diagonal movement
+            // Handle Down Right diagonal movement.
              if (!cm.checkWorldCollision(player, "Down")) {
                 updatePlayerPosition(player, GameConfig.PLAYER_SPEED * 0.7, "Down");
             }
@@ -227,7 +252,7 @@ public class KeyBindings {
                 updatePlayerPosition(player, GameConfig.PLAYER_SPEED * 0.7, "Right");
             }
         } else if (direction == "Down Left") {
-            // Handle Down Left diagonal movement
+            // Handle Down Left diagonal movement.
              if (!cm.checkWorldCollision(player, "Down")) {
                 updatePlayerPosition(player, GameConfig.PLAYER_SPEED * 0.7, "Down");
             }
@@ -235,22 +260,22 @@ public class KeyBindings {
                 updatePlayerPosition(player, GameConfig.PLAYER_SPEED * 0.7, "Left");
             }
         } else if (direction == "Up") {
-            // Handle Up single movement
+            // Handle Up single movement.
             if (!cm.checkWorldCollision(player, "Up")) {
                 updatePlayerPosition(player, GameConfig.PLAYER_SPEED, "Up");
             }
         } else if (direction == "Down") {
-            // Handle Down single movement
+            // Handle Down single movement.
              if (!cm.checkWorldCollision(player, "Down")) {
                 updatePlayerPosition(player, GameConfig.PLAYER_SPEED, "Down");
             }
         } else if (direction == "Left") {
-            // Handle Left single movement
+            // Handle Left single movement.
              if (!cm.checkWorldCollision(player, "Left")) {
                 updatePlayerPosition(player, GameConfig.PLAYER_SPEED, "Left");
             }
         } else if (direction == "Right") {
-            // Handle Right single movement
+            // Handle Right single movement.
              if (!cm.checkWorldCollision(player, "Right")) {
                 updatePlayerPosition(player, GameConfig.PLAYER_SPEED, "Right");
             }
@@ -258,7 +283,7 @@ public class KeyBindings {
     }
 
     /**
-     * Casts the spell of a player if they press down the right combination of keys
+     * Casts the spell of a player if they press down the right combination of keys.
      * 
      * @param player the player that casts the spell
      */
@@ -289,9 +314,9 @@ public class KeyBindings {
     }
 
     /**
-     * A helper function that return true or false if all the letters in a given string are known to be pressed down
+     * A helper function that return true or false if all the letters in a given string are known to be pressed down.
      * 
-     * @param checkString 
+     * @param checkString the string to be checked
      */
     public boolean isStringPressedDown(String checkString) {
         // Build a boolean array for the spell
@@ -310,12 +335,22 @@ public class KeyBindings {
         return true;
     }
 
+    /**
+     * Removes all letters in the spell.
+     * 
+     * @param spell the letters in the spell
+     */
     private void resetLetters(String spell) {
         for (int i = 0; i < spell.length(); i++) {
             letters[spell.charAt(i) - 97] = false;
         }
     }
 
+    /**
+     * Returns the letters the player is currently typing.
+     * 
+     * @return the letters the player is currently typing
+     */
     public String getLetters() {
         String outputString = "";
 

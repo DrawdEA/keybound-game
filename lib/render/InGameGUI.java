@@ -1,3 +1,22 @@
+/**
+ * The InGameGUI is responsible for the GUI of the player once he is playing the game.
+ * These feature the health of the player, the game's timer, and the spells that he currently possess.
+ * 
+ * @author Edward Joshua M. Diesta (241571), Charles Joshua T. Uy (244644)
+ * @version May 20, 2025
+ * 
+ * We have not discussed the Java language code in our program 
+ * with anyone other than our instructor or the teaching assistants 
+ * assigned to this course.
+ * 
+ * We have not used Java language code obtained from another student, 
+ * or any other unauthorized source, either modified or unmodified.
+ * 
+ * If any Java language code or documentation used in our program 
+ * was obtained from another source, such as a textbook or website, 
+ * that has been clearly noted with a proper citation in the comments 
+ * of our program.
+ */
 package lib.render;
 
 import java.awt.*;
@@ -17,7 +36,11 @@ public class InGameGUI {
     private KeyBindings keyBindings;
     private PlayerObject player;
 
-    // Initializes a game GUI.
+    /**
+     * Initializes the GUI.
+     * 
+     * @param kb the KeyBindings of the client
+     */
     public InGameGUI(KeyBindings kb) {
         try {
             keyBindings = kb;
@@ -38,12 +61,20 @@ public class InGameGUI {
         }
     }
 
-    // Sets up the player.
+    /**
+     * Sets up the player.
+     * 
+     * @param p the PlayerObject of the client
+     */
     public void updatePlayerObject(PlayerObject p) {
         player = p;
     }
     
-    // Renders the GUI for the player.
+    /**
+     * // Renders the GUI for the player.
+     * 
+     * @param g2d the Graphics2D of GameCanvas
+     */
     public void renderGUI(Graphics2D g2d) {
         // Render the main GUI.
         for (int i = 0; i < 3; i++) {
