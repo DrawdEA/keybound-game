@@ -1,27 +1,21 @@
 /**
  * The Environment class is responsible for generating the environment that the player is walking in.
- * This includes generating the map through a .txt file, and loading in the tiles and setting their collisions.
+ * This includes generating the map through a .txt file, and loading in the tiles and setting their collisions booleans.
  * 
- * The values of the tiles are as follows:
- * 0 - Grass Tile
- * 1 - Water Tile
- * 2 - Upper Left Corner Grass-Path Tile
- * 3 - Top Edge Grass-Path Tile
- * 4 - Upper Right Corner Grass-Path Tile
- * 5 - Left Edge Grass-Path Tile
- * 6 - Path Tile
- * 7 - Right Edge Grass-Path Tile
- * 8 - Lower Left Corner Grass-Path Tile
- * 9 - Bottom Edge Grass-Path Tile
- * 10 - Lower Right Corner Grass-Path Tile
- * 11 - Upper Left Outside Corner Grass-Path Tile
- * 12 - Upper Right Outside Corner Grass-Path Tile
- * 13 - Lower Left Outside Corner Grass-Path Tile
- * 14 - Lower Right Outside Corner Grass-Path Tile
- * 15 - Path Footprints 1
- * 16 - Path Footprints 2
- * 17 - Path Footprints 3
- * TODO: update list
+ * @author Edward Joshua M. Diesta (241571), Charles Joshua T. Uy (244644)
+ * @version May 20, 2025
+ * 
+ * We have not discussed the Java language code in our program 
+ * with anyone other than our instructor or the teaching assistants 
+ * assigned to this course.
+ * 
+ * We have not used Java language code obtained from another student, 
+ * or any other unauthorized source, either modified or unmodified.
+ * 
+ * If any Java language code or documentation used in our program 
+ * was obtained from another source, such as a textbook or website, 
+ * that has been clearly noted with a proper citation in the comments 
+ * of our program.
  */
 package lib.objects;
 
@@ -42,6 +36,7 @@ public class Environment extends GameObject {
      * 
      * @param x x position of the map
      * @param y y position of the map
+     * @param gc the GameCanvas of the client
      */
     public Environment(int x, int y, GameCanvas gc) {
         super("ENVIRONMENT", x, y, 0, 0);
@@ -60,12 +55,12 @@ public class Environment extends GameObject {
                 String line = br.readLine();
                 
                 String numbers[] = line.split(" ");
-                //System.out.printf("GENERATING MAP, AMOUNT OF TILES: %d\n",numbers.length);
 
                 for (int i = 0; i < GameConfig.MAX_WORLD_COLUMNS; i++) {
                     mapNumbers[i][j] = Integer.parseInt(numbers[i]);
                 }
             }
+
             System.out.println("SETUP DONE");
             br.close();
         } catch(IOException e) {
@@ -299,27 +294,39 @@ public class Environment extends GameObject {
         }
     }
 
+    /**
+     * The Tile class holds the data for individual tile.
+     * These include their sprites, and whether or not they can collide with the player.
+     */
     public class Tile {
         public BufferedImage image;
         public boolean canCollide = true;
     }
 
+    /**
+     * Returns a 2D array of the numbers of the map containing the tile sprite.
+     * 
+     * @return the 2D array of the numbers of the map
+     */
     public int[][] getMapNumbers() {
         return mapNumbers;
     }
 
+    /**
+     * Returns an array of the tiles. 
+     * 
+     * @return an array of the tiles
+     */
     public Tile[] getTiles() {
         return tiles;
     }
 
     @Override
     public void drawSprite(Graphics2D g2d) {
-        
-
         for (int i = 0; i < GameConfig.MAX_WORLD_COLUMNS; i++) {
             for (int j = 0; j < GameConfig.MAX_WORLD_ROWS; j++) {
 
-                // Generate the new camera-centric position.
+                // Generate the camera-centric position.
                 double worldX = i * GameConfig.TILE_SIZE;
                 double worldY = j * GameConfig.TILE_SIZE;
                 PlayerObject player = gameCanvas.getOwnPlayer();
@@ -331,10 +338,8 @@ public class Environment extends GameObject {
                     worldX - GameConfig.TILE_SIZE * 4 < player.getX() + player.getScreenX() &&
                     worldY + GameConfig.TILE_SIZE * 2 > player.getY() - player.getScreenY() &&
                     worldY - GameConfig.TILE_SIZE * 2 < player.getY() + player.getScreenY()) {
-                        g2d.drawImage(tiles[mapNumbers[i][j]].image, (int) screenX, (int) screenY, GameConfig.TILE_SIZE, GameConfig.TILE_SIZE, null);
-                    }
-                
-                
+                    g2d.drawImage(tiles[mapNumbers[i][j]].image, (int) screenX, (int) screenY, GameConfig.TILE_SIZE, GameConfig.TILE_SIZE, null);
+                }
             }
         }
     }

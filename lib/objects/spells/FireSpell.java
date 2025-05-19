@@ -1,3 +1,22 @@
+/**
+ * The FireSpell class is a spell in the game.
+ * It spawns a fireball that explodes on impact.
+ * 
+ * @author Edward Joshua M. Diesta (241571), Charles Joshua T. Uy (244644)
+ * @version May 20, 2025
+ * 
+ * We have not discussed the Java language code in our program 
+ * with anyone other than our instructor or the teaching assistants 
+ * assigned to this course.
+ * 
+ * We have not used Java language code obtained from another student, 
+ * or any other unauthorized source, either modified or unmodified.
+ * 
+ * If any Java language code or documentation used in our program 
+ * was obtained from another source, such as a textbook or website, 
+ * that has been clearly noted with a proper citation in the comments 
+ * of our program.
+ */
 package lib.objects.spells;
 
 import java.awt.*;
@@ -10,9 +29,7 @@ import lib.render.CollisionManager;
 import lib.render.Direction;
 
 public class FireSpell extends Spell {
-    // Notice that SPEED * maxAgeInTicks is the distance the fireball can travel
     private final double SPEED = 7;
-    private final Color COLOR = Color.RED;
     private final int TILE = GameConfig.TILE_SIZE;
 
     private double x, y;
@@ -43,44 +60,9 @@ public class FireSpell extends Spell {
     private static BufferedImage[] fireballDown;
     private static BufferedImage[] impactDown;
 
-    public FireSpell(int casterId, double x, double y, Direction dir, int aC, boolean f) {
-        super("FIRE_SPELL", casterId, x, y, 50, 25, dir);
-        this.dir = dir;
-        expired = false;
-        id = casterId;
-        finished = f;
-
-        this.x = x;
-        this.y = y;
-        
-        // Adjust to the spell to the right edge
-        if (dir == Direction.UP){
-            //this.x = x + TILE - 8;
-            //this.y = y;
-            width = 25;
-            height = 50;
-            hitbox = new Rectangle((int) (x - 5 + TILE - 8), (int) y, width, height);
-        } else if (dir == Direction.DOWN){
-            //this.x = x + TILE - 8;
-            //this.y = y + TILE;
-            width = 25;
-            height = 50;
-            hitbox = new Rectangle((int) (x - 5 + TILE - 8), (int) (y + TILE), width, height);
-        } else if (dir == Direction.LEFT){
-            //this.x = x;
-            //this.y = y + TILE * 0.75 - 25/2;
-            hitbox = new Rectangle((int) x - 5, (int) (y + TILE * 0.75 - 25/2), width, height);
-        } else if (dir == Direction.RIGHT){
-            //this.x = x + TILE * 2 - 25/2;
-            //this.y = y + TILE * 0.75 - 25/2;
-            hitbox = new Rectangle((int) (x - 5 + TILE * 2 - 25/2), (int) (y + TILE * 0.75 - 25/2), width, height);
-        }
-
-        //hitbox = new Rectangle((int) x - 5, (int) y, width, height);
-
-        animationCounter = aC;
-    }
-
+    /**
+     * Initializes the sprites of the class for faster loading.
+     */
     public static void initializeSprites() {
         fireball = new BufferedImage[4];
         impact = new BufferedImage[6];
@@ -156,6 +138,46 @@ public class FireSpell extends Spell {
         }
     }
 
+    /**
+     * Instantiates the fire spell.
+     * 
+     * @param casterId the id of the caster
+     * @param x the x-value position of the spell
+     * @param y the y-value position of the spell
+     * @param dir the direction of the spell
+     * @param aC the animationCounter of the spell
+     * @param f a boolean whether the fireball has exploded or not
+     */
+    public FireSpell(int casterId, double x, double y, Direction dir, int aC, boolean f) {
+        super("FIRE_SPELL", casterId, x, y, 50, 25, dir);
+        this.dir = dir;
+        expired = false;
+        id = casterId;
+        finished = f;
+
+        this.x = x;
+        this.y = y;
+        
+        // Adjust to the spell to the right edge
+        if (dir == Direction.UP){
+            width = 25;
+            height = 50;
+            hitbox = new Rectangle((int) (x - 5 + TILE - 8), (int) y, width, height);
+        } else if (dir == Direction.DOWN){
+            width = 25;
+            height = 50;
+            hitbox = new Rectangle((int) (x - 5 + TILE - 8), (int) (y + TILE), width, height);
+        } else if (dir == Direction.LEFT){
+            hitbox = new Rectangle((int) x - 5, (int) (y + TILE * 0.75 - 25/2), width, height);
+        } else if (dir == Direction.RIGHT){
+            hitbox = new Rectangle((int) (x - 5 + TILE * 2 - 25/2), (int) (y + TILE * 0.75 - 25/2), width, height);
+        }
+
+        //hitbox = new Rectangle((int) x - 5, (int) y, width, height);
+
+        animationCounter = aC;
+    }
+
     public String getDataString() {
         String spellString = "";
         spellString += String.format("FIRE_SPELL-%f-%f-%s-%d-%d-%s", x, y, dir.toString(), casterId, animationCounter, finished);
@@ -163,7 +185,7 @@ public class FireSpell extends Spell {
     }
 
     public void update() {
-        // Move the fire ball in the direction the player is facing
+        // Move the fire ball in the direction the player is facing.
         if (!finished) {
             if (dir == Direction.UP){
                 y -= SPEED;
@@ -176,13 +198,11 @@ public class FireSpell extends Spell {
             }
         }
         
-
         // Set the spell to expire if it's too old or if the explosion animation has finished.
         currAgeInTicks++;
         if((currAgeInTicks == maxAgeInTicks) || (finished && animationCounter >= 20)) {
             expired = true;
         }
-
         animationCounter++;
 
         // Hitboxing.
@@ -209,14 +229,12 @@ public class FireSpell extends Spell {
             finished = true;
             animationCounter = 0;
 
-            // System.out.println("FIRE HIT!");
             return playerHit.getId();
         } else {
             return 0;
         }
     }
 
-    
     @Override
     public void drawSprite(Graphics2D g2d) {
         if (dir == Direction.LEFT) {
@@ -252,10 +270,5 @@ public class FireSpell extends Spell {
                 g2d.drawImage(fireball[currentFrame], (int) x - 48 + 52, (int) (y - 48 + TILE * 0.75 - 25/2), 96, 96, null);
             }
         }
-        
-
-        // Hitboxing.
-        // g2d.setColor(COLOR);
-        // g2d.draw(hitbox);
     }
 }
