@@ -398,7 +398,7 @@ public class GameServer {
 
                     // Sending In Game Data.
                     } else {
-                        String gameStateData = "1 ";
+                        String gameStateData = String.format("1-10 ");
 
                         // Add all player data in order.
                         for (int i = 0; i < numOfPlayers; i++) {
@@ -482,7 +482,14 @@ public class GameServer {
     }
 
     /**
-     * Creates the game loop of the game.
+     * Handles ending the game and showing the final stats to the player.
+     */
+    private void endGame() {
+
+    }
+
+    /**
+     * Creates the game loop.
      */
     public void startGameLoop() {
         Thread gameLoop = new Thread(() -> {
@@ -495,7 +502,7 @@ public class GameServer {
                     if (resultOfCollisionCheck != 0){
                         playerData.get(resultOfCollisionCheck-1)[4] -= 1; // Decrease player hit HP.
                         
-                        // If Player died (hp = 0)
+                        // If Player died. (hp = 0)
                         if (playerData.get(resultOfCollisionCheck-1)[4] <= 0) { 
                             playerData.get(spell.getCasterId()-1)[5] += 1; // Increase kill count of caster.
                             playerData.get(resultOfCollisionCheck-1)[6] += 1; // Increment death count of dying player.
@@ -516,5 +523,24 @@ public class GameServer {
 
         gameLoop.setDaemon(true);
         gameLoop.start();
+
+        Thread gameTimer = new Thread(() -> {
+            int time = 0;
+
+            while (time <= GameConfig.GAME_DURATION) {
+                try {
+                    Thread.sleep(1000);
+                    time++;
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            // End the game after the timer is done.
+            endGame();
+        });
+        gameTimer.setDaemon(true);
+        gameTimer.start();
+
     }
 }

@@ -54,6 +54,10 @@ public class PlayerObject extends GameObject {
     private long lastDamagedTime;
     private int playerHealth, playerDeaths, playerKills;
 
+    // Invulnerability frames.
+    private int iframeCounter;
+    private boolean isFlickering;
+
     /**
      * Instantiates a player in the game.
      * 
@@ -94,6 +98,10 @@ public class PlayerObject extends GameObject {
         // Generate the sprites.
         playerSprites = new BufferedImage[53];
         playerSpritesLeft = new BufferedImage[53];
+
+        // Set up invulnerability frames.
+        iframeCounter = 0;
+        isFlickering = false;
 
         try {
             BufferedImage playerMovements = ImageIO.read(getClass().getResourceAsStream(String.format("/resources/player/%s.png", colorPaths[id - 1])));
@@ -307,11 +315,28 @@ public class PlayerObject extends GameObject {
             overridingIndex = 16;
         } else if (animationType.equals("Attacking2")) {
             overridingIndex = 32;
-        } else if (animationType.equals("Damaged")) {
+        } else if (animationType.equals("Damaged")) { // Handle iframes in this section too.
             overridingIndex = 40;
+            flickerPlayer();
         } else if (animationType.equals("Dying")) {
             overridingIndex = 45;
         }
+    }
+
+    /**
+     * Flickers the player.
+     */
+    private void flickerPlayer() {
+        isFlickering = true;
+        Thread thread = new Thread(() -> {
+            try {
+                Thread.sleep(2000);
+                isFlickering = false;
+            } catch (InterruptedException e) {
+                System.out.println("Thread was interrupted.");
+            }
+        });
+        thread.start();
     }
 
     /**
@@ -366,9 +391,9 @@ public class PlayerObject extends GameObject {
 
                 int totalFramesInThisOverride = 0;
 
-                if (overridingIndex == 40) { // Damaged animation only has 5 frames
+                if (overridingIndex == 40) { // Damaged animation only has 5 frames.
                     totalFramesInThisOverride = 5;
-                } else { // All other animations have 8
+                } else { // All other animations have 8.
                     totalFramesInThisOverride = 8;
                 }
 
@@ -425,7 +450,7 @@ public class PlayerObject extends GameObject {
      * 
      * @return the player data string to be parsed
      */
-    public String getPlayerDataString(){
+    public String getPlayerDataString() {
         return String.format("%d-%f-%f-%s-%d-%s", 
             id, 
             x, 
@@ -444,7 +469,7 @@ public class PlayerObject extends GameObject {
      */
     public boolean isDamageable() {
         long elapsedTimeSinceLastDamage = (System.currentTimeMillis() - lastDamagedTime) / 1000;
-        if (elapsedTimeSinceLastDamage >= 1) {
+        if (elapsedTimeSinceLastDamage >= 2) {
             lastDamagedTime = System.currentTimeMillis();
             return true;
         } else {
@@ -477,7 +502,7 @@ public class PlayerObject extends GameObject {
      * 
      * @param newhp the new HP of the player.
      */
-    public void setHP(int newhp){
+    public void setHP(int newhp) {
         playerHealth = newhp;
     }
 
@@ -530,11 +555,19 @@ public class PlayerObject extends GameObject {
             lastHorizontalFacing = Direction.RIGHT;
         }
         this.animationIndex = animationIndex; 
+
+        if (!isFlickering && animationIndex >= 40 && animationIndex < 45) {
+            flickerPlayer();
+        }
     }
 
-    @Override
-    public void drawSprite(Graphics2D g2d) {
-        // Draw the player's shadow.
+
+    /**
+     * Private helper function to draw the player.
+     * 
+     * @param g2d the Graphics2D of the GameCanvas
+     */
+    private void drawPlayer(Graphics2D g2d) {
         Composite originalComposite = g2d.getComposite();
         AlphaComposite alphaComposite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.2f);
         g2d.setComposite(alphaComposite);
@@ -557,6 +590,26 @@ public class PlayerObject extends GameObject {
                 g2d.drawImage(playerSprites[animationIndex], (int) screenX, (int) screenY, GameConfig.TILE_SIZE * 4, GameConfig.TILE_SIZE * 2, null);
             } else {
                 g2d.drawImage(playerSprites[animationIndex], (int) x, (int) y, GameConfig.TILE_SIZE * 4, GameConfig.TILE_SIZE * 2, null);
+            }
+        }
+    }
+
+    @Override
+    public void drawSprite(Graphics2D g2d) {
+        // Update iframeCounter.
+        if (iframeCounter == 40) {
+            iframeCounter = 0;
+        } else {
+            iframeCounter++;
+        }
+
+        
+        
+        if (!isFlickering) {
+            drawPlayer(g2d);
+        } else {
+            if (iframeCounter >= 25 && iframeCounter <= 40) {
+                drawPlayer(g2d);
             }
         }
 

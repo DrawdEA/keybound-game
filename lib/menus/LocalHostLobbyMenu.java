@@ -28,6 +28,7 @@ import java.net.InetAddress;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import lib.GameConfig;
+import lib.Sound;
 import lib.network.*;
 
 public class LocalHostLobbyMenu extends JPanel implements ActionListener {
@@ -225,6 +226,15 @@ public class LocalHostLobbyMenu extends JPanel implements ActionListener {
         // Add components.
         this.add(content, BorderLayout.CENTER);
 
+        // Add hover feedback.
+        startBtn.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                Sound hoverSound = new Sound(1);
+                hoverSound.play();
+            }
+        });
+
 
         /**
          * Server Thread.
@@ -309,6 +319,9 @@ public class LocalHostLobbyMenu extends JPanel implements ActionListener {
         JPanel mainFrame = (JPanel) this.getParent();
         
         if (e.getSource() == backBtn) {
+            Sound openSound = new Sound(2);
+            openSound.play();
+
             gs.closeConnections();
             mainFrame.remove(this);
             mainFrame.repaint();
@@ -316,6 +329,9 @@ public class LocalHostLobbyMenu extends JPanel implements ActionListener {
             mainFrame.revalidate();
             mainFrame.repaint();
         } else if (e.getSource() == startBtn) {
+            Sound openSound = new Sound(0);
+            openSound.play();
+
             gs.startGame();
             mainFrame.remove(this);
             mainFrame.repaint();

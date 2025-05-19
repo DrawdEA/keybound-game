@@ -34,3 +34,6 @@ BG images
 https://craftpix.net/freebies/free-nature-backgrounds-pixel-art/
 https://stackoverflow.com/questions/22162398/how-to-set-a-background-picture-in-jpanel
 https://stackoverflow.com/questions/2966334/how-do-i-set-the-colour-of-a-label-coloured-text-in-java
+
+Sound effects
+https://terraria.wiki.gg/wiki/Sound_IDs
