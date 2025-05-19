@@ -32,7 +32,7 @@ import lib.render.Direction;
 public class GameServer {
     private ServerSocket ss;
     private int numOfPlayers;
-    private boolean isGameStarted;
+    private boolean isGameStarted, isGameRunning;
     private Random random;
 
     private ReadFromClient p1ReadRunnable, p2ReadRunnable;
@@ -44,6 +44,7 @@ public class GameServer {
     private CollisionManager collisionManager;
 
     private int time;
+    private Thread gameLoop, gameTimer;
 
     /**
      * Instantiates the server and initializes server resources.
@@ -52,6 +53,7 @@ public class GameServer {
         System.out.println("==== GAME SERVER ====");
         numOfPlayers = 0;
         isGameStarted = false;
+        isGameRunning = false;
         random = new Random();
  
         /**
@@ -154,6 +156,7 @@ public class GameServer {
      */
     public void startGame() {
         isGameStarted = true;
+        isGameRunning = true;
         startGameLoop();
 
         System.out.println("Started the Game Successfully");
@@ -205,7 +208,7 @@ public class GameServer {
         @Override
         public void run() {
             try {
-                while (true) {
+                while (isGameRunning || !isGameStarted) {
                     String dataRaw = dataIn.readUTF();
 
                     // Split data into their properties.
@@ -381,7 +384,7 @@ public class GameServer {
         @Override
         public void run() {
             try {
-                while (true) {
+                while (isGameRunning || !isGameStarted) {
                     /*
                         Data formatting:
                         All first level properties of data is separated by a space " "
@@ -415,6 +418,10 @@ public class GameServer {
 
                     // Sending In Game Data.
                     } else {
+                        if (!isGameRunning && isGameStarted) { // Game ended, stop sending game data
+                             System.out.println("WTC" + playerID + ": Game has ended, stopping data send.");
+                             break;
+                        }
                         String gameStateData = String.format("1-%d ", time);
 
                         // Add all player data in order.
@@ -502,15 +509,30 @@ public class GameServer {
      * Handles ending the game and showing the final stats to the player.
      */
     private void endGame() {
-        System.out.println("END GAME");
+        isGameRunning = false;
+        System.out.println("ENDING GAME");
+
+        // Interrupt main game threads
+        if (gameLoop != null && gameLoop.isAlive()) {
+            System.out.println("Interrupting game loop thread.");
+            gameLoop.interrupt();
+        }
+        if (gameTimer != null && gameTimer.isAlive()) {
+            System.out.println("Interrupting game timer thread.");
+            gameTimer.interrupt();
+        }
+
+        System.out.println("Calling closeConnections() from endGame.");
+        closeConnections();
+        System.out.println("Game server shutdown process complete.");
     }
 
     /**
      * Creates the game loop.
      */
     public void startGameLoop() {
-        Thread gameLoop = new Thread(() -> {
-            while (true) {
+        gameLoop = new Thread(() -> {
+            while (isGameRunning) {
                 // Update all spells.
                 for (Spell spell : activeSpells) {
                     spell.update();
@@ -533,19 +555,19 @@ public class GameServer {
                 try {
                     Thread.sleep(12);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    System.out.println("Game Loop has been interrupted");
                 }
             }
         });
         gameLoop.start();
 
-        Thread gameTimer = new Thread(() -> {
-            while (time >= 0) {
+        gameTimer = new Thread(() -> {
+            while (time >= 0 && isGameRunning) {
                 try {
                     Thread.sleep(1000);
                     time = time - 1;
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    System.out.println("Game Timer has been interrupted");
                 }
             }
 

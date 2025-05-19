@@ -32,11 +32,12 @@ import javax.swing.*;
 import javax.swing.Timer;
 import lib.*;
 import lib.input.*;
+import lib.menus.MainMenu;
 import lib.network.Player;
 import lib.objects.*;
 import lib.objects.spells.*;
 
-public class GameCanvas extends JComponent {
+public class GameCanvas extends JComponent implements ActionListener{
     // Game objects.
     private ArrayList<GameObject> gameObjects;
     private ArrayList<Spell> spells;
@@ -47,7 +48,13 @@ public class GameCanvas extends JComponent {
     // The Game GUI.
     private InGameGUI gui;
 
+    // End Game Return Button
+    private JButton backToMainBtn;
+    private final Color buttonBg1 = new Color(58,68,102);
+    private final Color buttonTextColor = Color.WHITE;
+
     // Miscellaneous.
+    private boolean gameHasEnded;
     private Timer animationTimer;
     private KeyBindings keyBindings;
     private CollisionManager collisionManager;
@@ -69,7 +76,8 @@ public class GameCanvas extends JComponent {
         
         // Initialize object to hold all gameObjects.
         gameObjects = new ArrayList<>();
-        spells = new ArrayList<>();       
+        spells = new ArrayList<>();
+        gameHasEnded = false;       
         
         // Load Fonts and Bg image
         try {
@@ -81,6 +89,23 @@ public class GameCanvas extends JComponent {
         } catch (Exception ex) {
             System.out.println(ex);
         }
+
+        // Initialize return button
+        this.setLayout(null);
+        backToMainBtn = new JButton("DONE");
+        backToMainBtn.setFont(Pixelify.deriveFont(30f));
+        backToMainBtn.setBackground(buttonBg1);
+        backToMainBtn.setForeground(buttonTextColor);
+        backToMainBtn.setFocusable(false);
+        backToMainBtn.setBounds(            
+            (int) (GameConfig.SCREEN_LENGTH * 0.4), 
+            (int) (GameConfig.SCREEN_HEIGHT * 0.675), 
+            (int) (GameConfig.SCREEN_LENGTH * 0.2), 
+            (int) (GameConfig.SCREEN_HEIGHT * 0.1)
+        );
+        backToMainBtn.addActionListener(this);
+        backToMainBtn.setVisible(false); // Initially hidden then unhide at end of game
+        this.add(backToMainBtn);
     }
 
     /**
@@ -181,9 +206,21 @@ public class GameCanvas extends JComponent {
         spells.add(spell);
     }
 
+    /**
+     * Updates the game canvas' game timer  
+     * 
+     * @param seconds left for the game from the server
+     */
     public void updateGameTimer(int seconds) {
         if (gui != null) {
             gui.setGameTimer(seconds);
+
+            if (seconds == 0) {
+                gameHasEnded = true;
+                backToMainBtn.setVisible(true);
+                this.revalidate();
+                this.repaint();
+            }
         }
     }
 
@@ -226,7 +263,7 @@ public class GameCanvas extends JComponent {
       
         // Show the scoreboard if the player is pressing tab
         if (self != null && enemy != null) {
-            if (keyBindings.isScoreBoardAsked()) {
+            if (keyBindings.isScoreBoardAsked() || gameHasEnded) {
                 
                 // Background
                 g2d.setColor(new Color(234, 212, 170, 200));
@@ -240,8 +277,8 @@ public class GameCanvas extends JComponent {
                 // Title
                 g2d.setColor(new Color(30, 30, 30, 200));
                 g2d.setFont(Jacquard);
-                g2d.drawString("Leaderbound", (int) (GameConfig.SCREEN_LENGTH * 0.265), (int) (GameConfig.SCREEN_LENGTH * 0.25));
-
+                g2d.drawString("Score Board", (int) (GameConfig.SCREEN_LENGTH * 0.265), (int) (GameConfig.SCREEN_LENGTH * 0.25));
+                
                 // Header
                 g2d.setFont(Pixelify);
                 g2d.drawString("Player", (int) (GameConfig.SCREEN_LENGTH * 0.25), (int) (GameConfig.SCREEN_LENGTH * 0.3));
@@ -298,6 +335,22 @@ public class GameCanvas extends JComponent {
                 }
 
             }
+        }
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        JPanel mainFrame = (JPanel) this.getParent();
+        
+        if (e.getSource() == backToMainBtn) {
+            Sound openSound = new Sound(2);
+            openSound.play();
+
+            mainFrame.remove(this);
+            mainFrame.repaint();
+            mainFrame.add(new MainMenu(), BorderLayout.CENTER);
+            mainFrame.revalidate();
+            mainFrame.repaint();
         }
     }
 }
