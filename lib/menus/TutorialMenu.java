@@ -27,6 +27,7 @@ import java.net.InetAddress;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import lib.GameConfig;
+import lib.Sound;
 import lib.network.*;
 
 public class TutorialMenu extends JPanel implements ActionListener {
@@ -225,6 +226,43 @@ public class TutorialMenu extends JPanel implements ActionListener {
 
         // Add components.
         this.add(content, BorderLayout.CENTER);
+
+        // Handle hover effects.
+        waterTab.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                Sound hoverSound = new Sound(1);
+                hoverSound.play();
+            }
+        });
+        windTab.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                Sound hoverSound = new Sound(1);
+                hoverSound.play();
+            }
+        });
+        earthTab.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                Sound hoverSound = new Sound(1);
+                hoverSound.play();
+            }
+        });
+        fireTab.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                Sound hoverSound = new Sound(1);
+                hoverSound.play();
+            }
+        });
+        movementTab.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                Sound hoverSound = new Sound(1);
+                hoverSound.play();
+            }
+        });
     }
 
     @Override
@@ -243,6 +281,9 @@ public class TutorialMenu extends JPanel implements ActionListener {
         JPanel mainFrame = (JPanel) this.getParent();
 
         if (e.getSource() == backBtn) {
+            Sound openSound = new Sound(2);
+            openSound.play();
+
             mainFrame.remove(this);
             mainFrame.repaint();
             mainFrame.add(new MainMenu(), BorderLayout.CENTER);
@@ -250,6 +291,9 @@ public class TutorialMenu extends JPanel implements ActionListener {
             mainFrame.repaint();
 
         } else if (e.getSource() == movementTab) {
+            Sound openSound = new Sound(0);
+            openSound.play();
+
             title.setText("Movement");
             replaceKeyboardDemoImage("Movement_Keys");
             description.setText(MOVEMENT_DESCRIPTION);
@@ -257,6 +301,9 @@ public class TutorialMenu extends JPanel implements ActionListener {
             mainFrame.repaint();
 
         } else if (e.getSource() == fireTab) {
+            Sound openSound = new Sound(0);
+            openSound.play();
+
             title.setText("Fire Spell");
             replaceKeyboardDemoImage("Fire_Keys");
             description.setText(FIRE_DESCRIPTION);
@@ -264,6 +311,9 @@ public class TutorialMenu extends JPanel implements ActionListener {
             mainFrame.repaint();
 
         } else if (e.getSource() == waterTab) {
+            Sound openSound = new Sound(0);
+            openSound.play();
+
             title.setText("Water Spell");
             replaceKeyboardDemoImage("Water_Keys");
             description.setText(WATER_DESCRIPTION);
@@ -271,6 +321,9 @@ public class TutorialMenu extends JPanel implements ActionListener {
             mainFrame.repaint();
 
         } else if (e.getSource() == windTab) {
+            Sound openSound = new Sound(0);
+            openSound.play();
+
             title.setText("Wind Spell");
             replaceKeyboardDemoImage("Wind_Keys");
             description.setText(WIND_DESCRIPTION);
@@ -278,6 +331,9 @@ public class TutorialMenu extends JPanel implements ActionListener {
             mainFrame.repaint();
 
         } else if (e.getSource() == earthTab) {
+            Sound openSound = new Sound(0);
+            openSound.play();
+
             title.setText("Earth Spell");
             replaceKeyboardDemoImage("Earth_Keys");
             description.setText(EARTH_DESCRIPTION);
@@ -286,7 +342,7 @@ public class TutorialMenu extends JPanel implements ActionListener {
         }
     }
 
-    private void replaceKeyboardDemoImage(String name){
+    private void replaceKeyboardDemoImage(String name) {
         String path = "resources/images/Keyboards/" + name + ".png";
         InputStream keyboarDemoStream = ClassLoader.getSystemClassLoader().getResourceAsStream(path);
         try {

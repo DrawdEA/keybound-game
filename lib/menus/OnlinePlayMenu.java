@@ -28,6 +28,7 @@ import java.net.InetAddress;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import lib.GameConfig;
+import lib.Sound;
 import lib.network.*;
 
 public class OnlinePlayMenu extends JPanel implements ActionListener {
@@ -142,6 +143,9 @@ public class OnlinePlayMenu extends JPanel implements ActionListener {
         JPanel mainFrame = (JPanel) this.getParent();
 
         if (e.getSource() == backBtn) {
+            Sound openSound = new Sound(2);
+            openSound.play();
+
             mainFrame.remove(this);
             mainFrame.repaint();
             mainFrame.add(new MainMenu(), BorderLayout.CENTER);

@@ -568,16 +568,6 @@ public class PlayerObject extends GameObject {
      * @param g2d the Graphics2D of the GameCanvas
      */
     private void drawPlayer(Graphics2D g2d) {
-        Composite originalComposite = g2d.getComposite();
-        AlphaComposite alphaComposite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.2f);
-        g2d.setComposite(alphaComposite);
-        if (isPlayer) {
-            g2d.drawImage(shadow, (int) screenX + 40, (int) screenY + 59, GameConfig.TILE_SIZE * 2, GameConfig.TILE_SIZE * 2, null);
-        } else {
-            g2d.drawImage(shadow, (int) x + 40, (int) y + 59, GameConfig.TILE_SIZE * 2, GameConfig.TILE_SIZE * 2, null);
-        }
-        g2d.setComposite(originalComposite);
-
         // Draw the actual player.
         if (lastHorizontalFacing == Direction.LEFT) {
             if (isPlayer) {
@@ -603,7 +593,16 @@ public class PlayerObject extends GameObject {
             iframeCounter++;
         }
 
-        
+        // Generate the player's shadow.
+        Composite originalComposite = g2d.getComposite();
+        AlphaComposite alphaComposite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.2f);
+        g2d.setComposite(alphaComposite);
+        if (isPlayer) {
+            g2d.drawImage(shadow, (int) screenX + 40, (int) screenY + 59, GameConfig.TILE_SIZE * 2, GameConfig.TILE_SIZE * 2, null);
+        } else {
+            g2d.drawImage(shadow, (int) x + 40, (int) y + 59, GameConfig.TILE_SIZE * 2, GameConfig.TILE_SIZE * 2, null);
+        }
+        g2d.setComposite(originalComposite);
         
         if (!isFlickering) {
             drawPlayer(g2d);

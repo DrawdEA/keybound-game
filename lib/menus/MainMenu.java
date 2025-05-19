@@ -56,7 +56,7 @@ public class MainMenu extends JPanel implements ActionListener {
         // Load Fonts and background image.
         try {
             InputStream stream = ClassLoader.getSystemClassLoader().getResourceAsStream("resources/fonts/Jacquard12-Regular.ttf");
-            Jacquard = Font.createFont(Font.TRUETYPE_FONT, stream).deriveFont(110f);
+            Jacquard = Font.createFont(Font.TRUETYPE_FONT, stream).deriveFont(130f);
 
             stream = ClassLoader.getSystemClassLoader().getResourceAsStream("resources/fonts/Pixelify/PixelifySans-Regular.ttf");
             Pixelify = Font.createFont(Font.TRUETYPE_FONT, stream).deriveFont(50f);
