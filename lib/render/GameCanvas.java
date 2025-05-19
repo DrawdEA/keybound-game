@@ -134,12 +134,6 @@ public class GameCanvas extends JComponent {
             object.drawSprite(g2d);
         }
 
-        for (Spell spell : spells) {
-            spell.update();
-            spell.drawSprite(g2d);
-            //spell.handleCollisions(collisionManager);
-        }
-
         if (self != null && enemy != null) {
             // Draw the players.
             self.updatePlayerAnimation(keyBindings.getPlayerAction(), keyBindings.getPlayerDirection());
@@ -151,6 +145,11 @@ public class GameCanvas extends JComponent {
             gui.renderGUI(g2d);
         }
 
+        for (Spell spell : spells) {
+            spell.update();
+            spell.drawSprite(g2d);
+            //spell.handleCollisions(collisionManager);
+        }
 
     }
 }
