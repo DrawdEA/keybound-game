@@ -2,7 +2,6 @@ package lib.network;
 
 import java.io.*;
 import java.net.*;
-import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 import lib.*;
@@ -20,13 +19,13 @@ public class GameServer {
     private ReadFromClient p1ReadRunnable, p2ReadRunnable;
     private WriteToClient p1WriteRunnable, p2WriteRunnable;
 
-    private ArrayList<double[]> playerData;
+    private CopyOnWriteArrayList<double[]> playerData;
 
     private CopyOnWriteArrayList<Spell> activeSpells;
 
     private CollisionManager collisionManager;
 
-    private ArrayList<PlayerObject> playerObjects;
+    private CopyOnWriteArrayList<PlayerObject> playerObjects;
 
     public GameServer() {
         System.out.println("==== GAME SERVER ====");
@@ -34,11 +33,9 @@ public class GameServer {
         isGameStarted = false;
         random = new Random();
 
-        playerData = new ArrayList<>();
-        // new double[] { x, y, animationIndex, lastHorizontalFacing, HP }
+        // Player Data is composed of new double[] { x, y, animationIndex, lastHorizontalFacing, HP }
         // lastHorizontalFacing -> 0 = Direction.LEFT ; 1 = Direction.RIGHT
-        playerData.add(new double[]{GameConfig.TILE_SIZE * 64, GameConfig.TILE_SIZE * 43, 0, 0, 5});
-        playerData.add(new double[]{GameConfig.TILE_SIZE * 64, GameConfig.TILE_SIZE * 64, 0, 0, 5});
+        playerData = new CopyOnWriteArrayList<>();
 
         // Initialize sprites.
         FireSpell.initializeSprites();
@@ -50,7 +47,7 @@ public class GameServer {
         collisionManager = new CollisionManager();
 
         // Initialize the players.
-        playerObjects = new ArrayList<>();
+        playerObjects = new CopyOnWriteArrayList<>();
         activeSpells = new CopyOnWriteArrayList<>();
 
         try {
@@ -69,14 +66,27 @@ public class GameServer {
 
             while (players < GameConfig.MAX_PLAYERS) {
                 Socket s = ss.accept();
+
                 DataInputStream in = new DataInputStream(s.getInputStream());
                 DataOutputStream out = new DataOutputStream(s.getOutputStream());
+                
                 players++;
-                PlayerObject player = new PlayerObject(GameConfig.TILE_SIZE * 64, GameConfig.TILE_SIZE * 43, GameConfig.TILE_SIZE, false, players);
+                System.out.println("Player #" + players + " has connected.");
+                
+                double[] spawnLocation = getRandomSpawnLocation();
+                playerData.add(new double[]{
+                    spawnLocation[0], // x
+                    spawnLocation[1], // y
+                    0, // animation index
+                    0, // lastHorizontalFacing -> 0 = Direction.LEFT ; 1 = Direction.RIGHT
+                    5 // hp
+                });
+                
+                PlayerObject player = new PlayerObject(spawnLocation[0], spawnLocation[1], GameConfig.TILE_SIZE, false, players);
                 playerObjects.add(player);
                 collisionManager.addPlayer(player);
                 out.writeInt(players);
-                System.out.println("Player #" + players + " has connected.");
+
                 ReadFromClient rfc = new ReadFromClient(players, in);
                 WriteToClient wtc = new WriteToClient(players, out);
 
@@ -261,8 +271,9 @@ public class GameServer {
                         
                         // RESPAWN if dead
                         } else if (entity.startsWith("RESPAWN")){
-                            playerData.get(playerID-1)[0] = GameConfig.TILE_SIZE * 40 + (GameConfig.TILE_SIZE * (70-40)) * random.nextDouble();
-                            playerData.get(playerID-1)[1] = GameConfig.TILE_SIZE * 40 + (GameConfig.TILE_SIZE * (100-40)) * random.nextDouble();
+                            double[] newSpawnLocation = getRandomSpawnLocation();
+                            playerData.get(playerID-1)[0] = newSpawnLocation[0]; // Set X coordinate
+                            playerData.get(playerID-1)[1] = newSpawnLocation[1]; // Set Y coordinate
                             playerData.get(playerID-1)[4] = 5; // Reset HP 
                         }
                     }
@@ -374,6 +385,39 @@ public class GameServer {
             } catch (IOException ex) {
                 System.out.println("IOException from sendStartMsg()");
             }
+        }
+    }
+
+    private double randomDoubleFromRange(double min, double max) {
+        return GameConfig.TILE_SIZE * min + (GameConfig.TILE_SIZE * (max-min)) * random.nextDouble();
+    }
+
+    public double[] getRandomSpawnLocation() {
+        // Choose a random spawning zone
+        int spawningZone = random.nextInt(1, 4 + 1); // 4 total spawning zones
+
+        if (spawningZone == 1){
+            return new double[]{
+                randomDoubleFromRange(24, 57),
+                randomDoubleFromRange(44,46),
+            };
+        } else if (spawningZone == 2){
+            return new double[]{
+                randomDoubleFromRange(26, 38),
+                randomDoubleFromRange(45, 67),
+            };
+        } else if (spawningZone == 3){
+            return new double[]{
+                randomDoubleFromRange(38, 65),
+                randomDoubleFromRange(60, 72),
+            };
+        } else if (spawningZone == 4){
+            return new double[]{
+                randomDoubleFromRange(81, 103),
+                randomDoubleFromRange(68, 74),
+            };
+        } else {
+            return new double[]{0,0};
         }
     }
 

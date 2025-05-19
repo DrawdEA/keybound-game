@@ -263,6 +263,12 @@ public class Player {
                             respawnRequestSent = true;
                         }
                         
+                        // Position relative to game tiles as coordinates
+                        // System.out.printf("x: %f ; y: %f\n", 
+                        //     selfPlayer.getX()/GameConfig.TILE_SIZE,
+                        //     selfPlayer.getY()/GameConfig.TILE_SIZE
+                        // );
+
                         dataOut.writeUTF(dataString);
                         dataOut.flush();
                     }
