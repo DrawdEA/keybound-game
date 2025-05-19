@@ -24,6 +24,7 @@ public class Player {
 
     private GameCanvas gameCanvas;
     private PlayerObject selfPlayer;
+    PlayerObject enemy;
     
     private String wantsToCast;
     private boolean selfPlayerIsDead;
@@ -105,13 +106,12 @@ public class Player {
                             // Set up the canvas.
                             gameCanvas.addPlayers(playerID, serverData);
                            
-                            // Initialize selfPlayer to the main player in the gameCanvas
+                            // Initialize all players in the gameCanvas
                             selfPlayer = gameCanvas.getOwnPlayer();
+                            enemy = gameCanvas.getEnemy();
                         }
 
-                        PlayerObject enemy = gameCanvas.getEnemy();
-
-                        if (enemy != null && selfPlayer != null) { // Ensure selfPlayer is also not null
+                        if (enemy != null && selfPlayer != null) {
                             // Iterate over the server data and process all player data
                             for (int i = 1; i < numOfConnectedPlayers + 1; i++){
                                 
@@ -126,6 +126,9 @@ public class Player {
                                         Integer.parseInt(playerDataParts[3]), // Animation Index
                                         Integer.parseInt(playerDataParts[4]) // Last horizontally faced direction (0:LEFT; 1:RIGHT)
                                     );
+                                    enemy.setHP(Integer.parseInt(playerDataParts[5]));
+                                    enemy.setKills(Integer.parseInt(playerDataParts[6]));
+                                    enemy.setDeaths(Integer.parseInt(playerDataParts[7]));
                                 
                                 // if it is your Player ID then process its data
                                 } else {
@@ -136,16 +139,17 @@ public class Player {
                                     int oldClientHP = selfPlayer.getPlayerHealth();
 
                                     // --- Position Update Logic ---
-                                    // Only update client's position from server if:
-                                    // 1. Client thought it was dead, but server says it's alive (respawn confirmed).
-                                    // This ensures the teleport happens.
+                                    // Only updates position from the server if player has died and server gave it a new position to respawn
                                     if (selfPlayerIsDead && serverReportedHP > 0) {
                                         selfPlayer.setX(serverReportedX);
                                         selfPlayer.setY(serverReportedY);
                                     }
 
-                                    // HP and Death Update Logic
-                                    selfPlayer.setHP(serverReportedHP); // Always trust server HP
+                                    // Always trust server player stats
+                                    selfPlayer.setHP(serverReportedHP); 
+                                    selfPlayer.setHP(Integer.parseInt(playerDataParts[5]));
+                                    selfPlayer.setKills(Integer.parseInt(playerDataParts[6]));
+                                    selfPlayer.setDeaths(Integer.parseInt(playerDataParts[7]));
 
                                     if (serverReportedHP > 0) { // Player is alive according to server
                                         if (selfPlayerIsDead) { // Client thought it was dead, but now it's alive
@@ -295,5 +299,21 @@ public class Player {
 
     public boolean getIsInGame() {
         return isInGame;
+    }
+
+    public int[] getSelfStats() {
+        return new int[]{
+            selfPlayer.getId(),
+            selfPlayer.getKills(),
+            selfPlayer.getDeaths()
+        };
+    }
+
+    public int[] getEnemyStats() {
+        return new int[]{
+            enemy.getId(),
+            enemy.getKills(),
+            enemy.getDeaths()
+        };
     }
 }

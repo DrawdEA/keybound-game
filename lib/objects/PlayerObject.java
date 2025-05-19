@@ -52,7 +52,7 @@ public class PlayerObject extends GameObject {
     // Collisions.
     private Rectangle hitbox;
     private long lastDamagedTime;
-    private int playerHealth;
+    private int playerHealth, playerDeaths, playerKills;
 
     /**
      * Instantiates a player in the game.
@@ -85,9 +85,11 @@ public class PlayerObject extends GameObject {
         hitbox.width = GameConfig.TILE_SIZE;
         hitbox.height = GameConfig.TILE_SIZE;
 
-        // Create the player's health.
+        // Create the player's stats
         playerHealth = 5;
         lastDamagedTime = System.currentTimeMillis();
+        playerDeaths = 0;
+        playerKills = 0;
 
         // Generate the sprites.
         playerSprites = new BufferedImage[53];
@@ -436,15 +438,6 @@ public class PlayerObject extends GameObject {
     }
 
     /**
-     * Returns the health of the player.
-     * 
-     * @return the health of the player
-     */
-    public int getPlayerHealth() {
-        return playerHealth;
-    }
-
-    /**
      * Make the player invulnerable for 1 second after getting damaged.
      * 
      * @return whether or not the player can be damaged
@@ -471,12 +464,57 @@ public class PlayerObject extends GameObject {
     }
 
     /**
+     * Returns the health of the player.
+     * 
+     * @return the health of the player
+     */
+    public int getPlayerHealth() {
+        return playerHealth;
+    }
+
+    /**
      * Sets the new HP of the player.
      * 
      * @param newhp the new HP of the player.
      */
     public void setHP(int newhp){
         playerHealth = newhp;
+    }
+
+    /**
+     * Returns the number of deaths of the player.
+     * 
+     * @return the num of deaths of the player
+     */
+    public int getDeaths() {
+        return playerDeaths;
+    }
+
+    /**
+     * Sets the new num of deaths of the player.
+     * 
+     * @param newDeaths the new num of deaths of the player.
+     */
+    public void setDeaths(int newDeaths){
+        playerDeaths = newDeaths;
+    }
+
+    /**
+     * Returns the number of kills of the player.
+     * 
+     * @return the num of kills of the player
+     */
+    public int getKills() {
+        return playerKills;
+    }
+
+    /**
+     * Sets the new num of kills of the player.
+     * 
+     * @param newKills the new num of kills of the player.
+     */
+    public void setKills(int newKills){
+        playerKills = newKills;
     }
 
     /**
