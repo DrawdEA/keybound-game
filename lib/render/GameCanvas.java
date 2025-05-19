@@ -21,7 +21,10 @@ package lib.render;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
+import java.io.InputStream;
 import java.util.*;
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.Timer;
 import lib.*;
@@ -48,6 +51,9 @@ public class GameCanvas extends JComponent {
 
     private ActionListener al;
 
+    private Font Jacquard, Pixelify;
+    String[] colorPaths = {"purple", "red", "green", "gray", "yellow", "blue", "orange"};
+
     /**
      * Instantiates a game canvas and initializes much of the needed resources in the game.
      */
@@ -61,6 +67,18 @@ public class GameCanvas extends JComponent {
         // Initialize object to hold all gameObjects.
         gameObjects = new ArrayList<>();
         spells = new ArrayList<>();
+
+        
+        // Load Fonts and Bg image
+        try {
+            InputStream stream = ClassLoader.getSystemClassLoader().getResourceAsStream("resources/fonts/Jacquard12-Regular.ttf");
+            Jacquard = Font.createFont(Font.TRUETYPE_FONT, stream).deriveFont(100f);
+
+            stream = ClassLoader.getSystemClassLoader().getResourceAsStream("resources/fonts/Pixelify/PixelifySans-Regular.ttf");
+            Pixelify = Font.createFont(Font.TRUETYPE_FONT, stream).deriveFont(15f);
+        } catch (Exception ex) {
+            System.out.println(ex);
+        }
     }
 
     /**
@@ -114,7 +132,7 @@ public class GameCanvas extends JComponent {
         al = new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 keyBindings.movePlayer(collisionManager, self);
-                keyBindings.castPlayerSpells(selfPlayerClient); // Add a cooldown thread?
+                keyBindings.castPlayerSpells(selfPlayerClient);
                 repaint();
             }
         };
@@ -196,6 +214,82 @@ public class GameCanvas extends JComponent {
         for (Spell spell : spells) {
             spell.update();
             spell.drawSprite(g2d);
+        }
+      
+        // Show the scoreboard if the player is pressing tab
+        if (self != null && enemy != null) {
+            if (keyBindings.isScoreBoardAsked()) {
+                
+                // Background
+                g2d.setColor(new Color(234, 212, 170, 200));
+                g2d.fillRect(
+                    (int) (GameConfig.SCREEN_LENGTH * 0.2), 
+                    (int) (GameConfig.SCREEN_HEIGHT * 0.2), 
+                    (int) (GameConfig.SCREEN_LENGTH * 0.6), 
+                    (int) (GameConfig.SCREEN_HEIGHT * 0.6)
+                );
+
+                // Title
+                g2d.setColor(new Color(30, 30, 30, 200));
+                g2d.setFont(Jacquard);
+                g2d.drawString("Leaderbound", (int) (GameConfig.SCREEN_LENGTH * 0.265), (int) (GameConfig.SCREEN_LENGTH * 0.25));
+
+                // Header
+                g2d.setFont(Pixelify);
+                g2d.drawString("Player", (int) (GameConfig.SCREEN_LENGTH * 0.25), (int) (GameConfig.SCREEN_LENGTH * 0.3));
+                g2d.drawString("Kills", (int) (GameConfig.SCREEN_LENGTH * 0.55), (int) (GameConfig.SCREEN_LENGTH * 0.3));
+                g2d.drawString("Deaths", (int) (GameConfig.SCREEN_LENGTH * 0.65), (int) (GameConfig.SCREEN_LENGTH * 0.3));
+
+                try {
+                    // Self Player
+                    int[] selfPlayerStats = selfPlayerClient.getSelfStats();
+                    BufferedImage selfPlayerImage = ImageIO.read(getClass().getResourceAsStream(String.format("/resources/player/%s.png", 
+                    colorPaths[selfPlayerStats[0] - 1]))).getSubimage(0, 0, 64, 32);
+
+                    g2d.drawImage(selfPlayerImage, (int) (GameConfig.SCREEN_LENGTH * 0.25), (int) (GameConfig.SCREEN_LENGTH * 0.3) + 15, this);
+                    g2d.drawString(
+                        String.format("Player %d",selfPlayerStats[0]), 
+                        (int) (GameConfig.SCREEN_LENGTH * 0.25) + 75, 
+                        (int) (GameConfig.SCREEN_LENGTH * 0.3) + 16 + 20
+                    );
+                    g2d.drawString(
+                        String.format("%d",selfPlayerStats[1]), 
+                        (int) (GameConfig.SCREEN_LENGTH * 0.55), 
+                        (int) (GameConfig.SCREEN_LENGTH * 0.3) + 16 + 20 
+                    );
+                    g2d.drawString(
+                        String.format("%d",selfPlayerStats[2]), 
+                        (int) (GameConfig.SCREEN_LENGTH * 0.65), 
+                        (int) (GameConfig.SCREEN_LENGTH * 0.3) + 16 + 20
+                    );
+
+                    // Enemy Player
+                    int[] enemyPlayerStats = selfPlayerClient.getEnemyStats();
+                    BufferedImage enemyPlayerImage = ImageIO.read(getClass().getResourceAsStream(String.format("/resources/player/%s.png", 
+                    colorPaths[enemyPlayerStats[0] - 1]))).getSubimage(0, 0, 64, 32);
+
+                    g2d.drawImage(enemyPlayerImage, (int) (GameConfig.SCREEN_LENGTH * 0.25), (int) (GameConfig.SCREEN_LENGTH * 0.35) + 15, this);
+                    g2d.drawString(
+                        String.format("Player %d",enemyPlayerStats[0]), 
+                        (int) (GameConfig.SCREEN_LENGTH * 0.25) + 75, 
+                        (int) (GameConfig.SCREEN_LENGTH * 0.35) + 16 + 20
+                    );
+                    g2d.drawString(
+                        String.format("%d",enemyPlayerStats[1]), 
+                        (int) (GameConfig.SCREEN_LENGTH * 0.55), 
+                        (int) (GameConfig.SCREEN_LENGTH * 0.35) + 16 + 20 
+                    );
+                    g2d.drawString(
+                        String.format("%d",enemyPlayerStats[2]), 
+                        (int) (GameConfig.SCREEN_LENGTH * 0.65), 
+                        (int) (GameConfig.SCREEN_LENGTH * 0.35) + 16 + 20
+                    );
+
+                } catch (Exception ex) {
+                    System.err.println(ex);
+                }
+
+            }
         }
     }
 }

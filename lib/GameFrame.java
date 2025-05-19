@@ -45,6 +45,7 @@ public class GameFrame {
 
         // Set up the miscellaneous details.
         mainFrame.setTitle("Final Project - Diesta - Uy, C.");
+        mainFrame.setFocusTraversalKeysEnabled(false); // This allows the Tab key to be used in keybindings
         mainFrame.setResizable(false);
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainFrame.setVisible(true);

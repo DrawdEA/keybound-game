@@ -28,9 +28,10 @@ import lib.objects.PlayerObject;
 import lib.render.*;
 
 public class KeyBindings {
-    public boolean up, down, left, right;
-    public boolean attacking1, attacking2;
-    public boolean letters[];
+    private boolean up, down, left, right;
+    private boolean attacking1, attacking2;
+    private boolean letters[];
+    private boolean showScoreboard;
 
     /**
      * Sets up the key bindings of the player.
@@ -44,6 +45,8 @@ public class KeyBindings {
         right = false;
 
         letters = new boolean[26]; // Initializing boolean[] defaults it all to false (Boolean[] sets them to null)
+
+        showScoreboard = false;
 
         // Get the InputMap and ActionMap. WHEN_IN_FOCUSED_WINDOW is used to always have the keybind whenever the frame is focused.
         InputMap inputMap = gc.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
@@ -78,8 +81,24 @@ public class KeyBindings {
                 }
             });
         }
-
-        // Define movement actions.
+      
+        // Bind tab as scoreboard
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_TAB, 0, false), "showScoreboard");
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_TAB, 0, true), "hideScoreboard");
+        actionMap.put("showScoreboard", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                showScoreboard = true;
+            }
+        });
+        actionMap.put("hideScoreboard", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                showScoreboard = false;
+            }
+        });
+        
+        // Define movement actions
         actionMap.put("moveUp", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -346,6 +365,10 @@ public class KeyBindings {
         }
 
         return outputString;
+    }
+
+    public boolean isScoreBoardAsked() {
+        return showScoreboard;
     }
 }
 
