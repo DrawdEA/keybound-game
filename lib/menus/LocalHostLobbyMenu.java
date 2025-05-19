@@ -36,8 +36,6 @@ public class LocalHostLobbyMenu extends JPanel implements ActionListener {
     private JLabel title, subtitle;
     private JTextArea connectionDetails;
     private JButton startBtn, backBtn;
-    private JRadioButton arcaneModeRadioButton, apprenticeModeRadioButton;
-    private ButtonGroup modeRadioButtonGroup;
     private JPanel players, content;
 
     private BufferedImage bgImage;
@@ -72,13 +70,6 @@ public class LocalHostLobbyMenu extends JPanel implements ActionListener {
         subtitle = new JLabel("Local Lobby", SwingConstants.CENTER);
         backBtn = new JButton("< Back");
         startBtn = new JButton("Start!");
-        arcaneModeRadioButton = new JRadioButton("Arcane Mode", true);
-        apprenticeModeRadioButton = new JRadioButton("Apprentice Mode", false);
-
-        modeRadioButtonGroup = new ButtonGroup();
-        modeRadioButtonGroup.add(arcaneModeRadioButton);
-        modeRadioButtonGroup.add(apprenticeModeRadioButton);
-
         players = new JPanel();
         players.setLayout(new GridLayout(5,1));
 
@@ -169,29 +160,6 @@ public class LocalHostLobbyMenu extends JPanel implements ActionListener {
         connectionDetails.setBackground(new Color(228, 166, 114));
         connectionDetails.setMargin(new Insets(15,15,15,15));
 
-        // Mode Selection.
-        arcaneModeRadioButton.setBounds(            
-            (int) (GameConfig.SCREEN_LENGTH * 0.625), 
-            (int) (GameConfig.SCREEN_HEIGHT * 0.575), 
-            (int) (GameConfig.SCREEN_LENGTH * 0.3), 
-            (int) (GameConfig.SCREEN_HEIGHT * 0.1)
-        );
-        arcaneModeRadioButton.setFont(Pixelify.deriveFont(25f));
-        arcaneModeRadioButton.setForeground(titleTextColor);
-        arcaneModeRadioButton.setOpaque(false);
-        arcaneModeRadioButton.setFocusable(false);
-
-        apprenticeModeRadioButton.setBounds(            
-            (int) (GameConfig.SCREEN_LENGTH * 0.625), 
-            (int) (GameConfig.SCREEN_HEIGHT * 0.625), 
-            (int) (GameConfig.SCREEN_LENGTH * 0.3), 
-            (int) (GameConfig.SCREEN_HEIGHT * 0.1)
-        );
-        apprenticeModeRadioButton.setFont(Pixelify.deriveFont(25f));
-        apprenticeModeRadioButton.setForeground(titleTextColor);
-        apprenticeModeRadioButton.setOpaque(false);
-        apprenticeModeRadioButton.setFocusable(false);
-
         // Start Button.
         startBtn.setBounds(            
             (int) (GameConfig.SCREEN_LENGTH * 0.7), 
@@ -212,8 +180,6 @@ public class LocalHostLobbyMenu extends JPanel implements ActionListener {
         content.add(backBtn);
         content.add(players);
         content.add(connectionDetails);
-        content.add(arcaneModeRadioButton);
-        content.add(apprenticeModeRadioButton);
         content.add(startBtn);
         content.add(menuBackground);
 
