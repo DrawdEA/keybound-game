@@ -31,11 +31,11 @@ import lib.network.*;
 
 public class TutorialMenu extends JPanel implements ActionListener {
     // Components
-    private JLabel title, subtitle;
-    private JButton joinBtn, backBtn;
+    private JLabel title, keyboardDemo;
+    private JButton backBtn;
+    private JButton movementTab, fireTab, waterTab, earthTab, windTab;
+    private JTextArea description;
     private JPanel content;
-    private JLabel ipLabel;
-    private JTextField ipInput;
 
     private BufferedImage bgImage;
 
@@ -46,18 +46,35 @@ public class TutorialMenu extends JPanel implements ActionListener {
     // Fonts.
     private Font Jacquard, Pixelify;
 
+    // Descriptions
+    private final String MOVEMENT_DESCRIPTION = "Use the arrow keys to move around and TAB to view the score board";
+    private final String FIRE_DESCRIPTION = "Shoot a fast moving projectile in the direction of the last arrow key";
+    private final String WATER_DESCRIPTION = "Shoot a wide area attack a short distance in the direction of the last arrow key";
+    private final String WIND_DESCRIPTION = "Dash forward quickly in the direction of the last arrow key";
+    private final String EARTH_DESCRIPTION = "Arise a structure that deals damage upon contact with the enemy";
+
+
     public TutorialMenu() {
-        title = new JLabel("About", SwingConstants.CENTER);
+        title = new JLabel("Movement", SwingConstants.CENTER);
         backBtn = new JButton("< Back");
+        movementTab = new JButton("Movement");
+        fireTab = new JButton("Fire Spell");
+        waterTab = new JButton("Water Spell");
+        earthTab = new JButton("Earth Spell");
+        windTab = new JButton("Wind Spell");
+        keyboardDemo = new JLabel();
+        description = new JTextArea();
         
         // Load Fonts and background image.
         try {
+            // Fonts
             InputStream stream = ClassLoader.getSystemClassLoader().getResourceAsStream("resources/fonts/Jacquard12-Regular.ttf");
             Jacquard = Font.createFont(Font.TRUETYPE_FONT, stream).deriveFont(100f);
 
             stream = ClassLoader.getSystemClassLoader().getResourceAsStream("resources/fonts/Pixelify/PixelifySans-Regular.ttf");
-            Pixelify = Font.createFont(Font.TRUETYPE_FONT, stream).deriveFont(30f);
+            Pixelify = Font.createFont(Font.TRUETYPE_FONT, stream).deriveFont(15f);
 
+            // Images
             InputStream imgStream = ClassLoader.getSystemClassLoader().getResourceAsStream("resources/images/TutorialBg.png");
             bgImage = ImageIO.read(imgStream);
         } catch (Exception ex) {
@@ -70,7 +87,7 @@ public class TutorialMenu extends JPanel implements ActionListener {
         content.setOpaque(false);
 
         // Back Button.
-        backBtn.setFont(Pixelify);
+        backBtn.setFont(Pixelify.deriveFont(30f));
         backBtn.setOpaque(false);
         backBtn.setContentAreaFilled(false);
         backBtn.setBorderPainted(false);
@@ -91,9 +108,95 @@ public class TutorialMenu extends JPanel implements ActionListener {
         title.setFont(Jacquard);
         title.setForeground(titleTextColor);
 
+        // Tab Buttons
+        movementTab.setBounds(
+            (int) (GameConfig.SCREEN_LENGTH * 0.125), 
+            (int) (GameConfig.SCREEN_HEIGHT * 0.35), 
+            (int) (GameConfig.SCREEN_LENGTH * 0.125), 
+            (int) (GameConfig.SCREEN_HEIGHT * 0.075)
+        );
+        movementTab.setFont(Pixelify);
+        movementTab.setBackground(buttonBg1);
+        movementTab.setForeground(buttonTextColor);
+        movementTab.setFocusable(false);
+
+        fireTab.setBounds(
+            (int) (GameConfig.SCREEN_LENGTH * 0.28125), 
+            (int) (GameConfig.SCREEN_HEIGHT * 0.35), 
+            (int) (GameConfig.SCREEN_LENGTH * 0.125), 
+            (int) (GameConfig.SCREEN_HEIGHT * 0.075)
+        );
+        fireTab.setFont(Pixelify);
+        fireTab.setBackground(buttonBg1);
+        fireTab.setForeground(buttonTextColor);
+        fireTab.setFocusable(false);
+
+        waterTab.setBounds(
+            (int) (GameConfig.SCREEN_LENGTH * 0.4375), 
+            (int) (GameConfig.SCREEN_HEIGHT * 0.35), 
+            (int) (GameConfig.SCREEN_LENGTH * 0.125), 
+            (int) (GameConfig.SCREEN_HEIGHT * 0.075)
+        );
+        waterTab.setFont(Pixelify);
+        waterTab.setBackground(buttonBg1);
+        waterTab.setForeground(buttonTextColor);
+        waterTab.setFocusable(false);
+
+        windTab.setBounds(
+            (int) (GameConfig.SCREEN_LENGTH * 0.59375), 
+            (int) (GameConfig.SCREEN_HEIGHT * 0.35), 
+            (int) (GameConfig.SCREEN_LENGTH * 0.125), 
+            (int) (GameConfig.SCREEN_HEIGHT * 0.075)
+        );
+        windTab.setFont(Pixelify);
+        windTab.setBackground(buttonBg1);
+        windTab.setForeground(buttonTextColor);
+        windTab.setFocusable(false);
+
+        earthTab.setBounds(
+            (int) (GameConfig.SCREEN_LENGTH * 0.75), 
+            (int) (GameConfig.SCREEN_HEIGHT * 0.35), 
+            (int) (GameConfig.SCREEN_LENGTH * 0.125), 
+            (int) (GameConfig.SCREEN_HEIGHT * 0.075)
+        );
+        earthTab.setFont(Pixelify);
+        earthTab.setBackground(buttonBg1);
+        earthTab.setForeground(buttonTextColor);
+        earthTab.setFocusable(false);
+
+        // Keyboard Demo
+        replaceKeyboardDemoImage("Movement_Keys");
+        keyboardDemo.setBounds(
+            (int) ((GameConfig.SCREEN_LENGTH * 0.8 - 502)/2 + GameConfig.SCREEN_LENGTH * 0.1), 
+            (int) (GameConfig.SCREEN_HEIGHT * 0.5), 
+            502,
+            155
+        );
+
+        // Description
+        description.setText(MOVEMENT_DESCRIPTION);
+        description.setBounds(
+            (int) (GameConfig.SCREEN_LENGTH * 0.2), 
+            (int) (GameConfig.SCREEN_HEIGHT * 0.5) + 200, 
+            (int) (GameConfig.SCREEN_LENGTH * 0.6),
+            (int) (GameConfig.SCREEN_HEIGHT * 0.15)
+        );
+        description.setLineWrap(true);
+        description.setWrapStyleWord(true);
+        description.setFont(Pixelify.deriveFont(20f));
+        description.setBackground(new Color(0,0,0,0));
+        description.setDisabledTextColor(new Color(30, 30, 30));
+        description.setEnabled(false);
+        description.setHighlighter(null);
+
         // Add Event Listeners.
         backBtn.addActionListener(this);
-        
+        movementTab.addActionListener(this);
+        fireTab.addActionListener(this);
+        waterTab.addActionListener(this);
+        windTab.addActionListener(this);
+        earthTab.addActionListener(this);
+
         JPanel menuBackground = new JPanel();
         menuBackground.setBackground(new Color(234, 212, 170, 225));
         menuBackground.setBounds(
@@ -105,6 +208,13 @@ public class TutorialMenu extends JPanel implements ActionListener {
 
         content.add(title);
         content.add(backBtn);
+        content.add(movementTab);
+        content.add(fireTab);
+        content.add(waterTab);
+        content.add(windTab);
+        content.add(earthTab);
+        content.add(keyboardDemo);
+        content.add(description);
         content.add(menuBackground);
 
         // Set up frame.
@@ -127,7 +237,7 @@ public class TutorialMenu extends JPanel implements ActionListener {
             g.fillRect(0, 0, this.getWidth(), this.getHeight());
         }
     }
-    
+
     @Override
     public void actionPerformed(ActionEvent e) {
         JPanel mainFrame = (JPanel) this.getParent();
@@ -139,7 +249,51 @@ public class TutorialMenu extends JPanel implements ActionListener {
             mainFrame.revalidate();
             mainFrame.repaint();
 
+        } else if (e.getSource() == movementTab) {
+            title.setText("Movement");
+            replaceKeyboardDemoImage("Movement_Keys");
+            description.setText(MOVEMENT_DESCRIPTION);
+            mainFrame.revalidate();
+            mainFrame.repaint();
+
+        } else if (e.getSource() == fireTab) {
+            title.setText("Fire Spell");
+            replaceKeyboardDemoImage("Fire_Keys");
+            description.setText(FIRE_DESCRIPTION);
+            mainFrame.revalidate();
+            mainFrame.repaint();
+
+        } else if (e.getSource() == waterTab) {
+            title.setText("Water Spell");
+            replaceKeyboardDemoImage("Water_Keys");
+            description.setText(WATER_DESCRIPTION);
+            mainFrame.revalidate();
+            mainFrame.repaint();
+
+        } else if (e.getSource() == windTab) {
+            title.setText("Wind Spell");
+            replaceKeyboardDemoImage("Wind_Keys");
+            description.setText(WIND_DESCRIPTION);
+            mainFrame.revalidate();
+            mainFrame.repaint();
+
+        } else if (e.getSource() == earthTab) {
+            title.setText("Earth Spell");
+            replaceKeyboardDemoImage("Earth_Keys");
+            description.setText(EARTH_DESCRIPTION);
+            mainFrame.revalidate();
+            mainFrame.repaint();
         }
     }
 
+    private void replaceKeyboardDemoImage(String name){
+        String path = "resources/images/Keyboards/" + name + ".png";
+        InputStream keyboarDemoStream = ClassLoader.getSystemClassLoader().getResourceAsStream(path);
+        try {
+            BufferedImage keyboardImg = ImageIO.read(keyboarDemoStream);
+            keyboardDemo.setIcon(new ImageIcon(keyboardImg));
+        } catch (Exception ex) {
+            System.err.println(ex);
+        }
+    }
 }
