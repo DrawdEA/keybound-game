@@ -367,6 +367,11 @@ public class KeyBindings {
         return outputString;
     }
 
+    /**
+     * A getter method that returns the boolean if score board should be shown
+     * 
+     * @return boolean if score board to be shown is being requested by keybinds
+     */
     public boolean isScoreBoardAsked() {
         return showScoreboard;
     }
