@@ -294,6 +294,8 @@ public class LocalHostLobbyMenu extends JPanel implements ActionListener {
             mainFrame.add(new LocalPlaySelectionMenu(), BorderLayout.CENTER);
             mainFrame.revalidate();
             mainFrame.repaint();
+        
+        // Start the Game
         } else if (e.getSource() == startBtn) {
             Sound openSound = new Sound(0);
             openSound.play();

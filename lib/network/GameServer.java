@@ -85,7 +85,10 @@ public class GameServer {
     }
 
     // ----- Network and Connection ----- // 
-
+    
+    /**
+     * As the server, it accepts connections from clients and initializes the appropriate values in the server
+     */
     public void acceptConnections() {
         try {
             System.out.println("Waiting for connections...");
@@ -118,6 +121,7 @@ public class GameServer {
                 ReadFromClient rfc = new ReadFromClient(numOfPlayers, in);
                 WriteToClient wtc = new WriteToClient(numOfPlayers, out);
 
+                // Player 1 network threads
                 if (numOfPlayers == 1) {
                     p1ReadRunnable = rfc;
                     p1WriteRunnable = wtc;
@@ -127,6 +131,7 @@ public class GameServer {
                     readThread1.start();
                     writeThread1.start();
 
+                // Player 2 network threads
                 } else {
                     p2ReadRunnable = rfc;
                     p2WriteRunnable = wtc;
@@ -144,6 +149,9 @@ public class GameServer {
         }
     }
 
+    /**
+     * Begin the game by setting the right flags and starting the server game loop
+     */
     public void startGame() {
         isGameStarted = true;
         startGameLoop();
@@ -151,6 +159,9 @@ public class GameServer {
         System.out.println("Started the Game Successfully");
     }
 
+    /**
+     * Closes the server connections properly
+     */
     public void closeConnections() {
         System.out.println("Initiating server shutdown...");
         try {
@@ -163,6 +174,10 @@ public class GameServer {
         }
     }
 
+    /**
+     * Returns the number of players currently in the lobby
+     * @return int the number of players in the lobby
+     */
     public int getNumPlayersInLobby() {
         return numOfPlayers;
     }

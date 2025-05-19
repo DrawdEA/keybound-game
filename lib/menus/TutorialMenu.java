@@ -110,6 +110,7 @@ public class TutorialMenu extends JPanel implements ActionListener {
         title.setForeground(titleTextColor);
 
         // Tab Buttons
+        // Movement Button
         movementTab.setBounds(
             (int) (GameConfig.SCREEN_LENGTH * 0.125), 
             (int) (GameConfig.SCREEN_HEIGHT * 0.35), 
@@ -121,6 +122,7 @@ public class TutorialMenu extends JPanel implements ActionListener {
         movementTab.setForeground(buttonTextColor);
         movementTab.setFocusable(false);
 
+        // Fire Spell Button
         fireTab.setBounds(
             (int) (GameConfig.SCREEN_LENGTH * 0.28125), 
             (int) (GameConfig.SCREEN_HEIGHT * 0.35), 
@@ -132,6 +134,7 @@ public class TutorialMenu extends JPanel implements ActionListener {
         fireTab.setForeground(buttonTextColor);
         fireTab.setFocusable(false);
 
+        // Water Spell Button
         waterTab.setBounds(
             (int) (GameConfig.SCREEN_LENGTH * 0.4375), 
             (int) (GameConfig.SCREEN_HEIGHT * 0.35), 
@@ -143,6 +146,7 @@ public class TutorialMenu extends JPanel implements ActionListener {
         waterTab.setForeground(buttonTextColor);
         waterTab.setFocusable(false);
 
+        // Wind Spell Button
         windTab.setBounds(
             (int) (GameConfig.SCREEN_LENGTH * 0.59375), 
             (int) (GameConfig.SCREEN_HEIGHT * 0.35), 
@@ -154,6 +158,7 @@ public class TutorialMenu extends JPanel implements ActionListener {
         windTab.setForeground(buttonTextColor);
         windTab.setFocusable(false);
 
+        // Earth Spell Button
         earthTab.setBounds(
             (int) (GameConfig.SCREEN_LENGTH * 0.75), 
             (int) (GameConfig.SCREEN_HEIGHT * 0.35), 

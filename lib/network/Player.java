@@ -359,6 +359,10 @@ public class Player {
         return isInGame;
     }
 
+    /**
+     * Returns the needed stats of the self player for the scoreboard
+     * @return int[3] with the id, num of kills, and num of death, stats 
+     */
     public int[] getSelfStats() {
         return new int[]{
             selfPlayer.getId(),
@@ -367,6 +371,10 @@ public class Player {
         };
     }
 
+    /**
+     * Returns the needed stats of the enemy player for the scoreboard
+     * @return int[3] with the id, num of kills, and num of death, stats 
+     */
     public int[] getEnemyStats() {
         return new int[]{
             enemy.getId(),
