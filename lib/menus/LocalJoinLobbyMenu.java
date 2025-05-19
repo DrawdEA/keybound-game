@@ -1,3 +1,22 @@
+/**
+ * The LocalJoinLobbyMenu is responsible for handling the GUI for when a player joins.
+ * These include having the information about the server.
+ * 
+ * @author Edward Joshua M. Diesta (241571), Charles Joshua T. Uy (244644)
+ * @version May 20, 2025
+ * 
+ * We have not discussed the Java language code in our program 
+ * with anyone other than our instructor or the teaching assistants 
+ * assigned to this course.
+ * 
+ * We have not used Java language code obtained from another student, 
+ * or any other unauthorized source, either modified or unmodified.
+ * 
+ * If any Java language code or documentation used in our program 
+ * was obtained from another source, such as a textbook or website, 
+ * that has been clearly noted with a proper citation in the comments 
+ * of our program.
+ */
 package lib.menus;
 
 import java.awt.*;
@@ -10,31 +29,29 @@ import lib.GameConfig;
 import lib.network.*;
 
 public class LocalJoinLobbyMenu extends JPanel implements ActionListener {
-    // Components
+    // Components.
     private JLabel title, subtitle;
     private JTextArea connectionDetails;
-    private JButton startBtn, backBtn;
+    private JButton backBtn;
     private JPanel players, content;
 
     private BufferedImage bgImage;
 
-    private final Color buttonBg1 = new Color(58,68,102);
-    private final Color buttonTextColor = Color.WHITE;
     private final Color titleTextColor = new Color(38,43,68);
 
-    // Fonts
+    // Fonts.
     private Font Jacquard, Pixelify;
 
-    // Server Networking
+    // Server Networking.
     private String ip;
     private int port;
     private Player p;
     
     final LocalJoinLobbyMenu thisMenu = this;
 
-    // Constructor for lobby hosts
+    // Constructor for lobby hosts.
     public LocalJoinLobbyMenu(String ip) {
-        // Collection connection details
+        // Collection connection details.
         this.ip = ip;
         port = 10000;
 
@@ -51,7 +68,7 @@ public class LocalJoinLobbyMenu extends JPanel implements ActionListener {
         ));
         connectionDetails.setEditable(false);
 
-        // Load Fonts and Bg image
+        // Load Fonts and background image.
         try {
             InputStream stream = ClassLoader.getSystemClassLoader().getResourceAsStream("resources/fonts/Jacquard12-Regular.ttf");
             Jacquard = Font.createFont(Font.TRUETYPE_FONT, stream).deriveFont(100f);
@@ -65,7 +82,7 @@ public class LocalJoinLobbyMenu extends JPanel implements ActionListener {
             System.out.println(ex);
         }
 
-        // Setup JPanel that holds everything
+        // Setup JPanel that holds everything.
         content = new JPanel();
         content.setLayout(null);
         content.setOpaque(false);
@@ -79,7 +96,7 @@ public class LocalJoinLobbyMenu extends JPanel implements ActionListener {
             (int) (GameConfig.SCREEN_HEIGHT * 0.8)
         );
 
-        // Back Button
+        // Back Button.
         backBtn.setFont(Pixelify);
         backBtn.setOpaque(false);
         backBtn.setContentAreaFilled(false);
@@ -91,7 +108,7 @@ public class LocalJoinLobbyMenu extends JPanel implements ActionListener {
             150, 50
         );
 
-        // Title
+        // Title.
         title.setBounds(            
             (int) (GameConfig.SCREEN_LENGTH * 0.25), 
             (int) (GameConfig.SCREEN_HEIGHT * 0.2), 
@@ -101,7 +118,7 @@ public class LocalJoinLobbyMenu extends JPanel implements ActionListener {
         title.setFont(Jacquard);
         title.setForeground(titleTextColor);
 
-        // Subtitle
+        // Subtitle.
         subtitle.setBounds(            
             (int) (GameConfig.SCREEN_LENGTH * 0.275), 
             (int) (GameConfig.SCREEN_HEIGHT * 0.325), 
@@ -111,7 +128,7 @@ public class LocalJoinLobbyMenu extends JPanel implements ActionListener {
         subtitle.setFont(Pixelify);
         subtitle.setForeground(titleTextColor);
 
-        // Players
+        // Players.
         players.setBounds(            
             (int) (GameConfig.SCREEN_LENGTH * 0.125), 
             (int) (GameConfig.SCREEN_HEIGHT * 0.45), 
@@ -120,7 +137,7 @@ public class LocalJoinLobbyMenu extends JPanel implements ActionListener {
         );
         players.setOpaque(false);
 
-        // Connection Details
+        // Connection Details.
         connectionDetails.setBounds(            
             (int) (GameConfig.SCREEN_LENGTH * 0.55), 
             (int) (GameConfig.SCREEN_HEIGHT * 0.45), 
@@ -141,22 +158,24 @@ public class LocalJoinLobbyMenu extends JPanel implements ActionListener {
         content.add(connectionDetails);
         content.add(menuBackground);
 
-        // ---- Set up frame ----- // 
+        // Set up frame.
         this.setFocusable(true);
         this.setPreferredSize(new Dimension(GameConfig.SCREEN_LENGTH, GameConfig.SCREEN_HEIGHT));
         this.requestFocusInWindow();
         this.setLayout(new BorderLayout());
 
-        // ----- Add components ----- //
+        // Add components.
         this.add(content, BorderLayout.CENTER);
 
 
-        // ----- Server Thread ----- // 
-        // Join the created host's lobby as a player
+        /**
+         * Server Thread.
+         * Join the created host's lobby as a player.
+         */
         p = new Player();
         p.connectToServer(ip);
 
-        // Thread to show all new players connected to the lobby
+        // Thread to show all new players connected to the lobby.
         new Thread() {
             public void run() {
                 int displayedPlayers = 0;
@@ -168,7 +187,7 @@ public class LocalJoinLobbyMenu extends JPanel implements ActionListener {
 
                         if (currentPlayersInLobby != displayedPlayers) {
                             players.removeAll();
-                            // Add new player JLabels
+                            // Add new player JLabels.
                             for (int i = 0; i < currentPlayersInLobby; i++) {
 
                                 try {

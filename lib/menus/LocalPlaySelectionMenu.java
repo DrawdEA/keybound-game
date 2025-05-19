@@ -1,3 +1,22 @@
+/**
+ * The LocalPlaySelectionMenu class is responsible for showing the options the player has for local play.
+ * These include hosting and being able to join hosted games.
+ * 
+ * @author Edward Joshua M. Diesta (241571), Charles Joshua T. Uy (244644)
+ * @version May 20, 2025
+ * 
+ * We have not discussed the Java language code in our program 
+ * with anyone other than our instructor or the teaching assistants 
+ * assigned to this course.
+ * 
+ * We have not used Java language code obtained from another student, 
+ * or any other unauthorized source, either modified or unmodified.
+ * 
+ * If any Java language code or documentation used in our program 
+ * was obtained from another source, such as a textbook or website, 
+ * that has been clearly noted with a proper citation in the comments 
+ * of our program.
+ */
 package lib.menus;
 
 import java.awt.*;
@@ -9,7 +28,7 @@ import javax.swing.*;
 import lib.GameConfig;
 
 public class LocalPlaySelectionMenu extends JPanel implements ActionListener {
-    // Components
+    // Components.
     private JLabel title, subtitle;
     private JButton hostBtn, joinBtn, practiceBtn, backBtn;
     private JPanel content;
@@ -20,7 +39,7 @@ public class LocalPlaySelectionMenu extends JPanel implements ActionListener {
     private final Color titleTextColor = new Color(38,43,68);
     private final Color buttonTextColor = Color.WHITE;
 
-    // Fonts
+    // Fonts.
     private Font Jacquard, Pixelify;
 
     public LocalPlaySelectionMenu() {
@@ -31,7 +50,7 @@ public class LocalPlaySelectionMenu extends JPanel implements ActionListener {
         joinBtn = new JButton("Join Lobby");
         practiceBtn = new JButton("Practice Solo");
 
-        // Load Fonts and Bg image
+        // Load Fonts and background image.
         try {
             InputStream stream = ClassLoader.getSystemClassLoader().getResourceAsStream("resources/fonts/Jacquard12-Regular.ttf");
             Jacquard = Font.createFont(Font.TRUETYPE_FONT, stream).deriveFont(100f);
@@ -45,12 +64,12 @@ public class LocalPlaySelectionMenu extends JPanel implements ActionListener {
             System.out.println(ex);
         }
 
-        // Setup JPanel that holds everything
+        // Setup JPanel that holds everything.
         content = new JPanel();
         content.setLayout(null);
         content.setOpaque(false);
 
-        // Back Button
+        // Back Button.
         backBtn.setFont(Pixelify);
         backBtn.setOpaque(false);
         backBtn.setContentAreaFilled(false);
@@ -62,7 +81,7 @@ public class LocalPlaySelectionMenu extends JPanel implements ActionListener {
             150, 50
         );
 
-        // Title
+        // Title.
         title.setBounds(            
             (int) (GameConfig.SCREEN_LENGTH * 0.25), 
             (int) (GameConfig.SCREEN_HEIGHT * 0.2), 
@@ -72,7 +91,7 @@ public class LocalPlaySelectionMenu extends JPanel implements ActionListener {
         title.setFont(Jacquard);
         title.setForeground(titleTextColor);
 
-        // Subtitle
+        // Subtitle.
         subtitle.setBounds(            
             (int) (GameConfig.SCREEN_LENGTH * 0.275), 
             (int) (GameConfig.SCREEN_HEIGHT * 0.325), 
@@ -82,7 +101,7 @@ public class LocalPlaySelectionMenu extends JPanel implements ActionListener {
         subtitle.setFont(Pixelify);
         subtitle.setForeground(titleTextColor);
 
-        // Host Lobby Button
+        // Host Lobby Button.
         hostBtn.setBounds(            
             (int) (GameConfig.SCREEN_LENGTH * 0.25), 
             (int) (GameConfig.SCREEN_HEIGHT * 0.475), 
@@ -94,7 +113,7 @@ public class LocalPlaySelectionMenu extends JPanel implements ActionListener {
         hostBtn.setBackground(buttonBg1);
         hostBtn.setFocusable(false);
 
-        // Join Lobby Button
+        // Join Lobby Button.
         joinBtn.setBounds(            
             (int) (GameConfig.SCREEN_LENGTH * 0.6), 
             (int) (GameConfig.SCREEN_HEIGHT * 0.475), 
@@ -106,7 +125,7 @@ public class LocalPlaySelectionMenu extends JPanel implements ActionListener {
         joinBtn.setBackground(buttonBg1);
         joinBtn.setFocusable(false);
 
-        // Practice Button
+        // Practice Button.
         practiceBtn.setBounds(            
             (int) (GameConfig.SCREEN_LENGTH * 0.35), 
             (int) (GameConfig.SCREEN_HEIGHT * 0.65), 
@@ -118,7 +137,7 @@ public class LocalPlaySelectionMenu extends JPanel implements ActionListener {
         practiceBtn.setBackground(buttonBg1);
         practiceBtn.setFocusable(false);
 
-        // Add Event Listeners
+        // Add Event Listeners.
         backBtn.addActionListener(this);
         hostBtn.addActionListener(this);
         joinBtn.addActionListener(this);
@@ -141,13 +160,13 @@ public class LocalPlaySelectionMenu extends JPanel implements ActionListener {
         content.add(practiceBtn);
         content.add(menuBackground);
 
-        // ---- Set up frame ----- // 
+        // Set up frame.
         this.setFocusable(true);
         this.setPreferredSize(new Dimension(GameConfig.SCREEN_LENGTH, GameConfig.SCREEN_HEIGHT));
         this.requestFocusInWindow();
         this.setLayout(new BorderLayout());
 
-        // ----- Add components ----- //
+        // Add components.
         this.add(content, BorderLayout.CENTER);
     }
 

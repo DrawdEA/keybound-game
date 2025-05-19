@@ -1,3 +1,22 @@
+/**
+ * The LocalHostLobbyMenu is responsible for handling the GUI for when a player hosts.
+ * These include the buttons for starting the game and having the information about the server.
+ * 
+ * @author Edward Joshua M. Diesta (241571), Charles Joshua T. Uy (244644)
+ * @version May 20, 2025
+ * 
+ * We have not discussed the Java language code in our program 
+ * with anyone other than our instructor or the teaching assistants 
+ * assigned to this course.
+ * 
+ * We have not used Java language code obtained from another student, 
+ * or any other unauthorized source, either modified or unmodified.
+ * 
+ * If any Java language code or documentation used in our program 
+ * was obtained from another source, such as a textbook or website, 
+ * that has been clearly noted with a proper citation in the comments 
+ * of our program.
+ */
 package lib.menus;
 
 import java.awt.*;
@@ -12,7 +31,7 @@ import lib.GameConfig;
 import lib.network.*;
 
 public class LocalHostLobbyMenu extends JPanel implements ActionListener {
-    // Components
+    // Components.
     private JLabel title, subtitle;
     private JTextArea connectionDetails;
     private JButton startBtn, backBtn;
@@ -26,18 +45,20 @@ public class LocalHostLobbyMenu extends JPanel implements ActionListener {
     private final Color buttonTextColor = Color.WHITE;
     private final Color titleTextColor = new Color(38,43,68);
 
-    // Fonts
+    // Fonts.
     private Font Jacquard, Pixelify;
 
-    // Server Networking
+    // Server Networking.
     private GameServer gs;
     private String ip;
     private int port;
     private Player p;
 
-    // Constructor for lobby hosts
+    /**
+     * Constructor for lobby hosts.
+     */
     public LocalHostLobbyMenu() {
-        // Collection connection details
+        // Collection connection details.
         try(final DatagramSocket socket = new DatagramSocket()){
             socket.connect(InetAddress.getByName("8.8.8.8"), 10002);
             ip = socket.getLocalAddress().getHostAddress();
@@ -66,7 +87,7 @@ public class LocalHostLobbyMenu extends JPanel implements ActionListener {
         ));
         connectionDetails.setEditable(false);
 
-        // Load Fonts and Bg image
+        // Load fonts and background image.
         try {
             InputStream stream = ClassLoader.getSystemClassLoader().getResourceAsStream("resources/fonts/Jacquard12-Regular.ttf");
             Jacquard = Font.createFont(Font.TRUETYPE_FONT, stream).deriveFont(100f);
@@ -80,7 +101,7 @@ public class LocalHostLobbyMenu extends JPanel implements ActionListener {
             System.out.println(ex);
         }
 
-        // Setup JPanel that holds everything
+        // Setup JPanel that holds everything.
         content = new JPanel();
         content.setLayout(null);
         content.setOpaque(false);
@@ -94,7 +115,7 @@ public class LocalHostLobbyMenu extends JPanel implements ActionListener {
             (int) (GameConfig.SCREEN_HEIGHT * 0.8)
         );
 
-        // Back Button
+        // Back button.
         backBtn.setFont(Pixelify);
         backBtn.setOpaque(false);
         backBtn.setContentAreaFilled(false);
@@ -106,7 +127,7 @@ public class LocalHostLobbyMenu extends JPanel implements ActionListener {
             150, 50
         );
 
-        // Title
+        // Title.
         title.setBounds(            
             (int) (GameConfig.SCREEN_LENGTH * 0.25), 
             (int) (GameConfig.SCREEN_HEIGHT * 0.2), 
@@ -116,7 +137,7 @@ public class LocalHostLobbyMenu extends JPanel implements ActionListener {
         title.setFont(Jacquard);
         title.setForeground(titleTextColor);
 
-        // Subtitle
+        // Subtitle.
         subtitle.setBounds(            
             (int) (GameConfig.SCREEN_LENGTH * 0.275), 
             (int) (GameConfig.SCREEN_HEIGHT * 0.325), 
@@ -126,7 +147,7 @@ public class LocalHostLobbyMenu extends JPanel implements ActionListener {
         subtitle.setFont(Pixelify);
         subtitle.setForeground(titleTextColor);
 
-        // Players
+        // Players.
         players.setBounds(            
             (int) (GameConfig.SCREEN_LENGTH * 0.125), 
             (int) (GameConfig.SCREEN_HEIGHT * 0.45), 
@@ -135,7 +156,7 @@ public class LocalHostLobbyMenu extends JPanel implements ActionListener {
         );
         players.setOpaque(false);
 
-        // Connection Details
+        // Connection Details.
         connectionDetails.setBounds(            
             (int) (GameConfig.SCREEN_LENGTH * 0.55), 
             (int) (GameConfig.SCREEN_HEIGHT * 0.45), 
@@ -147,7 +168,7 @@ public class LocalHostLobbyMenu extends JPanel implements ActionListener {
         connectionDetails.setBackground(new Color(228, 166, 114));
         connectionDetails.setMargin(new Insets(15,15,15,15));
 
-        // Mode Selection
+        // Mode Selection.
         arcaneModeRadioButton.setBounds(            
             (int) (GameConfig.SCREEN_LENGTH * 0.625), 
             (int) (GameConfig.SCREEN_HEIGHT * 0.575), 
@@ -170,7 +191,7 @@ public class LocalHostLobbyMenu extends JPanel implements ActionListener {
         apprenticeModeRadioButton.setOpaque(false);
         apprenticeModeRadioButton.setFocusable(false);
 
-        // Start Button
+        // Start Button.
         startBtn.setBounds(            
             (int) (GameConfig.SCREEN_LENGTH * 0.7), 
             (int) (GameConfig.SCREEN_HEIGHT * 0.75), 
@@ -195,21 +216,23 @@ public class LocalHostLobbyMenu extends JPanel implements ActionListener {
         content.add(startBtn);
         content.add(menuBackground);
 
-        // ---- Set up frame ----- // 
+        // Set up frame.
         this.setFocusable(true);
         this.setPreferredSize(new Dimension(GameConfig.SCREEN_LENGTH, GameConfig.SCREEN_HEIGHT));
         this.requestFocusInWindow();
         this.setLayout(new BorderLayout());
 
-        // ----- Add components ----- //
+        // Add components.
         this.add(content, BorderLayout.CENTER);
 
 
-        // ----- Server Thread ----- // 
-        // Start game server on host machine
+        /**
+         * Server Thread.
+         * Start game server on host machine.
+         */
         gs = new GameServer();
 
-        // Thread to show all new players connected to the lobby
+        // Thread to show all new players connected to the lobby.
         new Thread() {
             public void run() {
                 int displayedPlayers = 0;
@@ -219,7 +242,7 @@ public class LocalHostLobbyMenu extends JPanel implements ActionListener {
                     int currentPlayersInLobby = gs.getNumPlayersInLobby();
                     if (currentPlayersInLobby != displayedPlayers) {
                         players.removeAll();
-                        // Add new player JLabels
+                        // Add new player JLabels.
                         for (int i = 0; i < currentPlayersInLobby; i++) {
 
                             try {
@@ -245,9 +268,9 @@ public class LocalHostLobbyMenu extends JPanel implements ActionListener {
                         displayedPlayers = currentPlayersInLobby;
                     }
 
-                    // Prevent this loop from consuming 100% CPU
+                    // Prevent this loop from consuming 100% CPU.
                     try {
-                        Thread.sleep(500); // Check every 500ms
+                        Thread.sleep(500); // Check every 500ms.
                     } catch (InterruptedException ex) {
                         System.err.println(ex);
                     }
@@ -255,7 +278,7 @@ public class LocalHostLobbyMenu extends JPanel implements ActionListener {
             }
         }.start();
         
-        // Thread to accept connections
+        // Thread to accept connections.
         new Thread() {
             public void run() {
                 System.out.println("TEST: ACCEPTING CONNECTIONS..");
@@ -263,7 +286,7 @@ public class LocalHostLobbyMenu extends JPanel implements ActionListener {
             }
         }.start();
 
-        // Join the created host's lobby as a player
+        // Join the created host's lobby as a player.
         System.out.println("TEST: CREATING PLAYER..");
         p = new Player();
         System.out.println("TEST: CONNECT TO SERVER..");

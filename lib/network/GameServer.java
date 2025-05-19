@@ -1,3 +1,22 @@
+/**
+ * The GameServer class is responsible for handling the server side of the game. 
+ * It is also responsible for generating spells, and keeping things secure by handling hitboxing, health and timer in the server.
+ * 
+ * @author Edward Joshua M. Diesta (241571), Charles Joshua T. Uy (244644)
+ * @version May 20, 2025
+ * 
+ * We have not discussed the Java language code in our program 
+ * with anyone other than our instructor or the teaching assistants 
+ * assigned to this course.
+ * 
+ * We have not used Java language code obtained from another student, 
+ * or any other unauthorized source, either modified or unmodified.
+ * 
+ * If any Java language code or documentation used in our program 
+ * was obtained from another source, such as a textbook or website, 
+ * that has been clearly noted with a proper citation in the comments 
+ * of our program.
+ */
 package lib.network;
 
 import java.io.*;
@@ -24,14 +43,19 @@ public class GameServer {
     private CopyOnWriteArrayList<Spell> activeSpells;
     private CollisionManager collisionManager;
 
+    /**
+     * Instantiates the server and initializes server resources.
+     */
     public GameServer() {
         System.out.println("==== GAME SERVER ====");
         numOfPlayers = 0;
         isGameStarted = false;
         random = new Random();
-
-        // Player Data is composed of new double[] { x, y, animationIndex, lastHorizontalFacing, HP, Kills }
-        // lastHorizontalFacing -> 0 = Direction.LEFT ; 1 = Direction.RIGHT
+ 
+        /**
+         * Player Data is composed of new double[] { x, y, animationIndex, lastHorizontalFacing, HP, Kills }.
+         * lastHorizontalFacing -> 0 = Direction.LEFT ; 1 = Direction.RIGHT.
+         */
         playerData = new CopyOnWriteArrayList<>();
 
         // Initialize sprites.
@@ -141,43 +165,54 @@ public class GameServer {
         return numOfPlayers;
     }
 
+    /**
+     * The ReadFromClient is responsible for reading data from the client.
+     * This is done constantly.
+     */
     private class ReadFromClient implements Runnable {
         private int playerID;
         private DataInputStream dataIn;
 
+        /**
+         * Instantiates the class with a DataInputStream
+         * 
+         * @param pid the ID of the player
+         * @param out the DataInputStream
+         */
         public ReadFromClient(int pid, DataInputStream in) {
             playerID = pid;
             dataIn = in;
             System.out.println("RFC" + playerID + " Runnable created");
         }
 
+        @Override
         public void run() {
             try {
                 while (true) {
                     String dataRaw = dataIn.readUTF();
 
-                    // Split data into their properties
+                    // Split data into their properties.
                     String[] data = dataRaw.split(" ");
 
-                    // Update Positions
+                    // Update Positions.
                     String[] basicPlayerInfo = data[0].split("-");
                     int id = Integer.parseInt(basicPlayerInfo[0]);
 
-                    // Update the server's records on player positions
-                    playerData.get(id-1)[0] = Double.parseDouble(basicPlayerInfo[1]); // X
-                    playerData.get(id-1)[1] = Double.parseDouble(basicPlayerInfo[2]); // Y
-                        // basicPlayerInfo[3] is current direction Facing             // Current facing direction
-                    playerData.get(id-1)[2] = Double.parseDouble(basicPlayerInfo[4]); // Animation index
-                    if (basicPlayerInfo[5].equals("LEFT")) {                          // Last faced horizontal direction
+                    // Update the server's records on player positions.
+                    playerData.get(id-1)[0] = Double.parseDouble(basicPlayerInfo[1]); // X.
+                    playerData.get(id-1)[1] = Double.parseDouble(basicPlayerInfo[2]); // Y.
+                    // basicPlayerInfo[3] is current direction Facing                 // Current facing direction.
+                    playerData.get(id-1)[2] = Double.parseDouble(basicPlayerInfo[4]); // Animation index.
+                    if (basicPlayerInfo[5].equals("LEFT")) { // Last faced horizontal direction.
                         playerData.get(id-1)[3] = 0;
                     } else if (basicPlayerInfo[5].equals("RIGHT")) {
                         playerData.get(id-1)[3] = 1;
                     }
                     
-                    // Implement spells
+                    // Implement spells.
                     for (String entity : data){
                         
-                        // FIRE_SPELL 
+                        // The fire spell. 
                         if (entity.startsWith("FIRE_SPELL")) {
                             String[] params = entity.split("-");
                             if (params.length == 7) {
@@ -189,7 +224,7 @@ public class GameServer {
                                     Integer.parseInt(params[5]),
                                     Boolean.parseBoolean(params[6]))
                                 );
-                            // FIRE_SPELL Initialization
+                            // The fire spell for initialization.
                             } else {
                                 activeSpells.add(new FireSpell(
                                     playerID,
@@ -202,7 +237,7 @@ public class GameServer {
                             }
                             
                         
-                        // WATER_SPELL
+                        // The water spell.
                         } else if (entity.startsWith("WATER_SPELL")) {
                             String[] params = entity.split("-");
                             
@@ -215,11 +250,11 @@ public class GameServer {
                                 ));
                         
 
-                        // WIND_SPELL
+                        // The wind spell.
                         } else if (entity.startsWith("WIND_SPELL")) {
                             String[] params = entity.split("-");
                             
-                            // Update the player positions
+                            // Update the player positions.
                             playerData.get(playerID-1)[0] = Double.parseDouble(params[1]);
                             playerData.get(playerID-1)[1] = Double.parseDouble(params[2]);
 
@@ -234,7 +269,7 @@ public class GameServer {
                                     Double.parseDouble(params[6])
                                     )
                                 );
-                            } else {
+                            } else { // The wind spell for initializations.
                                 activeSpells.add(new WindSpell(
                                     playerID,
                                     Double.parseDouble(params[1]), 
@@ -245,7 +280,7 @@ public class GameServer {
                             }
                             
                         
-                        // EARTH SPELL
+                        // The earth spell.
                         } else if (entity.startsWith("EARTH_SPELL")) {
                             String[] params = entity.split("-");
 
@@ -258,7 +293,7 @@ public class GameServer {
                                     Integer.parseInt(params[4]),
                                     Boolean.parseBoolean(params[5]))
                                 );
-                            } else {
+                            } else { // The earth spell for initializations.
                                 activeSpells.add(new EarthSpell(
                                     playerID,
                                     Double.parseDouble(params[1]), 
@@ -268,17 +303,17 @@ public class GameServer {
                                 );
                             }
                         
-                        // RESPAWN if dead
+                        // Respawns if dead.
                         } else if (entity.startsWith("RESPAWN")){
-                            // Respwan in a new location
+                            // Respawn in a new location.
                             double[] newSpawnLocation = getRandomSpawnLocation();
-                            playerData.get(playerID-1)[0] = newSpawnLocation[0]; // Set X coordinate
-                            playerData.get(playerID-1)[1] = newSpawnLocation[1]; // Set Y coordinate
-                            playerData.get(playerID-1)[4] = 5; // Reset HP 
+                            playerData.get(playerID-1)[0] = newSpawnLocation[0]; // Set X coordinate.
+                            playerData.get(playerID-1)[1] = newSpawnLocation[1]; // Set Y coordinate.
+                            playerData.get(playerID-1)[4] = 5; // Reset HP.
                         }
                     }
 
-                    // Update all player objects to the updates positions
+                    // Update all player objects to the updates positions.
                     for (int i = 0; i < 2; i++){
                         playerObjects.get(i).setX(playerData.get(i)[0]);
                         playerObjects.get(i).setY(playerData.get(i)[1]);
@@ -294,16 +329,39 @@ public class GameServer {
         }
     }
 
+    /**
+     * The WriteToClient is responsible for passing data to the client.
+     * This is done constantly.
+     */
     private class WriteToClient implements Runnable {
         private int playerID;
         private DataOutputStream dataOut;
 
+        /**
+         * Instantiates the class with a WriteToClient
+         * 
+         * @param pid the ID of the player
+         * @param out the DataOutputStream
+         */
         public WriteToClient(int pid, DataOutputStream out) {
             playerID = pid;
             dataOut = out;
             System.out.println("WTC" + playerID + " Runnable created");
         }
 
+        /**
+         * Starts the game loop once there is enough players.
+         */
+        public void sendStartMsg() {
+            try {
+                dataOut.writeUTF("We now have 2 numOfPlayers. Go!");
+                startGameLoop();
+            } catch (IOException ex) {
+                System.out.println("IOException from sendStartMsg()");
+            }
+        }
+
+        @Override
         public void run() {
             try {
                 while (true) {
@@ -326,43 +384,43 @@ public class GameServer {
                         1 [PLAYER_ID]-[X]-[Y]-[FRAME]-[HP]-[KILLS]-[DEATHS] [SPELL_CASTER'S_ID]-[SPELL_NAME]-[X]-[Y]-[Other Spell Parameters...] ...Other Spells...
                     */
 
-                    // Sending Lobby Data
+                    // Sending Lobby Data.
                     if (!isGameStarted) {
                         dataOut.writeUTF(String.format("0 %d", numOfPlayers));
                         dataOut.flush();
 
-                        // Add a sleep to avoid overwhelming the connection
+                        // Add a sleep to avoid overwhelming the connection.
                         try {
                             Thread.sleep(100);
                         } catch (InterruptedException ex) {
                             System.out.println("InterruptedException from WTC run()");
                         }
 
-                    // Sending In Game Data
+                    // Sending In Game Data.
                     } else {
                         String gameStateData = "1 ";
 
-                        // Add all player data in order
+                        // Add all player data in order.
                         for (int i = 0; i < numOfPlayers; i++) {
                             gameStateData += String.format("%d-%f-%f-%d-%d-%d-%d-%d ", 
-                                i+1, // Player's ID
-                                playerData.get(i)[0], // Player's X Coordinate stored in the server
-                                playerData.get(i)[1], // Player's Y Coordinate stored in the server
-                                (int) playerData.get(i)[2], // Player's animation index stored in the server
-                                (int) playerData.get(i)[3], // Player's last horizontally faced direction (0:left ; 1:Right)
-                                (int) playerData.get(i)[4], // Player's HP
-                                (int) playerData.get(i)[5], // Player's Kills
-                                (int) playerData.get(i)[6] // Player's Deaths
+                                i+1, // Player's ID.
+                                playerData.get(i)[0], // Player's X Coordinate stored in the server.
+                                playerData.get(i)[1], // Player's Y Coordinate stored in the server.
+                                (int) playerData.get(i)[2], // Player's animation index stored in the server.
+                                (int) playerData.get(i)[3], // Player's last horizontally faced direction. (0:left ; 1:Right)
+                                (int) playerData.get(i)[4], // Player's HP.
+                                (int) playerData.get(i)[5], // Player's Kills.
+                                (int) playerData.get(i)[6] // Player's Deaths.
                             );
                         }
                         
-                        // Add all spells 
+                        // Add all spells.
                         for (Spell spell : activeSpells) {
                             gameStateData += spell.getDataString();
                             gameStateData += " ";
                         }
 
-                        // Send data to client
+                        // Send data to client.
                         dataOut.writeUTF(gameStateData);
                         dataOut.flush();
                         try {
@@ -370,33 +428,33 @@ public class GameServer {
                         } catch (InterruptedException ex) {
                             System.out.println("InterruptedException from WTC run()");
                         } 
-                        
                     }
-                    
-
                 }
             } catch (IOException ex) {
                 System.out.println("IOException from WTC run()");
             }
         }
-
-        public void sendStartMsg() {
-            try {
-                dataOut.writeUTF("We now have 2 numOfPlayers. Go!");
-                startGameLoop();
-            } catch (IOException ex) {
-                System.out.println("IOException from sendStartMsg()");
-            }
-        }
     }
 
+    /**
+     * Returns a random double from a minimum and a maximum.
+     * 
+     * @param min the minimum value
+     * @param max the maximum value
+     * @return the random double
+     */
     private double randomDoubleFromRange(double min, double max) {
         return GameConfig.TILE_SIZE * min + (GameConfig.TILE_SIZE * (max-min)) * random.nextDouble();
     }
 
+    /**
+     * Returns a random spawning location.
+     * 
+     * @return a random spawning location
+     */
     public double[] getRandomSpawnLocation() {
-        // Choose a random spawning zone
-        int spawningZone = random.nextInt(1, 4 + 1); // 4 total spawning zones
+        // Choose a random spawning zone.
+        int spawningZone = random.nextInt(1, 4 + 1); // 4 total spawning zones.
 
         if (spawningZone == 1){
             return new double[]{
@@ -423,27 +481,29 @@ public class GameServer {
         }
     }
 
-    // ----- Game Loop Logic ----- //
+    /**
+     * Creates the game loop of the game.
+     */
     public void startGameLoop() {
         Thread gameLoop = new Thread(() -> {
             while (true) {
-                // Update all spells
+                // Update all spells.
                 for (Spell spell : activeSpells) {
                     spell.update();
                     
                     int resultOfCollisionCheck = spell.handleCollisions(collisionManager);
                     if (resultOfCollisionCheck != 0){
-                        playerData.get(resultOfCollisionCheck-1)[4] -= 1; // Decrease player hit hp
+                        playerData.get(resultOfCollisionCheck-1)[4] -= 1; // Decrease player hit HP.
                         
                         // If Player died (hp = 0)
                         if (playerData.get(resultOfCollisionCheck-1)[4] <= 0) { 
-                            playerData.get(spell.getCasterId()-1)[5] += 1; // Increase kill count of caster
-                            playerData.get(resultOfCollisionCheck-1)[6] += 1; // Increment death count of dying player
+                            playerData.get(spell.getCasterId()-1)[5] += 1; // Increase kill count of caster.
+                            playerData.get(resultOfCollisionCheck-1)[6] += 1; // Increment death count of dying player.
                         }
                     }
                 }
                 
-                // Remove all expired spells
+                // Remove all expired spells.
                 activeSpells.removeIf((spell) -> spell.isExpired());
 
                 try {
