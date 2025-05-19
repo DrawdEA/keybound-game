@@ -31,5 +31,5 @@ public class GameConfig {
     public static final int CAST_ANIMATION_COUNTER = 5;
     public static final int SCREEN_X = (GameConfig.SCREEN_LENGTH / 2) - (GameConfig.TILE_SIZE * 2);
     public static final int SCREEN_Y = (GameConfig.SCREEN_HEIGHT / 2) - (GameConfig.TILE_SIZE);
-    public static final int GAME_DURATION = 180; // In seconds.
+    public static final int GAME_DURATION = 30; // In seconds.
 }

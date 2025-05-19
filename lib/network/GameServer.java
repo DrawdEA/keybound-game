@@ -43,6 +43,8 @@ public class GameServer {
     private CopyOnWriteArrayList<Spell> activeSpells;
     private CollisionManager collisionManager;
 
+    private int time;
+
     /**
      * Instantiates the server and initializes server resources.
      */
@@ -70,6 +72,9 @@ public class GameServer {
         // Initialize the numOfPlayers.
         playerObjects = new CopyOnWriteArrayList<>();
         activeSpells = new CopyOnWriteArrayList<>();
+
+        // Initialize the game timer.
+        time = GameConfig.GAME_DURATION;
 
         try {
             ss = new ServerSocket(10000);
@@ -141,10 +146,7 @@ public class GameServer {
 
     public void startGame() {
         isGameStarted = true;
-
-        // Start the game.
-        p1WriteRunnable.sendStartMsg();
-        p2WriteRunnable.sendStartMsg();
+        startGameLoop();
 
         System.out.println("Started the Game Successfully");
     }
@@ -398,7 +400,7 @@ public class GameServer {
 
                     // Sending In Game Data.
                     } else {
-                        String gameStateData = String.format("1-10 ");
+                        String gameStateData = String.format("1-%d ", time);
 
                         // Add all player data in order.
                         for (int i = 0; i < numOfPlayers; i++) {
@@ -485,7 +487,7 @@ public class GameServer {
      * Handles ending the game and showing the final stats to the player.
      */
     private void endGame() {
-
+        System.out.println("END GAME");
     }
 
     /**
@@ -514,23 +516,19 @@ public class GameServer {
                 activeSpells.removeIf((spell) -> spell.isExpired());
 
                 try {
-                    Thread.sleep(25);
+                    Thread.sleep(12);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
         });
-
-        gameLoop.setDaemon(true);
         gameLoop.start();
 
         Thread gameTimer = new Thread(() -> {
-            int time = 0;
-
-            while (time <= GameConfig.GAME_DURATION) {
+            while (time >= 0) {
                 try {
                     Thread.sleep(1000);
-                    time++;
+                    time = time - 1;
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -539,7 +537,6 @@ public class GameServer {
             // End the game after the timer is done.
             endGame();
         });
-        gameTimer.setDaemon(true);
         gameTimer.start();
 
     }

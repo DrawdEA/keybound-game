@@ -36,15 +36,18 @@ public class InGameGUI {
     private KeyBindings keyBindings;
     private PlayerObject player;
 
+    private int secondsLeft;
+
     /**
      * Initializes the GUI.
      * 
      * @param kb the KeyBindings of the client
      */
     public InGameGUI(KeyBindings kb) {
-        try {
-            keyBindings = kb;
+        secondsLeft = 0;
+        keyBindings = kb;
 
+        try {
             // Render the GUI elements.
             BufferedImage hearts = ImageIO.read(getClass().getResourceAsStream("/resources/gui/hearts.png"));
             fullHeart = hearts.getSubimage(0, 0, 16, 16);
@@ -68,6 +71,10 @@ public class InGameGUI {
      */
     public void updatePlayerObject(PlayerObject p) {
         player = p;
+    }
+
+    public void setGameTimer(int seconds) {
+        secondsLeft = seconds;
     }
     
     /**
@@ -106,7 +113,10 @@ public class InGameGUI {
         g2d.drawString(inputText, (GameConfig.SCREEN_LENGTH / 2) - (textWidth / 2), (GameConfig.SCREEN_HEIGHT / 2) - (textAscent / 2) - 20);
 
         // Render the time.
-        String timeString = "3:18";
+        int hours = secondsLeft / 60;
+        int minutes = secondsLeft % 60;
+        String time = String.format("%d:%02d", hours, minutes);
+        String timeString = String.valueOf(time);
         Font timeFont = vcrOsdFont.deriveFont(64f);
         g2d.setFont(timeFont);
         FontMetrics fm2 = g2d.getFontMetrics();

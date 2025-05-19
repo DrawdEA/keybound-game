@@ -181,6 +181,12 @@ public class GameCanvas extends JComponent {
         spells.add(spell);
     }
 
+    public void updateGameTimer(int seconds) {
+        if (gui != null) {
+            gui.setGameTimer(seconds);
+        }
+    }
+
     @Override
     protected void paintComponent(Graphics g) {
         // Cast Graphics to Graphics2D and apply anti-aliasing key.

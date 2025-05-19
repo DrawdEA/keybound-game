@@ -135,7 +135,7 @@ public class Player {
                     // Process In Game Data.
                     } else if (serverData[0].startsWith("1-")) {
                         int gameTime = Integer.parseInt(serverData[0].split("-")[1]);
-                        //gameCanvas.setTimer(gameTime);
+                        gameCanvas.updateGameTimer(gameTime);
 
                         // Game Proper Initializations.
                         if (!isInGame) {
