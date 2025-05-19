@@ -205,10 +205,10 @@ public class Player {
                                         }
                                     }
 
-                                    // Trigger "Damaged" animation if HP decreased AND player is not dead .
+                                    // Trigger "Damaged" animation if HP decreased AND player is not dead.
                                     if (serverReportedHP < oldClientHP && serverReportedHP > 0) {
                                         if (!selfPlayer.isOverridingAnimation() || selfPlayer.isOverridingAnimationOfType("Damaged")) {
-                                             selfPlayer.overrideAnimation("Damaged");
+                                            selfPlayer.overrideAnimation("Damaged");
                                         }
                                     }
                                 }

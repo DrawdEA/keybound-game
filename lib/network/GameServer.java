@@ -482,7 +482,7 @@ public class GameServer {
     }
 
     /**
-     * Creates the game loop of the game.
+     * Creates the game loop.
      */
     public void startGameLoop() {
         Thread gameLoop = new Thread(() -> {
@@ -495,7 +495,7 @@ public class GameServer {
                     if (resultOfCollisionCheck != 0){
                         playerData.get(resultOfCollisionCheck-1)[4] -= 1; // Decrease player hit HP.
                         
-                        // If Player died (hp = 0)
+                        // If Player died. (hp = 0)
                         if (playerData.get(resultOfCollisionCheck-1)[4] <= 0) { 
                             playerData.get(spell.getCasterId()-1)[5] += 1; // Increase kill count of caster.
                             playerData.get(resultOfCollisionCheck-1)[6] += 1; // Increment death count of dying player.
