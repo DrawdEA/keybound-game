@@ -85,7 +85,7 @@ public class GameCanvas extends JComponent {
         al = new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 keyBindings.movePlayer(collisionManager, self);
-                keyBindings.castPlayerSpells(selfPlayerClient); // Add a cooldown thread?
+                keyBindings.castPlayerSpells(selfPlayerClient);
                 repaint();
             }
         };
@@ -151,5 +151,10 @@ public class GameCanvas extends JComponent {
             //spell.handleCollisions(collisionManager);
         }
 
+        if (self != null && enemy != null) {
+            if (keyBindings.isScoreBoardAsked()) {
+                System.out.println("SCORES");
+            }
+        }
     }
 }
