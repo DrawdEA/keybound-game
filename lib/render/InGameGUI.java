@@ -29,7 +29,6 @@ import lib.objects.PlayerObject;
 
 public class InGameGUI {
     private BufferedImage fullHeart, emptyHeart;
-    private BufferedImage frame;
 
     private Font vcrOsdFont, comicRunesFont;
 
@@ -52,7 +51,6 @@ public class InGameGUI {
             BufferedImage hearts = ImageIO.read(getClass().getResourceAsStream("/resources/gui/hearts.png"));
             fullHeart = hearts.getSubimage(0, 0, 16, 16);
             emptyHeart = hearts.getSubimage(0, 48, 16, 16);
-            frame = ImageIO.read(getClass().getResourceAsStream("/resources/gui/frame.png"));
 
             InputStream stream = ClassLoader.getSystemClassLoader().getResourceAsStream("resources/fonts/VCR_OSD_MONO_1.001.ttf");
             vcrOsdFont = Font.createFont(Font.TRUETYPE_FONT, stream).deriveFont(24f);
@@ -83,11 +81,6 @@ public class InGameGUI {
      * @param g2d the Graphics2D of GameCanvas
      */
     public void renderGUI(Graphics2D g2d) {
-        // Render the main GUI.
-        /* for (int i = 0; i < 3; i++) {
-            g2d.drawImage(frame, 916, 660 - i * 98, 88, 88, null);
-        } */
-
         // Render the health bar.
         int playerHealth = 0;
         if (player != null) {

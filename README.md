@@ -17,6 +17,3 @@ gci -r *.class | rm; javac *.java; java GameStarter
 - `network` is for all classes relating to hosting and joining game lobbies
 - `objects` are for game objects
 - `render` is for classes that draw with graphics 
-
-## Server Hosting
-TODO: Figure this out 
