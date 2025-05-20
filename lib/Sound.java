@@ -115,9 +115,10 @@ public class Sound {
     public void stop() {
         if (clip != null && isPlaying) {
             clip.stop();
+            clip.flush();
             clip.setFramePosition(0);
             isPlaying = false;
-            clip.close();
+            //clip.close();
         }
     }
 }
