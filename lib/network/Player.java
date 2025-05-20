@@ -21,6 +21,8 @@ package lib.network;
 
 import java.io.*;
 import java.net.*;
+
+import lib.Sound;
 import lib.objects.PlayerObject;
 import lib.objects.spells.*;
 import lib.render.*;
@@ -199,6 +201,8 @@ public class Player {
                                     } else { // Player is dead or still dead according to server.
                                         if (!selfPlayerIsDead) { // Client thought it was alive, but server says it's dead.
                                             selfPlayerIsDead = true;
+                                            Sound killSound = new Sound(11);
+                                            killSound.play();
                                             if (!selfPlayer.isOverridingAnimationOfType("Dying")) {
                                                 selfPlayer.overrideAnimation("Dying");
                                             }
@@ -333,13 +337,25 @@ public class Player {
     }
 
     /**
-     * Asks for a spell to be casts, immediately being put in the queue.
+     * Asks for a spell to be cast, immediately being put in the queue.
      * 
      * @param spellName the name of the spell to be casted
      */
     public void requestToCast(String spellName) {
         selfPlayer.overrideAnimation("Attacking1");
         wantsToCast = spellName;
+
+        Sound spellSound;
+        if (spellName == "FIRE_SPELL") {
+            spellSound = new Sound(6);
+        } else if (spellName == "WATER_SPELL") {
+            spellSound = new Sound(3);
+        } else if (spellName == "EARTH_SPELL") {
+            spellSound = new Sound(5);
+        } else {
+            spellSound = new Sound(7);
+        }
+        spellSound.play();
     }
 
     /**

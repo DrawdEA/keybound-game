@@ -103,7 +103,7 @@ public class LocalPlaySelectionMenu extends JPanel implements ActionListener {
 
         // Host Lobby Button.
         hostBtn.setBounds(            
-            (int) (GameConfig.SCREEN_LENGTH * 0.25), 
+            (int) (GameConfig.SCREEN_LENGTH * 0.205), 
             (int) (GameConfig.SCREEN_HEIGHT * 0.475), 
             (int) (GameConfig.SCREEN_LENGTH * 0.2), 
             (int) (GameConfig.SCREEN_HEIGHT * 0.1)

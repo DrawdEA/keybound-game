@@ -84,9 +84,9 @@ public class InGameGUI {
      */
     public void renderGUI(Graphics2D g2d) {
         // Render the main GUI.
-        for (int i = 0; i < 3; i++) {
+        /* for (int i = 0; i < 3; i++) {
             g2d.drawImage(frame, 916, 660 - i * 98, 88, 88, null);
-        }
+        } */
 
         // Render the health bar.
         int playerHealth = 0;

@@ -52,6 +52,8 @@ public class MainMenu extends JPanel implements ActionListener {
 
         // Initialize the sounds.
         Sound.initializeSounds();
+        Sound backgroundMusic = new Sound(10);
+        backgroundMusic.play();
 
         // Load Fonts and background image.
         try {

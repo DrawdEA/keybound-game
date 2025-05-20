@@ -22,12 +22,9 @@ package lib.render;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 import javax.imageio.ImageIO;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.*;
 import javax.swing.Timer;
 import lib.*;
@@ -63,6 +60,11 @@ public class GameCanvas extends JComponent implements ActionListener{
 
     private Font Jacquard, Pixelify;
     String[] colorPaths = {"purple", "red", "green", "gray", "yellow", "blue", "orange"};
+
+    // Music.
+    Sound finishMusic;
+    Sound backgroundMusic;
+    boolean hasNotPlayedFinishSound;
 
     /**
      * Instantiates a game canvas and initializes much of the needed resources in the game.
@@ -170,6 +172,23 @@ public class GameCanvas extends JComponent implements ActionListener{
         collisionManager.addPlayer(enemy);
         collisionManager.addPlayer(self);
         repaint();
+
+        Sound.clearAllSounds();
+
+        // Handle hover effects.
+        backToMainBtn.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                Sound hoverSound = new Sound(1);
+                hoverSound.play();
+            }
+        });   
+        
+        // Handle music.
+        hasNotPlayedFinishSound = true;
+        finishMusic = new Sound(8);
+        backgroundMusic = new Sound(9);
+        backgroundMusic.play();
     }
 
     /**
@@ -220,6 +239,12 @@ public class GameCanvas extends JComponent implements ActionListener{
                 backToMainBtn.setVisible(true);
                 this.revalidate();
                 this.repaint();
+
+                if (hasNotPlayedFinishSound) {
+                    finishMusic.play();
+                    hasNotPlayedFinishSound = false;
+                }
+                
             }
         }
     }
@@ -249,16 +274,18 @@ public class GameCanvas extends JComponent implements ActionListener{
             self.updatePlayerAnimation(keyBindings.getPlayerAction(), keyBindings.getPlayerDirection());
             enemy.drawSprite(g2d);
             self.drawSprite(g2d);
-
-            // Render the GUI.
-            gui.updatePlayerObject(self);
-            gui.renderGUI(g2d);
         }
 
         // Draw the spells.
         for (Spell spell : spells) {
             spell.update();
             spell.drawSprite(g2d);
+        }
+
+        if (self != null && enemy != null) {
+            // Render the GUI.
+            gui.updatePlayerObject(self);
+            gui.renderGUI(g2d);
         }
       
         // Show the scoreboard if the player is pressing tab
@@ -343,6 +370,7 @@ public class GameCanvas extends JComponent implements ActionListener{
         JPanel mainFrame = (JPanel) this.getParent();
         
         if (e.getSource() == backToMainBtn) {
+            Sound.clearAllSounds();
             Sound openSound = new Sound(2);
             openSound.play();
 

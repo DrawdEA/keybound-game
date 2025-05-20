@@ -31,17 +31,36 @@ public class Sound {
     private boolean isLooped;
 
     private static ArrayList<File> sounds;
+    private static ArrayList<Sound> activeSounds;
 
     /**
      * Initializes the sound files for faster loading.
      */
     public static void initializeSounds() {
         sounds = new ArrayList<>();
+        activeSounds = new ArrayList<>();
         
         String pathname = "resources/sounds/";
         sounds.add(new File(pathname + "open.aiff"));
         sounds.add(new File(pathname + "hover.wav"));
         sounds.add(new File(pathname + "close.wav"));
+        sounds.add(new File(pathname + "water.wav"));
+        sounds.add(new File(pathname + "hit.wav"));
+        sounds.add(new File(pathname + "earth.wav"));
+        sounds.add(new File(pathname + "fire.wav"));
+        sounds.add(new File(pathname + "wind.wav"));
+        sounds.add(new File(pathname + "end.wav"));
+        sounds.add(new File(pathname + "ingame.aiff"));
+        sounds.add(new File(pathname + "play.aiff"));
+        sounds.add(new File(pathname + "ding.wav"));
+    }
+
+    public static void clearAllSounds() {
+        for (Sound sound : activeSounds) {
+            sound.stop();
+        }
+
+        activeSounds.removeIf(obj -> obj instanceof Sound);
     }
 
     /**
@@ -62,6 +81,8 @@ public class Sound {
         } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
             System.out.println("Error from Sound.java");
         }
+
+        activeSounds.add(this);
     }
 
     /**

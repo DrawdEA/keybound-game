@@ -24,6 +24,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import lib.GameConfig;
+import lib.Sound;
 import lib.objects.PlayerObject;
 import lib.render.CollisionManager;
 import lib.render.Direction;
@@ -228,6 +229,9 @@ public class FireSpell extends Spell {
         if (playerHit != null && !finished && playerHit.isDamageable()) {
             finished = true;
             animationCounter = 0;
+
+            Sound hitSound = new Sound(4);
+            hitSound.play();
 
             return playerHit.getId();
         } else {

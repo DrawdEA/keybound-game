@@ -25,6 +25,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import lib.GameConfig;
+import lib.Sound;
 import lib.objects.PlayerObject;
 import lib.render.CollisionManager;
 import lib.render.Direction;
@@ -184,6 +185,8 @@ public class WaterSpell extends Spell {
     public int handleCollisions(CollisionManager cm) {
         PlayerObject playerHit = cm.checkProjectileCollision(hitbox, casterId);
         if (playerHit != null && playerHit.isDamageable()) {
+            Sound hitSound = new Sound(4);
+            hitSound.play();
             return playerHit.getId();
         } else {
             return 0;
