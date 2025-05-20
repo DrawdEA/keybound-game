@@ -59,7 +59,7 @@ public class LocalHostLobbyMenu extends JPanel implements ActionListener {
     public LocalHostLobbyMenu() {
         // Collection connection details.
         try(final DatagramSocket socket = new DatagramSocket()){
-            socket.connect(InetAddress.getByName("8.8.8.8"), 10000);
+            socket.connect(InetAddress.getByName("8.8.8.8"), 10002); // Don't make it the same port
             ip = socket.getLocalAddress().getHostAddress();
         } catch (Exception ex){
             System.err.println(ex);
