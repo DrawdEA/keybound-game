@@ -21,7 +21,6 @@ package lib.network;
 
 import java.io.*;
 import java.net.*;
-
 import lib.Sound;
 import lib.objects.PlayerObject;
 import lib.objects.spells.*;
@@ -68,7 +67,7 @@ public class Player {
      */
     public void connectToServer(String ip) {
         try {
-            socket = new Socket("localhost", 10000);
+            socket = new Socket(ip, 10000);
             DataInputStream in = new DataInputStream(socket.getInputStream());
             DataOutputStream out = new DataOutputStream(socket.getOutputStream());
             playerID = in.readInt();
